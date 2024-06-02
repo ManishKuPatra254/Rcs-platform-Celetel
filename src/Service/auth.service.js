@@ -66,6 +66,23 @@ export const updateProfile = async (profile) => {
 }
 
 
+export const changePassword = async (password) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put('https://main-rcs.vercel.app/profile/change-password', password, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+}
+
+
 
 export const getCampaignsDetails = async () => {
     try {
@@ -123,6 +140,21 @@ export const createNewTemplates = async (createTemplates) => {
     try {
         const token = localStorage.getItem('token');
         const response = await axios.post('https://main-rcs.vercel.app/api/template/create', createTemplates, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+}
+export const createBots = async (createBot) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post('https://main-rcs.vercel.app/api/bot', createBot, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'

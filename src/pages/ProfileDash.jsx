@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { TextField, Box, Typography } from '@mui/material';
-import { getProfile, updateProfile } from '../Service/auth.service';
+import { changePassword, createBots, getProfile, updateProfile } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,7 +22,18 @@ const Profile = () => {
         username: "",
         phone: "",
         company: ""
+    });
 
+
+    const [password, setPassword] = useState({
+        oldPassword: "",
+        newPassword: "",
+    });
+
+    const [createBot, setCreateBot] = useState({
+
+        botId: "",
+        botName: "",
     });
 
     useEffect(() => {
@@ -52,6 +63,14 @@ const Profile = () => {
             ...profile,
             [name]: value,
         });
+        setPassword({
+            ...password,
+            [name]: value,
+        });
+        setCreateBot({
+            ...password,
+            [name]: value,
+        });
     };
 
     const handleSave = async () => {
@@ -59,6 +78,30 @@ const Profile = () => {
             const response = await updateProfile(profile);
             console.log('Profile updated successfully:', response.message);
             setProfile(response);
+            alert(response.message);
+        } catch (error) {
+            console.error('Error updating profile:', error.message);
+        }
+    };
+
+
+    const handleChangePassword = async () => {
+        try {
+            const response = await changePassword(password);
+            console.log('Profile updated successfully:', response.message);
+            setPassword('');
+            alert(response.message);
+        } catch (error) {
+            console.error('Error updating profile:', error.message);
+        }
+    };
+
+
+    const handleCreateBot = async () => {
+        try {
+            const response = await createBots(createBot);
+            console.log('Profile updated successfully:', response.message);
+            setCreateBot('');
             alert(response.message);
         } catch (error) {
             console.error('Error updating profile:', error.message);
@@ -73,7 +116,7 @@ const Profile = () => {
         <Fragment>
             <Layout>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
-                    <div className="border-2 grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
+                    <div className=" grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
                         <Typography variant="h4">
                             Profile Details
                         </Typography>
@@ -141,26 +184,55 @@ const Profile = () => {
                             </Button>
                         </Box>
                     </div>
-                    <div className="border-2 grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
+                    <div className=" grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
                         <Typography variant="h4">
                             Bot Details
                         </Typography>
                         <TextField
                             label="Bot Id"
-                            // name="username"
-                            // value={profile.username}
-                            // onChange={handleInputChange}
+                            name="botId"
+                            value={createBot.botId}
+                            onChange={handleInputChange}
                             fullWidth
                             size='small'
                         />
                         <TextField
                             label="Bot Name"
-                            // name="username"
-                            // value={profile.username}
-                            // onChange={handleInputChange}
+                            name="botName"
+                            value={createBot.botName}
+                            onChange={handleInputChange}
                             fullWidth
                             size='small'
                         />
+                        <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
+                            <Button onClick={handleCreateBot}>Create</Button>
+                            <Button>Cancel</Button>
+                        </Box>
+                    </div>
+                    <div className=" grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
+                        <Typography variant="h4">
+                            Change Password
+                        </Typography>
+                        <TextField
+                            label="Old Password"
+                            name="oldPassword"
+                            value={password.oldPassword}
+                            onChange={handleInputChange}
+                            fullWidth
+                            size='small'
+                        />
+                        <TextField
+                            label="New Password"
+                            name="newPassword"
+                            value={password.newPassword}
+                            onChange={handleInputChange}
+                            fullWidth
+                            size='small'
+                        />
+                        <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
+                            <Button onClick={handleChangePassword}>Update</Button>
+                            <Button>Cancel</Button>
+                        </Box>
                     </div>
                 </div>
             </Layout>

@@ -37,7 +37,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Link as RouterLink } from 'react-router-dom';
 import { Fragment } from "react"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+// import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -138,10 +138,10 @@ export function Layout({ children }) {
                                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                             >
                                 <LineChart className="h-5 w-5" />
-                                <span className="sr-only">Analytics</span>
+                                <span className="sr-only">Reports</span>
                             </Link>
                         </TooltipTrigger>
-                        <TooltipContent side="right">Analytics</TooltipContent>
+                        <TooltipContent side="right">Reports</TooltipContent>
                     </Tooltip>
                 </nav>
                 <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
@@ -290,27 +290,13 @@ export function Layout({ children }) {
 
                             <DropdownMenuItem>Support</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <span className="no-underline text-inherit">
-                                        <DropdownMenuItem>
-                                            Logout
-                                        </DropdownMenuItem>
-                                    </span>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This will log you out from your account.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                            <DropdownMenu>
+                                <span onClick={handleLogout} className="no-underline text-inherit">
+                                    <DropdownMenuItem>
+                                        Logout
+                                    </DropdownMenuItem>
+                                </span>
+                            </DropdownMenu>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </header>

@@ -64,6 +64,21 @@ export const updateProfile = async (profile) => {
         throw error;
     }
 }
+export const changePassword = async (password) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put('https://main-rcs.vercel.app/profile/change-password', password, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+}
 
 
 

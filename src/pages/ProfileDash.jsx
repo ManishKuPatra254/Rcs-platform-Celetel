@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { TextField, Box, Typography } from '@mui/material';
-import { changePassword, getProfile, updateProfile } from '../Service/auth.service';
+import { changePassword, createBots, getProfile, updateProfile } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,11 +22,18 @@ const Profile = () => {
         username: "",
         phone: "",
         company: ""
-
     });
+
+
     const [password, setPassword] = useState({
         oldPassword: "",
         newPassword: "",
+    });
+
+    const [createBot, setCreateBot] = useState({
+
+        botId: "",
+        botName: "",
     });
 
     useEffect(() => {
@@ -60,6 +67,10 @@ const Profile = () => {
             ...password,
             [name]: value,
         });
+        setCreateBot({
+            ...password,
+            [name]: value,
+        });
     };
 
     const handleSave = async () => {
@@ -79,6 +90,18 @@ const Profile = () => {
             const response = await changePassword(password);
             console.log('Profile updated successfully:', response.message);
             setPassword('');
+            alert(response.message);
+        } catch (error) {
+            console.error('Error updating profile:', error.message);
+        }
+    };
+
+
+    const handleCreateBot = async () => {
+        try {
+            const response = await createBots(createBot);
+            console.log('Profile updated successfully:', response.message);
+            setCreateBot('');
             alert(response.message);
         } catch (error) {
             console.error('Error updating profile:', error.message);
@@ -167,22 +190,22 @@ const Profile = () => {
                         </Typography>
                         <TextField
                             label="Bot Id"
-                            // name="username"
-                            // value={profile.username}
-                            // onChange={handleInputChange}
+                            name="botId"
+                            value={createBot.botId}
+                            onChange={handleInputChange}
                             fullWidth
                             size='small'
                         />
                         <TextField
                             label="Bot Name"
-                            // name="username"
-                            // value={profile.username}
-                            // onChange={handleInputChange}
+                            name="botName"
+                            value={createBot.botName}
+                            onChange={handleInputChange}
                             fullWidth
                             size='small'
                         />
                         <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
-                            <Button>Create</Button>
+                            <Button onClick={handleCreateBot}>Create</Button>
                             <Button>Cancel</Button>
                         </Box>
                     </div>

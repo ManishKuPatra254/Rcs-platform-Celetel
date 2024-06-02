@@ -189,7 +189,7 @@ echo $response;
                                 </div>
                             </div>
                             <TabsContent value="cURL">
-                                <Card x-chunk="dashboard-05-chunk-3">
+                                <Card value='cURL' x-chunk="dashboard-05-chunk-3">
                                     <CardHeader className="px-7">
                                         <CardTitle>Example API Request</CardTitle>
                                         <CardDescription>
@@ -197,8 +197,8 @@ echo $response;
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="overflow-auto">
-                                            <pre>{cUrl}</pre>
+                                        <div className="overflow-x-auto">
+                                            <pre className="whitespace-pre-wrap">{cUrl}</pre>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -212,15 +212,13 @@ echo $response;
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent>
-
-                                        <div className="overflow-auto">
-                                            <pre>{phpContent}</pre>
+                                        <div className="overflow-x-auto">
+                                            <pre className="whitespace-pre-wrap">{phpContent}</pre>
                                         </div>
-
-
                                     </CardContent>
                                 </Card>
                             </TabsContent>
+
                         </Tabs>
                     </div>
                     <div>

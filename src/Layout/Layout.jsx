@@ -37,7 +37,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Link as RouterLink } from 'react-router-dom';
 import { Fragment } from "react"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+// import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -290,27 +290,13 @@ export function Layout({ children }) {
 
                             <DropdownMenuItem>Support</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <span className="no-underline text-inherit">
-                                        <DropdownMenuItem>
-                                            Logout
-                                        </DropdownMenuItem>
-                                    </span>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This will log you out from your account.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleLogout}>Logout</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
+                            <DropdownMenu>
+                                <span onClick={handleLogout} className="no-underline text-inherit">
+                                    <DropdownMenuItem>
+                                        Logout
+                                    </DropdownMenuItem>
+                                </span>
+                            </DropdownMenu>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </header>

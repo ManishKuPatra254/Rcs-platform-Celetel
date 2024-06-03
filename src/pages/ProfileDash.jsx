@@ -17,6 +17,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Profile = () => {
     const [profile, setProfile] = useState({
@@ -26,7 +27,6 @@ const Profile = () => {
         phone: "",
         company: ""
     });
-
 
     const [password, setPassword] = useState({
         oldPassword: "",
@@ -42,6 +42,7 @@ const Profile = () => {
         botId: "",
     });
 
+    const [selectedOption, setSelectedOption] = useState('updateProfile');
 
     useEffect(() => {
         const getProfileData = async () => {
@@ -95,7 +96,6 @@ const Profile = () => {
         }
     };
 
-
     const handleChangePassword = async () => {
         try {
             const response = await changePassword(password);
@@ -107,7 +107,6 @@ const Profile = () => {
         }
     };
 
-
     const handleCreateBot = async () => {
         try {
             const response = await createBots(createBot);
@@ -118,6 +117,7 @@ const Profile = () => {
             console.error('Error updating profile:', error.message);
         }
     };
+
     const handleUpdateBot = async () => {
         try {
             const response = await updateBot(currentBotId);
@@ -137,122 +137,134 @@ const Profile = () => {
         <Fragment>
             <Layout>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
-                    <div className="grid mt-2 auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
-                        <CardTitle className='text-3xl'>Profile Details</CardTitle>
-                        <Label htmlFor="">Username</Label>
-                        <Input
-                            name="username"
-                            value={profile.username}
-                            onChange={handleInputChange} />
+                    <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-8/12 lg:col-span-4 lg:w-8/12 sm:w-8/12">
+                        <CardTitle className='text-3xl'>Profile Management</CardTitle>
+                        <Label>Select an option</Label>
+                        <Select onValueChange={setSelectedOption}>
+                            <SelectTrigger className="">
+                                <SelectValue placeholder="Select an option" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="updateProfile">Update Profile</SelectItem>
+                                <SelectItem value="changePassword">Change Password</SelectItem>
+                                <SelectItem value="createBot">Create Bot</SelectItem>
+                                <SelectItem value="updateBot">Update Bot</SelectItem>
+                            </SelectContent>
+                        </Select>
 
-                        <Label htmlFor="Email">Email</Label>
-                        <Input
-                            name="email"
-                            value={profile.email}
-                            onChange={handleInputChange}
-                            disabled
-                        />
-
-                        <Label htmlFor="Company">Company</Label>
-                        <Input
-                            name="company"
-                            value={profile.company}
-                            onChange={handleInputChange}
-                        />
-                        <Label htmlFor="Phone number">Phone number</Label>
-                        <Input
-                            name="phone"
-                            value={profile.phone}
-                            onChange={handleInputChange} />
-
-                        <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button>Save</Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently update your
-                                            account and remove your old data from our servers.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleSave}>Continue</AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                            <Button onClick={handleCancel}>
-                                Cancel
-                            </Button>
-                        </Box>
-                    </div>
-                    <div className=" grid mt-2 auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
-                        <CardTitle className='text-3xl'>Bot Details</CardTitle>
-
-                        <Label htmlFor="Bot Id">Bot Id</Label>
-                        <Input
-                            name="botId"
-                            value={createBot.botId}
-                            onChange={handleInputChange}
-
-                        />
-                        <Label htmlFor="Bot Name"> Bot Name</Label>
-                        <Input name="botName"
-                            value={createBot.botName}
-                            onChange={handleInputChange}
-                        />
-                        <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
-                            <Button onClick={handleCreateBot}>Create</Button>
-                            <Button>Cancel</Button>
-                        </Box>
-                    </div>
-                    <div className=" grid mt-2 auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
-                        <CardTitle className="text-3xl">
-                            Change Password
-                        </CardTitle>
-                        <Label htmlFor="Email">Old Password</Label>
-                        <Input
-                            name="oldPassword"
-                            value={password.oldPassword}
-                            onChange={handleInputChange}
-
-                        />
-                        <Label htmlFor="New Password">New Password</Label>
-                        <Input
-                            name="newPassword"
-                            value={password.newPassword}
-                            onChange={handleInputChange}
-
-                        />
-                        <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
-                            <Button onClick={handleChangePassword}>Update</Button>
-                            <Button>Cancel</Button>
-                        </Box>
-                    </div>
-                    <div className=" grid mt-2 auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
-                        <CardTitle className='text-3xl'>Update Bot</CardTitle>
-
-                        <Label htmlFor="Bot Id">Bot Id</Label>
-                        <Input
-                            name="botId"
-                            value={currentBotId.botId}
-                            onChange={handleInputChange}
-
-                        />
-                        <Label htmlFor="Bot name">Bot name</Label>
-                        <Input
-                            name="botName"
-                            value={currentBotId.botName}
-                            onChange={handleInputChange}
-                            disabled
-                        />
-                        <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
-                            <Button onClick={handleUpdateBot}>Update</Button>
-                            <Button>Cancel</Button>
-                        </Box>
+                        {selectedOption === 'updateProfile' && (
+                            <Fragment>
+                                <Label htmlFor="username">Username</Label>
+                                <Input
+                                    name="username"
+                                    value={profile.username}
+                                    onChange={handleInputChange}
+                                />
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                    name="email"
+                                    value={profile.email}
+                                    onChange={handleInputChange}
+                                    disabled
+                                />
+                                <Label htmlFor="company">Company</Label>
+                                <Input
+                                    name="company"
+                                    value={profile.company}
+                                    onChange={handleInputChange}
+                                />
+                                <Label htmlFor="phone">Phone number</Label>
+                                <Input
+                                    name="phone"
+                                    value={profile.phone}
+                                    onChange={handleInputChange}
+                                />
+                                <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button>Update</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This will permanently update your
+                                                    account and remove your old data from our servers.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={handleSave}>Continue</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                    <Button onClick={handleCancel}>
+                                        Cancel
+                                    </Button>
+                                </Box>
+                            </Fragment>
+                        )}
+                        {selectedOption === 'changePassword' && (
+                            <Fragment>
+                                <Label htmlFor="oldPassword">Old Password</Label>
+                                <Input
+                                    name="oldPassword"
+                                    value={password.oldPassword}
+                                    onChange={handleInputChange}
+                                />
+                                <Label htmlFor="newPassword">New Password</Label>
+                                <Input
+                                    name="newPassword"
+                                    value={password.newPassword}
+                                    onChange={handleInputChange}
+                                />
+                                <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
+                                    <Button onClick={handleChangePassword}>Update</Button>
+                                    <Button onClick={handleCancel}>Cancel</Button>
+                                </Box>
+                            </Fragment>
+                        )}
+                        {selectedOption === 'createBot' && (
+                            <Fragment>
+                                <Label htmlFor="botId">Bot Id</Label>
+                                <Input
+                                    name="botId"
+                                    value={createBot.botId}
+                                    onChange={handleInputChange}
+                                />
+                                <Label htmlFor="botName">Bot name</Label>
+                                <Input
+                                    name="botName"
+                                    value={createBot.botName}
+                                    onChange={handleInputChange}
+                                />
+                                <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
+                                    <Button onClick={handleCreateBot}>Save</Button>
+                                    <Button onClick={handleCancel}>Cancel</Button>
+                                </Box>
+                            </Fragment>
+                        )}
+                        {selectedOption === 'updateBot' && (
+                            <Fragment>
+                                <Label htmlFor="botId">Bot Id</Label>
+                                <Input
+                                    name="botId"
+                                    value={currentBotId.botId}
+                                    onChange={handleInputChange}
+                                />
+                                <Label htmlFor="botName">Bot name</Label>
+                                <Input
+                                    name="botName"
+                                    value={currentBotId.botName}
+                                    onChange={handleInputChange}
+                                    disabled
+                                />
+                                <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
+                                    <Button onClick={handleUpdateBot}>Update</Button>
+                                    <Button onClick={handleCancel}>Cancel</Button>
+                                </Box>
+                            </Fragment>
+                        )}
                     </div>
                 </div>
             </Layout>

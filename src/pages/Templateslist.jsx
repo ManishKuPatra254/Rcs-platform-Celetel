@@ -7,22 +7,48 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { getTemplateDetailsList } from '../Service/auth.service';
+import { getTemplateDetailsList, getTemplatedataById, updateTemplatedataById } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const columns = [
-    { _id: 'templateName', label: 'Template Name', minWidth: 170 },
-    { _id: 'botId', label: 'Template ID', minWidth: 100 },
-    { _id: 'templateType', label: 'Type', minWidth: 100 },
-    { _id: 'status', label: 'Status', minWidth: 100 },
+    { id: 'templateName', label: 'Template Name', minWidth: 170 },
+    { id: 'botId', label: 'Template ID', minWidth: 100 },
+    { id: 'templateType', label: 'Type', minWidth: 100 },
+    { id: 'status', label: 'Status', minWidth: 100 },
+    { id: 'actions', label: 'Actions', minWidth: 100 },
 ];
 
 export default function TemplateList() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [templateList, setTemplateList] = React.useState([]);
+    const [selectedTemplate, setSelectedTemplate] = React.useState(null);
+
+    React.useEffect(() => {
+        const fetchTemplates = async () => {
+            try {
+                const response = await getTemplateDetailsList();
+                setTemplateList(response.templates);
+            } catch (error) {
+                console.error('Error fetching template data:', error.message);
+            }
+        };
+
+        fetchTemplates();
+    }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -33,99 +59,127 @@ export default function TemplateList() {
         setPage(0);
     };
 
-    React.useEffect(() => {
-        const getTemplateDetails = async () => {
-            try {
-                const response = await getTemplateDetailsList();
-                console.log(response.templates)
-                setTemplateList(response.templates);
-            } catch (error) {
-                console.error('Error fetching template data:', error.message);
-            }
-        };
+    const handleEditClick = async (id) => {
+        try {
+            const response = await getTemplatedataById(id);
+            setSelectedTemplate(response.template);
+        } catch (error) {
+            console.error('Error fetching template data:', error.message);
+        }
+    };
 
-        getTemplateDetails();
-    }, []);
+    const handleSaveChanges = async () => {
+        try {
+            const { _id, userId, ...updatedTemplate } = selectedTemplate;
+            console.log(userId, "userId")
+            console.log(selectedTemplate, "id468788");
+
+            const response = await updateTemplatedataById(_id, updatedTemplate);
+            console.log(response, "updateddata");
+            setTemplateList(prev => prev.map(template => template._id === _id ? updatedTemplate : template));
+            setSelectedTemplate(null);
+            alert(response.message);
+            console.log(response.message);
+        } catch (error) {
+            console.error('Error updating template data:', error.message);
+        }
+    };
+
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setSelectedTemplate(prev => ({ ...prev, [name]: value }));
+    };
 
     return (
-        <React.Fragment>
-            <Layout>
-                <div className="w-full mt-2 gap-4 md:w-full xl:w-full ">
-                    <Paper sx={{ width: '100%', overflow: 'hidden', padding: '20px' }}>
-                        <div className="flex flex-col md:flex-row justify-between mt-3 ">
-                            <h1>Templates</h1>
-                            <Link to={'/addtemplates'}>
-                                <Button
-                                    variant='contained'
-                                    sx={{
-                                        padding: '5px 50px',
-                                        textTransform: 'unset',
-                                        fontWeight: '600',
-                                        borderRadius: '5px',
-                                        fontSize: '13px',
-                                        backgroundColor: '#000',
-                                        color: 'white',
-                                        '&:hover': {
-                                            backgroundColor: '#000',
-                                            color: 'white',
-                                        },
-                                        '@media (max-width:1000px)': {
-                                            mt: 2,
-                                        },
-                                    }}
-                                >
-                                    Add templates
-                                </Button>
-                            </Link>
-                        </div>
-                        <TableContainer sx={{ maxHeight: 440 }}>
-                            <Table stickyHeader aria-label="sticky table">
-                                <TableHead>
-                                    <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell key={column._id} style={{ minWidth: column.minWidth }}>
-                                                {column.label}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {templateList.length > 0 ? (
-                                        templateList
-                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                            .map((row) => (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
-                                                    {columns.map((column) => (
-                                                        <TableCell key={column._id}>
-                                                            {column._id === 'createdAt' || column._id === 'updatedAt'
-                                                                ? new Date(row[column._id]).toLocaleString()
-                                                                : row[column._id]}
-                                                        </TableCell>
-                                                    ))}
-                                                </TableRow>
-                                            ))
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={columns.length} align="center">
-                                                No templates found
-                                            </TableCell>
+        <Layout>
+            <div className="w-full mt-2 gap-4 md:w-full xl:w-full">
+                <Paper sx={{ width: '100%', overflow: 'hidden', padding: '20px' }}>
+                    <div className="flex flex-col md:flex-row justify-between mt-3">
+                        <h1>Templates</h1>
+                        <Link to="/addtemplates">
+                            <Button>Add templates</Button>
+                        </Link>
+                    </div>
+                    <TableContainer sx={{ maxHeight: 440 }}>
+                        <Table stickyHeader aria-label="sticky table">
+                            <TableHead>
+                                <TableRow>
+                                    {columns.map((column) => (
+                                        <TableCell key={column.id} style={{ minWidth: column.minWidth }}>
+                                            {column.label}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {templateList.length > 0 ? (
+                                    templateList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
+                                            {columns.map((column) => (
+                                                <TableCell key={column.id}>
+                                                    {column.id === 'actions' ? (
+                                                        <div className="text-center flex space-x-2">
+                                                            <Dialog>
+                                                                <DialogTrigger onClick={() => handleEditClick(row._id)}>
+                                                                    <Button>
+                                                                        Edit
+                                                                    </Button>
+                                                                </DialogTrigger>
+                                                                <DialogContent>
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Edit Template</DialogTitle>
+                                                                        <DialogDescription>Make changes to your template here. Click save when youre done.</DialogDescription>
+                                                                    </DialogHeader>
+                                                                    {selectedTemplate && selectedTemplate._id === row._id && (
+                                                                        <>
+                                                                            <Label htmlFor="templateName" className="text-left">Template name</Label>
+                                                                            <Input name="templateName" value={selectedTemplate.templateName} onChange={handleInputChange} />
+
+                                                                            <Label htmlFor="templateType" className="text-left">Template type</Label>
+                                                                            <Input name="templateType" value={selectedTemplate.templateType} onChange={handleInputChange} />
+
+                                                                            <Label htmlFor="textMessageContent" className="text-left">Text message content</Label>
+                                                                            <Input name="textMessageContent" value={selectedTemplate.textMessageContent} onChange={handleInputChange} />
+
+                                                                            <Label htmlFor="status" className="text-left">Status</Label>
+                                                                            <Input name="status" value={selectedTemplate.status} onChange={handleInputChange} />
+                                                                            <DialogFooter>
+                                                                                <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
+                                                                            </DialogFooter>
+                                                                        </>
+                                                                    )}
+                                                                </DialogContent>
+                                                            </Dialog>
+                                                        </div>
+                                                    ) : (
+                                                        column.id === 'createdAt' || column.id === 'updatedAt'
+                                                            ? new Date(row[column.id]).toLocaleString()
+                                                            : row[column.id]
+                                                    )}
+                                                </TableCell>
+                                            ))}
                                         </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        <TablePagination
-                            rowsPerPageOptions={[10, 25, 100]}
-                            component="div"
-                            count={templateList.length}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                    </Paper>
-                </div>
-            </Layout>
-        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={columns.length} align="center">No templates found</TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[10, 25, 100]}
+                        component="div"
+                        count={templateList.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                </Paper>
+            </div>
+        </Layout>
     );
 }

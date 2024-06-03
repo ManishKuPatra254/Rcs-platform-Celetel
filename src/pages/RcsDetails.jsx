@@ -2,6 +2,8 @@ import { Fragment, useEffect, useState } from 'react';
 import { Box, TextField, Button, MenuItem, Typography, FormControl, InputLabel, Select } from '@mui/material';
 import { createCampaigns, getCampaignsDetails } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState({
@@ -75,18 +77,12 @@ export default function RcsDetails() {
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-3 w-full lg:grid-cols-3">
                     <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
                         <Box width="100%">
-                            <Box component="form" display="flex" flexDirection="column" gap={4} width="100%" sx={{ padding: "20px" }} >
+                            <Box component="form" display="flex" flexDirection="column" gap={2} width="100%" sx={{ padding: "20px" }} >
                                 <Typography variant="h4">
                                     Send RCS
                                 </Typography>
-                                <TextField
-                                    variant="outlined"
-                                    name='contactSource'
-                                    sx={{ background: "#ECEFFE" }}
-                                    label="Contact Source"
-                                    value={campaigns.contactSource}
-                                    onChange={handleCampaignsChange}
-                                    size='small' />
+                                <Label htmlFor="" className="text-left">Contact source</Label>
+                                <Input name="templateName" />
 
                                 <FormControl variant="outlined" fullWidth size='small'>
                                     <InputLabel>Select Bot</InputLabel>

@@ -137,6 +137,7 @@ export const getTemplateDetailsList = async () => {
 
 
 export const createNewTemplates = async (createTemplates) => {
+    console.log(createTemplates, "createtemplates")
     try {
         const token = localStorage.getItem('token');
         const response = await axios.post('https://main-rcs.vercel.app/api/template/create', createTemplates, {
@@ -145,6 +146,7 @@ export const createNewTemplates = async (createTemplates) => {
                 'Content-Type': 'application/json'
             }
         });
+        console.log(response.data)
         return response.data;
     } catch (error) {
         console.log("Profile update error", error.message);

@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
-import { TextField, Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { changePassword, createBots, getProfile, updateBot, updateProfile } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,9 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { CardTitle } from '@/components/ui/card';
 
 const Profile = () => {
     const [profile, setProfile] = useState({
@@ -134,43 +137,34 @@ const Profile = () => {
         <Fragment>
             <Layout>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
-                    <div className=" grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
-                        <Typography variant="h4">
-                            Profile Details
-                        </Typography>
-                        <TextField
-                            label="Username"
+                    <div className="grid mt-2 auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
+                        <CardTitle className='text-3xl'>Profile Details</CardTitle>
+                        <Label htmlFor="">Username</Label>
+                        <Input
                             name="username"
                             value={profile.username}
-                            onChange={handleInputChange}
-                            fullWidth
-                            size='small'
-                        />
-                        <TextField
-                            label="Email"
+                            onChange={handleInputChange} />
+
+                        <Label htmlFor="Email">Email</Label>
+                        <Input
                             name="email"
                             value={profile.email}
                             onChange={handleInputChange}
-                            fullWidth
-                            size='small'
                             disabled
                         />
-                        <TextField
-                            label="Company"
+
+                        <Label htmlFor="Company">Company</Label>
+                        <Input
                             name="company"
                             value={profile.company}
                             onChange={handleInputChange}
-                            fullWidth
-                            size='small'
                         />
-                        <TextField
-                            label="Phone number"
+                        <Label htmlFor="Phone number">Phone number</Label>
+                        <Input
                             name="phone"
                             value={profile.phone}
-                            onChange={handleInputChange}
-                            fullWidth
-                            size='small'
-                        />
+                            onChange={handleInputChange} />
+
                         <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
@@ -190,88 +184,69 @@ const Profile = () => {
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
-                            <Button sx={{
-                                textTransform: "unset",
-                                background: "black",
-                                '&:hover': {
-                                    backgroundColor: '#000',
-                                    color: "white"
-                                },
-                            }}
-                                variant="contained" onClick={handleCancel}>
+                            <Button onClick={handleCancel}>
                                 Cancel
                             </Button>
                         </Box>
                     </div>
-                    <div className=" grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
-                        <Typography variant="h4">
-                            Bot Details
-                        </Typography>
-                        <TextField
-                            label="Bot Id"
+                    <div className=" grid mt-2 auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
+                        <CardTitle className='text-3xl'>Bot Details</CardTitle>
+
+                        <Label htmlFor="Bot Id">Bot Id</Label>
+                        <Input
                             name="botId"
                             value={createBot.botId}
                             onChange={handleInputChange}
-                            fullWidth
-                            size='small'
+
                         />
-                        <TextField
-                            label="Bot Name"
-                            name="botName"
+                        <Label htmlFor="Bot Name"> Bot Name</Label>
+                        <Input name="botName"
                             value={createBot.botName}
                             onChange={handleInputChange}
-                            fullWidth
-                            size='small'
                         />
                         <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
                             <Button onClick={handleCreateBot}>Create</Button>
                             <Button>Cancel</Button>
                         </Box>
                     </div>
-                    <div className=" grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
-                        <Typography variant="h4">
+                    <div className=" grid mt-2 auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
+                        <CardTitle className="text-3xl">
                             Change Password
-                        </Typography>
-                        <TextField
-                            label="Old Password"
+                        </CardTitle>
+                        <Label htmlFor="Email">Old Password</Label>
+                        <Input
                             name="oldPassword"
                             value={password.oldPassword}
                             onChange={handleInputChange}
-                            fullWidth
-                            size='small'
+
                         />
-                        <TextField
-                            label="New Password"
+                        <Label htmlFor="New Password">New Password</Label>
+                        <Input
                             name="newPassword"
                             value={password.newPassword}
                             onChange={handleInputChange}
-                            fullWidth
-                            size='small'
+
                         />
                         <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
                             <Button onClick={handleChangePassword}>Update</Button>
                             <Button>Cancel</Button>
                         </Box>
                     </div>
-                    <div className=" grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
-                        <Typography variant="h4">
-                            Update Bot
-                        </Typography>
-                        <TextField
-                            label="Bot Id"
+                    <div className=" grid mt-2 auto-rows-max items-start gap-4 md:gap-4 lg:col-span-2">
+                        <CardTitle className='text-3xl'>Update Bot</CardTitle>
+
+                        <Label htmlFor="Bot Id">Bot Id</Label>
+                        <Input
                             name="botId"
                             value={currentBotId.botId}
                             onChange={handleInputChange}
-                            fullWidth
-                            size='small'
+
                         />
-                        <TextField
-                            label="Bot name"
+                        <Label htmlFor="Bot name">Bot name</Label>
+                        <Input
                             name="botName"
                             value={currentBotId.botName}
                             onChange={handleInputChange}
-                            fullWidth
-                            size='small'
                             disabled
                         />
                         <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>

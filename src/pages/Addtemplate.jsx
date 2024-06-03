@@ -1,7 +1,5 @@
 import { Fragment, useState } from 'react';
-// import { Box, TextField, MenuItem, Typography, FormControl, InputLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tab, Tabs, Tooltip } from '@mui/material';
 import { Layout } from '@/Layout/Layout';
-// import { createNewTemplates } from '@/Service/auth.service';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from "@/components/ui/textarea"
@@ -13,7 +11,16 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Button } from '@/components/ui/button';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
+import { CardTitle } from '@/components/ui/card';
+import { Info } from 'lucide-react';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { createNewTemplates } from '@/Service/auth.service';
 
 export default function Addtemplates() {
     // const [selectedImage, setSelectedImage] = useState(null);
@@ -40,36 +47,37 @@ export default function Addtemplates() {
         thumbnailFileName: "",
     });
 
-    // const handleCreateTemplates = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const response = await createNewTemplates(createTemplates);
-    //         if (response.success === true) {
-    //             alert(response.data.message);
-    //             console.log(response.data);
-    //             SetCreateTemplates({
-    //                 botId: "",
-    //                 templateName: "",
-    //                 templateType: "",
-    //                 textMessageContent: "",
-    //                 orientation: "",
-    //                 alignment: "",
-    //                 height: "",
-    //                 width: "",
-    //                 cardTitle: "",
-    //                 cardDescription: "",
-    //                 mediaUrl: "",
-    //                 thumbnailUrl: "",
-    //                 fileName: "",
-    //                 thumbnailFileName: "",
-    //             });
-    //         } else {
-    //             alert("Registration completed successfully");
-    //         }
-    //     } catch (error) {
-    //         console.log(error.message);
-    //     }
-    // };
+    const handleCreateTemplates = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await createNewTemplates(createTemplates);
+            console.log(response.data, "checkbefore")
+            if (response.success === true) {
+                alert(response.data.message);
+                console.log(response.data, "response data");
+                SetCreateTemplates({
+                    botId: "",
+                    templateName: "",
+                    templateType: "",
+                    textMessageContent: "",
+                    orientation: "",
+                    alignment: "",
+                    height: "",
+                    width: "",
+                    cardTitle: "",
+                    cardDescription: "",
+                    mediaUrl: "",
+                    thumbnailUrl: "",
+                    fileName: "",
+                    thumbnailFileName: "",
+                });
+            } else {
+                alert("Registration completed successfully");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
 
     // const handleImageChange = (event) => {
     //     if (event.target.files && event.target.files[0]) {
@@ -93,10 +101,12 @@ export default function Addtemplates() {
 
 
     const handleCreateTemplateChange = (e) => {
+        e.preventDefault();
         const { name, value } = e.target;
         SetCreateTemplates((prevData) => ({
             ...prevData,
             [name]: value,
+            templateType: value,
         }));
     };
 
@@ -112,9 +122,8 @@ export default function Addtemplates() {
                             },
                         }}>
                             <Box component="form" display="flex" flexDirection="column" gap={2} width="100%" sx={{ padding: "20px" }}>
-                                <Typography variant="h4">
-                                    Add Templates
-                                </Typography>
+                                <CardTitle className='text-3xl'>Add Templates</CardTitle>
+
                                 <Label htmlFor="" className="text-left">Bot Id</Label>
                                 <Input
                                     name='botId'
@@ -128,7 +137,8 @@ export default function Addtemplates() {
                                     onChange={handleCreateTemplateChange} />
                                 {/* // 'text_message', 'rich_card', 'carousel' */}
                                 <Label htmlFor="" className="text-left">Template type</Label>
-                                <Select>
+                                <Select name='templateType' value={createTemplates.templateType}
+                                    onChange={handleCreateTemplateChange}>
                                     <SelectTrigger className="">
                                         <SelectValue placeholder="Text" />
                                     </SelectTrigger>
@@ -138,14 +148,34 @@ export default function Addtemplates() {
                                         <SelectItem value="carousel">Rich Card Carousel</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <Label htmlFor="" className="text-left">Message content</Label>
-                                <Textarea
-                                    placeholder="Message content"
-                                    variant="outlined"
-                                    name='textMessageContent'
-                                    value={createTemplates.textMessageContent}
-                                    onChange={handleCreateTemplateChange} />
-                                <Button>Start</Button>
+                                <div className="form-group flex flex-col">
+                                    <Label htmlFor="textMessageContent" className="text-left flex items-center">
+                                        Message content
+
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <span className="ml-2">
+                                                        <Info size={15} className="text-slate-900 text-sm cursor-pointer" />
+                                                    </span>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>0/(2500) characters used.</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+
+                                    </Label>
+                                    <Textarea
+                                        placeholder="Message content"
+                                        variant="outlined"
+                                        name='textMessageContent'
+                                        value={createTemplates.textMessageContent}
+                                        onChange={handleCreateTemplateChange}
+                                        className="mt-2 border rounded px-2 py-1"
+                                    />
+                                </div>
+                                <Button onClick={handleCreateTemplates}>Start</Button>
                             </Box>
                         </Box>
                     </div>

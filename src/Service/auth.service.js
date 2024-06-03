@@ -166,3 +166,59 @@ export const createBots = async (createBot) => {
         throw error;
     }
 }
+
+export const updateBot = async (currentBotId) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put('https://main-rcs.vercel.app/api/botId', currentBotId, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+}
+
+
+export const getTemplatedataById = async (id) => {
+    console.log(id, "templateid");
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.get(`https://main-rcs.vercel.app/api/template/details/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+};
+
+
+export const updateTemplatedataById = async (id, updatedData) => {
+    console.log(id, "updatetemplateid");
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.put(`https://main-rcs.vercel.app/api/template/update/${id}`, updatedData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+};

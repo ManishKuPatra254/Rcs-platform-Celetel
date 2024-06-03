@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { TextField, Box, Typography } from '@mui/material';
-import { changePassword, createBots, getProfile, updateProfile } from '../Service/auth.service';
+import { changePassword, createBots, getProfile, updateBot, updateProfile } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,10 +31,14 @@ const Profile = () => {
     });
 
     const [createBot, setCreateBot] = useState({
-
         botId: "",
         botName: "",
     });
+
+    const [currentBotId, setCurrentBotId] = useState({
+        botId: "",
+    });
+
 
     useEffect(() => {
         const getProfileData = async () => {
@@ -68,7 +72,11 @@ const Profile = () => {
             [name]: value,
         });
         setCreateBot({
-            ...password,
+            ...createBot,
+            [name]: value,
+        });
+        setCurrentBotId({
+            ...currentBotId,
             [name]: value,
         });
     };
@@ -107,6 +115,16 @@ const Profile = () => {
             console.error('Error updating profile:', error.message);
         }
     };
+    const handleUpdateBot = async () => {
+        try {
+            const response = await updateBot(currentBotId);
+            console.log('Profile updated successfully:', response.message);
+            setCurrentBotId('');
+            alert(response.message);
+        } catch (error) {
+            console.error('Error updating profile:', error.message);
+        }
+    };
 
     const handleCancel = () => {
         // handle cancel logic, maybe reset form or navigate away
@@ -135,6 +153,7 @@ const Profile = () => {
                             onChange={handleInputChange}
                             fullWidth
                             size='small'
+                            disabled
                         />
                         <TextField
                             label="Company"
@@ -231,6 +250,32 @@ const Profile = () => {
                         />
                         <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
                             <Button onClick={handleChangePassword}>Update</Button>
+                            <Button>Cancel</Button>
+                        </Box>
+                    </div>
+                    <div className=" grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
+                        <Typography variant="h4">
+                            Update Bot
+                        </Typography>
+                        <TextField
+                            label="Bot Id"
+                            name="botId"
+                            value={currentBotId.botId}
+                            onChange={handleInputChange}
+                            fullWidth
+                            size='small'
+                        />
+                        <TextField
+                            label="Bot name"
+                            name="botName"
+                            value={currentBotId.botName}
+                            onChange={handleInputChange}
+                            fullWidth
+                            size='small'
+                            disabled
+                        />
+                        <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
+                            <Button onClick={handleUpdateBot}>Update</Button>
                             <Button>Cancel</Button>
                         </Box>
                     </div>

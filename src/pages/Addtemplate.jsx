@@ -29,7 +29,7 @@ export default function Addtemplates() {
     // const [cardDescription, setCardDescription] = useState('');
 
     // 'text_message', 'rich_card', 'carousel'
-    const [createTemplates, SetCreateTemplates] = useState({
+    const [createTemplates, setCreateTemplates] = useState({
         // "userId": "",
         botId: "",
         templateName: "",
@@ -55,7 +55,7 @@ export default function Addtemplates() {
             if (response.success === true) {
                 alert(response.data.message);
                 console.log(response.data, "response data");
-                SetCreateTemplates({
+                setCreateTemplates({
                     botId: "",
                     templateName: "",
                     templateType: "",
@@ -103,9 +103,15 @@ export default function Addtemplates() {
     const handleCreateTemplateChange = (e) => {
         e.preventDefault();
         const { name, value } = e.target;
-        SetCreateTemplates((prevData) => ({
+        setCreateTemplates((prevData) => ({
             ...prevData,
             [name]: value,
+        }));
+    };
+
+    const handleTemplateTypeChange = (value) => {
+        setCreateTemplates((prevData) => ({
+            ...prevData,
             templateType: value,
         }));
     };
@@ -138,9 +144,9 @@ export default function Addtemplates() {
                                 {/* // 'text_message', 'rich_card', 'carousel' */}
                                 <Label htmlFor="" className="text-left">Template type</Label>
                                 <Select name='templateType' value={createTemplates.templateType}
-                                    onChange={handleCreateTemplateChange}>
+                                    onValueChange={handleTemplateTypeChange}>
                                     <SelectTrigger className="">
-                                        <SelectValue placeholder="Text" />
+                                        <SelectValue placeholder="Select a option" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="text_message">Text</SelectItem>
@@ -151,7 +157,6 @@ export default function Addtemplates() {
                                 <div className="form-group flex flex-col">
                                     <Label htmlFor="textMessageContent" className="text-left flex items-center">
                                         Message content
-
                                         <TooltipProvider>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
@@ -191,6 +196,7 @@ export default function Addtemplates() {
                                             <h4 className="mobile-title">{cardTitle}</h4>
                                             <p className="mobile-description">{cardDescription}</p>
                                              */}
+                                <p className="mobile-description">{createTemplates.textMessageContent}</p>
                             </div>
                         </div>
                     </div>

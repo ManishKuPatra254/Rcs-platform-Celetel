@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { changePassword, createBots, getProfile, updateBot, updateProfile } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
+import { toast } from "sonner"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -90,7 +91,24 @@ const Profile = () => {
             const response = await updateProfile(profile);
             console.log('Profile updated successfully:', response.message);
             setProfile(response);
-            alert(response.message);
+            // alert(response.message);
+            const currentDate = new Date();
+            const formattedDate = currentDate.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: true
+            });
+            toast(response.message, {
+                description: formattedDate,
+                action: {
+                    label: "OK",
+                },
+            });
         } catch (error) {
             console.error('Error updating profile:', error.message);
         }
@@ -101,7 +119,24 @@ const Profile = () => {
             const response = await changePassword(password);
             console.log('Profile updated successfully:', response.message);
             setPassword('');
-            alert(response.message);
+            // alert(response.message);
+            const currentDate = new Date();
+            const formattedDate = currentDate.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: true
+            });
+            toast(response.message, {
+                description: formattedDate,
+                action: {
+                    label: "OK",
+                },
+            });
         } catch (error) {
             console.error('Error updating profile:', error.message);
         }
@@ -112,18 +147,55 @@ const Profile = () => {
             const response = await createBots(createBot);
             console.log('Profile updated successfully:', response.message);
             setCreateBot('');
-            alert(response.message);
+            // alert(response.message);
+            const currentDate = new Date();
+            const formattedDate = currentDate.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: true
+            });
+            toast(response.message, {
+                description: formattedDate,
+                action: {
+                    label: "Undo",
+                    onClick: () => console.log("OK"),
+
+                },
+            });
         } catch (error) {
             console.error('Error updating profile:', error.message);
         }
     };
+
 
     const handleUpdateBot = async () => {
         try {
             const response = await updateBot(currentBotId);
             console.log('Profile updated successfully:', response.message);
             setCurrentBotId('');
-            alert(response.message);
+            // alert(response.message);
+            const currentDate = new Date();
+            const formattedDate = currentDate.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: true
+            });
+            toast(response.message, {
+                description: formattedDate,
+                action: {
+                    label: "OK",
+                },
+            });
         } catch (error) {
             console.error('Error updating profile:', error.message);
         }
@@ -239,7 +311,7 @@ const Profile = () => {
                                     onChange={handleInputChange}
                                 />
                                 <Box sx={{ display: "flex", gap: "15px", justifyContent: "flex-end", mt: 2 }}>
-                                    <Button onClick={handleCreateBot}>Save</Button>
+                                    <Button onClick={handleCreateBot}>Create</Button>
                                     <Button onClick={handleCancel}>Cancel</Button>
                                 </Box>
                             </Fragment>

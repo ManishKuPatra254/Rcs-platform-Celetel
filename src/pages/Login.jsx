@@ -2,12 +2,9 @@ import { useState, forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Snackbar from '@mui/material/Snackbar';
 import Stack from '@mui/material/Stack';
 import MuiAlert from '@mui/material/Alert';
@@ -20,6 +17,13 @@ import { Navbar } from './Navbar';
 import { loginUser } from '../Service/auth.service';
 import bg from '../assets/New1.svg';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { CardTitle } from '@/components/ui/card';
+import { Checkbox } from "@/components/ui/checkbox"
+
+
+
+
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -41,7 +45,6 @@ export default function Login() {
       console.log('Login response:', response);
 
       if (response.success === true) {
-        console.log('Navigation triggered to /dashboard');
         setFormData({ email: '', password: '' });
         navigate('/dashboard');
         const currentDate = new Date();
@@ -228,46 +231,32 @@ export default function Login() {
                       </Grid>
                       <Grid item xs={12} sx={{ padding: '5px', color: 'black' }}>
                         <Grid container alignItems="center" justifyContent="space-between" style={{ marginTop: '10px' }}>
-                          <Grid item>
-                            <FormControlLabel
-                              control={<Checkbox sx={{ color: 'black' }} name="rememberMe" />}
-                              label="Remember me"
-                            />
-                          </Grid>
-                          <Grid item>
-                            <Typography
-                              variant="body1"
-                              component="span"
-                              onClick={() => navigate('/reset-password')}
-                              style={{ cursor: 'pointer' }}
+                          <div className="flex items-center space-x-2 mt-3">
+                            <Checkbox id="terms" />
+                            <label
+                              htmlFor="terms"
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                             >
+                              Remember me
+                            </label>
+                          </div>
+                          <Grid item>
+                            <CardTitle
+                              onClick={() => navigate('/reset-password')}
+                              className='text-sm text-gray-500 font-light cursor-pointer'>
                               Forgot password?
-                            </Typography>
+                            </CardTitle>
                           </Grid>
                         </Grid>
                       </Grid>
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          fullWidth
-                          size="large"
-                          sx={{
-                            mt: '10px',
-                            padding: '10px',
-                            textTransform: 'unset',
-                            fontWeight: '600',
-                            borderRadius: '8px',
-                            backgroundColor: '#000',
-                            color: 'white',
-                            '&:hover': { backgroundColor: '#000', color: 'white' },
-                          }}
-                        >
+                        <Button className='w-full mt-5'
+                          type="submit">
                           Login
                         </Button>
                       </Grid>
                       <Grid item xs={12} sx={{ color: 'black' }}>
-                        <Stack direction="row" justifyContent="center" alignItems="center" sx={{ height: '100%', textAlign: 'center', mb: 5 }}>
+                        <Stack direction="row" justifyContent="center" alignItems="center" sx={{ height: '100%', textAlign: 'center', mb: 5, mt: 4 }}>
                           <Typography variant="body1" component="span" style={{ marginTop: '10px' }}>
                             Not registered yet?{' '}
                             <span

@@ -213,7 +213,7 @@ echo $response;
                                     </CardHeader>
                                     <CardContent>
                                         <div className="overflow-x-auto">
-                                            <pre className="whitespace-pre-wrap">{phpContent}</pre>
+                                            <pre className="whitespace-pre-wrap text-sm">{phpContent}</pre>
                                         </div>
                                     </CardContent>
                                 </Card>

@@ -109,7 +109,7 @@ echo $response;
                                 <CardHeader className="pb-3">
                                     <CardTitle>Today Submission</CardTitle>
                                     <CardDescription className="max-w-lg text-balance leading-relaxed">
-                                        Introducing Our Dynamic Orders Dashboard for Seamless
+                                        Introducing Our Dynamic Rcs Dashboard for Seamless
                                         Management and Insightful Analysis.
                                     </CardDescription>
                                 </CardHeader>

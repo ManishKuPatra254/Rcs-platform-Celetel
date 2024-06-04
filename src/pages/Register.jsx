@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import bg from "../assets/Group 32.svg";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -17,6 +16,9 @@ import Slide from "@mui/material/Slide";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { registerUser } from "../Service/auth.service";
+import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -50,9 +52,35 @@ export default function Register() {
           confirmPassword: "",
         });
         navigate('/');
-        alert("Registration completed sucessfully ");
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: true
+        });
+        toast(response.message, {
+          description: formattedDate,
+        })
       } else {
-        alert("Error register ");
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: true
+        });
+        toast(response.message, {
+          description: formattedDate,
+        });
       }
     } catch (error) {
       console.log(error.message);
@@ -405,23 +433,8 @@ export default function Register() {
                       <Grid item xs={12} sx={{ padding: "10px", color: "black" }}>
                         <Button
                           type="submit"
-                          variant="contained"
-                          fullWidth="true"
-                          onClick={handleRegisterUs}
-                          size="large"
-                          sx={{
-                            padding: "10px",
-                            textTransform: 'unset',
-                            fontWeight: "600",
-                            borderRadius: '8px',
-                            backgroundColor: '#000',
-                            color: "white",
-                            '&:hover': {
-                              backgroundColor: '#000',
-                              color: "white"
-                            },
-                          }}
-                        >
+                          className='w-full'
+                          onClick={handleRegisterUs}>
                           Register
                         </Button>
                       </Grid>

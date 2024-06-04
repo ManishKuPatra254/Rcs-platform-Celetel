@@ -1,12 +1,13 @@
 import {
     Home,
     LineChart,
-    PanelLeft,
+    // PanelLeft,
     Search,
     Settings,
     Send,
     Users2,
     LayoutPanelTop,
+    GalleryHorizontalEnd,
 } from "lucide-react"
 
 import {
@@ -172,7 +173,7 @@ export function Layout({ children }) {
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button size="icon" variant="outline" className="sm:hidden">
-                                <PanelLeft className="h-5 w-5" />
+                                <GalleryHorizontalEnd className="h-5 w-5" />
                                 <span className="sr-only">Toggle Menu</span>
                             </Button>
                         </SheetTrigger>

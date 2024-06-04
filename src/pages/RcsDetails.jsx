@@ -1,37 +1,27 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Box, TextField, Button, MenuItem, Typography, FormControl, InputLabel, Select } from '@mui/material';
+import { Box } from '@mui/material';
 import { createCampaigns, getCampaignsDetails } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CardTitle } from '@/components/ui/card';
 
 export default function RcsDetails() {
-    const [campaigns, setCampaigns] = useState({
-        contactSource: "",
-        bot: "",
-        template: "",
+    const [campaigns, setCampaigns] = useState([]);
+    const [formData, setFormData] = useState({
+        botId: "",
+        templateName: "",
         campaignName: "",
-        customerParameter: "",
+        // totalMessages: ""
     });
-
-    const [templates, setTemplates] = useState([]);
-    const [bots, setBots] = useState([]);
 
     useEffect(() => {
         const getCampaigns = async () => {
             try {
                 const response = await getCampaignsDetails();
-                console.log(response);
-
-                setCampaigns((prevData) => ({
-                    ...prevData,
-                    contactSource: response.contactSource,
-                    campaignName: response.campaignName,
-                    customerParameter: response.customerParameter
-                }));
-
-                setTemplates(response.templates);
-                setBots(response.bots);
+                console.log(response, "rcsdetails");
+                setCampaigns(response);
             } catch (error) {
                 console.error('Error fetching profile data:', error.message);
             }
@@ -43,16 +33,15 @@ export default function RcsDetails() {
     const handleCreateCampaigns = async (e) => {
         e.preventDefault();
         try {
-            const response = await createCampaigns(campaigns);
+            const response = await createCampaigns(formData);
             if (response.success === true) {
                 alert(response.data.message);
                 console.log(response.data);
-                setCampaigns({
-                    contactSource: "",
-                    bot: "",
-                    template: "",
+                setFormData({
+                    botId: "",
+                    templateName: "",
                     campaignName: "",
-                    customerParameter: "",
+                    // totalMessages: ""
                 });
             } else {
                 alert("Registration completed successfully");
@@ -62,15 +51,6 @@ export default function RcsDetails() {
         }
     };
 
-    const handleCampaignsChange = (e) => {
-        e.preventDefault();
-        const { name, value } = e.target;
-        setCampaigns((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
     return (
         <Fragment>
             <Layout>
@@ -78,76 +58,60 @@ export default function RcsDetails() {
                     <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
                         <Box width="100%">
                             <Box component="form" display="flex" flexDirection="column" gap={2} width="100%" sx={{ padding: "20px" }} >
-                                <Typography variant="h4">
+                                <CardTitle className='text-3xl'>
                                     Send RCS
-                                </Typography>
-                                <Label htmlFor="" className="text-left">Contact source</Label>
-                                <Input name="templateName" />
-
-                                <FormControl variant="outlined" fullWidth size='small'>
-                                    <InputLabel>Select Bot</InputLabel>
-                                    <Select
-                                        label="Select Bot"
-                                        name='bot'
-                                        value={campaigns.bot}
-                                        onChange={handleCampaignsChange}
-                                    >
-                                        {bots.map((bot) => (
-                                            <MenuItem key={bot.botId} value={bot.botId}>
-                                                {bot.botId}
-                                            </MenuItem>
+                                </CardTitle>
+                                <Label htmlFor="botId" className="text-left">Bot Id</Label>
+                                <Select name='botId' value={formData.botId} onValueChange={(value) => setFormData({ ...formData, botId: value })}>
+                                    <SelectTrigger className="">
+                                        <SelectValue placeholder="Select a option" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {campaigns.map((campaign) => (
+                                            <SelectItem key={campaign._id} value={campaign.botId}>
+                                                {campaign.botId}
+                                            </SelectItem>
                                         ))}
-                                    </Select>
-                                </FormControl>
-                                <FormControl variant="outlined" fullWidth size='small'>
-                                    <InputLabel>Template</InputLabel>
-                                    <Select
-                                        label="Template"
-                                        name='template'
-                                        value={campaigns.template}
-                                        onChange={handleCampaignsChange}
-                                    >
-                                        {templates.map((template) => (
-                                            <MenuItem key={template._id} value={template._id}>
-                                                {template.templateName}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
+                                    </SelectContent>
+                                </Select>
 
-                                <TextField label="Custom Parameter"
-                                    name='customerParameter'
-                                    value={campaigns.customerParameter}
-                                    onChange={handleCampaignsChange}
-                                    variant="outlined"
-                                    multiline rows={4}
-                                    fullWidth size='small' />
-                                <Box display="flex" gap={2}>
-                                    <TextField
-                                        label="Campaign Name"
-                                        name='campaignName'
-                                        value={campaigns.campaignName}
-                                        onChange={handleCampaignsChange}
-                                        variant="outlined"
-                                        fullWidth size='small' />
-                                    <TextField label="Total Messages" variant="outlined" fullWidth size='small' />
-                                </Box>
-                                <Button onClick={handleCreateCampaigns} variant="contained" sx={{
-                                    mt: '10px',
-                                    padding: "10px",
-                                    textTransform: 'unset',
-                                    fontWeight: "600",
-                                    borderRadius: '8px',
-                                    backgroundColor: '#000',
-                                    color: "white",
-                                    '&:hover': {
-                                        backgroundColor: '#000',
-                                        color: "white"
-                                    },
-                                }}>
-                                    Start
-                                </Button>
+                                <Label htmlFor="templateName" className="text-left">Template Name</Label>
+                                <Select name='templateName' value={formData.templateName} onValueChange={(value) => setFormData({ ...formData, templateName: value })}>
+                                    <SelectTrigger className="">
+                                        <SelectValue placeholder="Select a option" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {campaigns.map((campaign) => (
+                                            <SelectItem key={campaign._id} value={campaign.templateName}>
+                                                {campaign.templateName}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+
+
+                                <Label htmlFor="campaignName" className="text-left">Campaign Name</Label>
+                                <Select name='campaignName' value={formData.campaignName} onValueChange={(value) => setFormData({ ...formData, campaignName: value })}>
+                                    <SelectTrigger className="">
+                                        <SelectValue placeholder="Select a option" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {campaigns.map((campaign) => (
+                                            <SelectItem key={campaign._id} value={campaign.campaignName}>
+                                                {campaign.campaignName}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {/* <Label>Total Messages</Label>
+                                <Input
+                                    name='totalMessages'
+                                    value={formData.totalMessages}
+                                    onChange={handleFormChange} /> */}
                             </Box>
+                            <Button className='w-full' onClick={handleCreateCampaigns}>
+                                Start
+                            </Button>
                         </Box>
                     </div>
                     <div className="mt-2">

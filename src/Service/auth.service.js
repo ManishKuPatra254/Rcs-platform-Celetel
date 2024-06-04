@@ -87,7 +87,7 @@ export const changePassword = async (password) => {
 export const getCampaignsDetails = async () => {
     try {
         const token = localStorage.getItem('token');
-        const responseContact = await axios.get('https://projectors.vercel.app/api/campaigns/templates-bots', {
+        const responseContact = await axios.get('https://main-rcs.vercel.app/api/campaigns/user-campaigns', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -101,10 +101,10 @@ export const getCampaignsDetails = async () => {
 }
 
 
-export const createCampaigns = async (campaigns) => {
+export const createCampaigns = async (formData) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post('https://projectors.vercel.app/api/campaigns', campaigns, {
+        const response = await axios.post('https://main-rcs.vercel.app/api/campaigns/create', formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -153,6 +153,8 @@ export const createNewTemplates = async (createTemplates) => {
         throw error;
     }
 }
+
+
 export const createBots = async (createBot) => {
     try {
         const token = localStorage.getItem('token');

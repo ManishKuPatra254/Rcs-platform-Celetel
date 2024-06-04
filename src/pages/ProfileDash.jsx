@@ -162,7 +162,7 @@ const Profile = () => {
             toast(response.message, {
                 description: formattedDate,
                 action: {
-                    label: "Undo",
+                    label: "OK",
                     onClick: () => console.log("OK"),
 
                 },

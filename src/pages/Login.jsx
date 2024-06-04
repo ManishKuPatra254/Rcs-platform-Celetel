@@ -19,9 +19,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Navbar } from './Navbar';
 import { loginUser } from '../Service/auth.service';
 import bg from '../assets/New1.svg';
-import { ToastAction } from '@/components/ui/toast';
-import { toast } from '@/components/ui/use-toast';
-
+import { toast } from 'sonner';
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -43,26 +41,44 @@ export default function Login() {
       console.log('Login response:', response);
 
       if (response.success === true) {
-        toast({
-          title: 'Login Successful',
-          description: 'You have successfully logged in.',
-        });
         console.log('Navigation triggered to /dashboard');
         setFormData({ email: '', password: '' });
         navigate('/dashboard');
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: true
+        });
+        toast('Login Successful', {
+          description: formattedDate,
+        });
       } else {
         console.error('Error during login, no token received');
-        toast({
-          title: 'Login Failed',
-          description: 'Enter correct username and password.',
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: true
+        });
+        toast('Login Failed please correct username and password.', {
+          description: formattedDate,
         });
       }
     } catch (error) {
       console.error('Error during login:', error.message);
-      toast({
-        title: 'Login Error',
+      toast('Login Error', {
         description: `Error during login: ${error.message}`,
-        action: <ToastAction altText="Try Again">Retry</ToastAction>,
       });
     }
   };

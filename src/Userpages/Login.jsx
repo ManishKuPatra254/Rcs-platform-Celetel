@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { CardTitle } from '@/components/ui/card';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Loader2 } from "lucide-react";
+import { Helmet } from 'react-helmet';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -99,6 +100,9 @@ export default function Login() {
 
   return (
     <>
+      <Helmet>
+        <title> Login | RCS Celetel</title>
+      </Helmet>
       <div>
         <Navbar />
         <Box sx={{

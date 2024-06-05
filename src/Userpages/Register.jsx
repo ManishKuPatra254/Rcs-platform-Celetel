@@ -8,24 +8,17 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useState, forwardRef } from "react";
-import Snackbar from "@mui/material/Snackbar";
+import { Fragment, useState } from "react";
 import Stack from "@mui/material/Stack";
-import MuiAlert from "@mui/material/Alert";
-import Slide from "@mui/material/Slide";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { registerUser } from "../Service/auth.service";
 import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
+import { Helmet } from "react-helmet";
 
-
-const Alert = forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 
 export default function Register() {
-  const [open, setOpen] = useState(false);
   // const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -96,27 +89,13 @@ export default function Register() {
     }));
   };
 
-  const vertical = "top";
-  const horizontal = "right";
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
-    setOpen(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log(data)
   };
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
-
-  function TransitionLeft(props) {
-    return <Slide {...props} direction="left" />;
-  }
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -125,18 +104,10 @@ export default function Register() {
   };
 
   return (
-    <>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        TransitionComponent={TransitionLeft}
-        anchorOrigin={{ vertical, horizontal }}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-          Failed! Enter correct username and password.
-        </Alert>
-      </Snackbar>
+    <Fragment>
+      <Helmet>
+        <title> Register | RCS Celetel</title>
+      </Helmet>
       <div>
         <Navbar />
         <Box sx={{
@@ -467,6 +438,6 @@ export default function Register() {
           </Grid>
         </Box>
       </div >
-    </>
+    </Fragment>
   );
 }

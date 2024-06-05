@@ -241,26 +241,9 @@ const Profile = () => {
             <Layout>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
                     <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-11/12 lg:col-span-4 lg:w-10/12 sm:w-full">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                        <CardTitle className="text-3xl">
+                            Profile Management
+                        </CardTitle>
                         <Tabs defaultValue="updateProfile" className="">
                             <TabsList className="grid w-full grid-cols-4 sm:grid-col-2">
                                 <TabsTrigger value="updateProfile">Profile</TabsTrigger>

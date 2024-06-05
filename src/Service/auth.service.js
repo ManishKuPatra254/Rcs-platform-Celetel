@@ -1,8 +1,11 @@
+// import { API_BASEURL } from '@/environment';
 import axios from 'axios';
+// import { API_BASEURL } from '/src/environment/index.jsx';
 
+// console.log(API_BASEURL, "Apiurl");
 export const registerUser = async (formData) => {
     try {
-        const responseContact = await axios.post('https://main-rcs.vercel.app/auth/register', formData, {
+        const responseContact = await axios.post(`http://157.15.202.251/auth/register`, formData, {
             headers: {
                 'Content-Type': 'application/json',
 
@@ -21,7 +24,7 @@ export const registerUser = async (formData) => {
 export const loginUser = async (formData) => {
     console.log(formData);
     try {
-        const response = await axios.post('https://main-rcs.vercel.app/auth/login', formData);
+        const response = await axios.post(`http://157.15.202.251/auth/login`, formData);
         const token = response.data.token;
         console.log(token);
         localStorage.setItem('token', token);
@@ -36,7 +39,7 @@ export const loginUser = async (formData) => {
 export const getProfile = async () => {
     try {
         const token = localStorage.getItem('token');
-        const responseContact = await axios.get('https://main-rcs.vercel.app/profile/details', {
+        const responseContact = await axios.get(`http://157.15.202.251/profile/details`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -52,7 +55,7 @@ export const getProfile = async () => {
 export const updateProfile = async (profile) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.put('https://main-rcs.vercel.app/profile/update', profile, {
+        const response = await axios.put(`http://157.15.202.251/profile/update`, profile, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -69,7 +72,57 @@ export const updateProfile = async (profile) => {
 export const changePassword = async (password) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.put('https://main-rcs.vercel.app/profile/change-password', password, {
+        const response = await axios.put(`http://157.15.202.251/profile/change-password`, password, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+}
+
+
+export const createBots = async (createBot) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(`http://157.15.202.251/api/bot`, createBot, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+}
+
+
+export const getBots = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://157.15.202.251/api/botIds`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+}
+
+export const updateBot = async (currentBotId) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put(`http://157.15.202.251/api/botId`, currentBotId, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -87,7 +140,7 @@ export const changePassword = async (password) => {
 export const getCampaignsDetails = async () => {
     try {
         const token = localStorage.getItem('token');
-        const responseContact = await axios.get('https://main-rcs.vercel.app/api/campaigns/user-campaigns', {
+        const responseContact = await axios.get(`http://157.15.202.251/api/campaigns`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -104,7 +157,7 @@ export const getCampaignsDetails = async () => {
 export const createCampaigns = async (formData) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post('https://main-rcs.vercel.app/api/campaigns/create', formData, {
+        const response = await axios.post(`http://157.15.202.251/api/campaigns/create-campaign`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -122,7 +175,7 @@ export const getTemplateDetailsList = async () => {
     const token = localStorage.getItem('token');
 
     try {
-        const responseContact = await axios.get('https://main-rcs.vercel.app/api/template/all', {
+        const responseContact = await axios.get(`http://157.15.202.251/api/template/all`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -140,7 +193,7 @@ export const createNewTemplates = async (createTemplates) => {
     console.log(createTemplates, "createtemplates")
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post('https://main-rcs.vercel.app/api/template/create', createTemplates, {
+        const response = await axios.post(`http://157.15.202.251/api/template/create`, createTemplates, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -155,37 +208,6 @@ export const createNewTemplates = async (createTemplates) => {
 }
 
 
-export const createBots = async (createBot) => {
-    try {
-        const token = localStorage.getItem('token');
-        const response = await axios.post('https://main-rcs.vercel.app/api/bot', createBot, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.log("Profile update error", error.message);
-        throw error;
-    }
-}
-
-export const updateBot = async (currentBotId) => {
-    try {
-        const token = localStorage.getItem('token');
-        const response = await axios.put('https://main-rcs.vercel.app/api/botId', currentBotId, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.log("Profile update error", error.message);
-        throw error;
-    }
-}
 
 
 export const getTemplatedataById = async (id) => {
@@ -193,7 +215,7 @@ export const getTemplatedataById = async (id) => {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://main-rcs.vercel.app/api/template/details/${id}`, {
+        const response = await axios.get(`http://157.15.202.251/api/template/details/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -213,7 +235,7 @@ export const updateTemplatedataById = async (id, updatedData) => {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.put(`https://main-rcs.vercel.app/api/template/update/${id}`, updatedData, {
+        const response = await axios.put(`http://157.15.202.251/api/template/update/${id}`, updatedData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -226,3 +248,22 @@ export const updateTemplatedataById = async (id, updatedData) => {
         throw error;
     }
 };
+
+
+export const startNewCampaign = async (id) => {
+    console.log(id, "idtosatrt");
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(`http://157.15.202.251/api/campaigns/start-campaign/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+}

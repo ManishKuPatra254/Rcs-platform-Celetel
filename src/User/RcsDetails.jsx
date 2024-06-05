@@ -1,20 +1,12 @@
 import { Fragment, useEffect, useState } from 'react';
-import { getCampaignsDetails } from '../Service/auth.service';
+import { getCampaignsDetails, startNewCampaign } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CardTitle } from '@/components/ui/card';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
 import { Loader2 } from 'lucide-react';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 import { Link } from 'react-router-dom';
-import axios from 'axios'; // Import axios
+import { toast } from 'sonner';
 
 const columns = [
     { id: 'templateName', label: 'Template Name', minWidth: 170 },
@@ -43,22 +35,6 @@ export default function RcsDetails() {
         fetchTemplates();
     }, []);
 
-    const startCampaign = async (id) => {
-        try {
-            await axios.post(`http://157.15.202.251/api/campaigns/start-campaign/${id}`, null, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log("Campaign started successfully!");
-            // You may want to update the campaign list after starting the campaign
-            // fetchTemplates();
-        } catch (error) {
-            console.error("Failed to start campaign:", error.message);
-        }
-    };
-
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -66,6 +42,18 @@ export default function RcsDetails() {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
+    };
+
+    const handleStartCampaign = async (id) => {
+        try {
+            await startNewCampaign(id);
+            const response = await getCampaignsDetails();
+            console.log(response);
+            setGetCampaigns(response);
+            toast(response.message);
+        } catch (error) {
+            console.error('Error starting campaign:', error.message);
+        }
     };
 
     return (
@@ -105,17 +93,7 @@ export default function RcsDetails() {
                                                         <TableCell key={column.id}>
                                                             {column.id === 'actions' ? (
                                                                 <div className="text-center flex space-x-2">
-                                                                    <Dialog>
-                                                                        <DialogTrigger>
-                                                                            <Button onClick={() => startCampaign(row._id)}>Start</Button>
-                                                                        </DialogTrigger>
-                                                                        <DialogContent>
-                                                                            <DialogHeader>
-                                                                                <DialogTitle>Start Template</DialogTitle>
-                                                                                <DialogDescription>Make changes to your template here. Click save when youre done.</DialogDescription>
-                                                                            </DialogHeader>
-                                                                        </DialogContent>
-                                                                    </Dialog>
+                                                                    <Button onClick={() => handleStartCampaign(row._id)}>Start</Button>
                                                                 </div>
                                                             ) : (
                                                                 column.id === 'createdAt' || column.id === 'updatedAt'

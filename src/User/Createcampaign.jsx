@@ -8,6 +8,7 @@ import { CardTitle } from '@/components/ui/card';
 import { createCampaigns, getBots } from "@/Service/auth.service";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 
 export default function Createcampaign() {
@@ -70,11 +71,21 @@ export default function Createcampaign() {
 
     const handleCreateChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        if (name === 'numbers') {
+            const numbersArray = value.split(',').map(number => number.trim());
+            setFormData({
+                ...formData,
+                [name]: numbersArray,
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
+
+
 
     return (
         <Fragment>
@@ -118,22 +129,12 @@ export default function Createcampaign() {
 
 
                                 <Label htmlFor="" className="text-left">Phone no</Label>
-                                <Input
+                                <Textarea
                                     name='numbers'
-                                    type="number"
-                                    value={formData.numbers}
+                                    type='number'
+                                    value={formData.numbers.join(',')}
                                     onChange={handleCreateChange} />
 
-                                {/* <div className="form-group flex flex-col">
-                                    <Textarea
-                                        placeholder="Message content"
-                                        variant="outlined"
-                                        name='textMessageContent'
-                                        value={formData.textMessageContent}
-                                        onChange={handleCreateChange}
-                                        className="mt-2 border rounded px-2 py-1"
-                                    />
-                                </div> */}
                                 <Button onClick={handleCreateCampaigns}>Submit</Button>
                             </Box>
                         </Box>
@@ -147,7 +148,7 @@ export default function Createcampaign() {
                                 <p className="mobile-title">{formData.botId}</p>
                                 <p className="mobile-title">{formData.templateName}</p>
                                 <p className="mobile-title">{formData.campaignName}</p>
-                                <p className="mobile-description">{formData.numbers}</p>
+                                <p className="mobile-description">{formData.numbers.join(', ')}</p>
                             </div>
                         </div>
                     </div>

@@ -1,14 +1,14 @@
 import { Fragment } from 'react'
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Login from './Userpages/Login';
-import Register from './Userpages/Register';
-import ForgotPassword from './Userpages/ForgotPassword';
-import RcsDetails from './Userpages/RcsDetails';
-import Templatelist from './Userpages/Templateslist';
-import Addtemplates from './Userpages/Addtemplate';
-import Profile from './Userpages/ProfileDash';
-import { Userdashboard } from './Userpages/Userdashboard';
+import Login from './User/Login';
+import Register from './User/Register';
+import ForgotPassword from './User/ForgotPassword';
+import RcsDetails from './User/RcsDetails';
+import Templatelist from './User/Templateslist';
+import Addtemplates from './User/Addtemplate';
+import Profile from './User/ProfileDash';
+import { Userdashboard } from './User/Userdashboard';
 
 function App() {
 

@@ -145,8 +145,8 @@ export default function Createcampaign() {
                         <s></s>
                         <div className="inner_content">
                             <div className="inner_content_2">
-                                <p className="mobile-title">{formData.botId}</p>
-                                <p className="mobile-title">{formData.templateName}</p>
+                                <p className="text-md">{formData.botId}</p>
+                                <p className="text-xs mt-2 break-words text-ellipsis">{formData.templateName}</p>
                                 <p className="mobile-title">{formData.campaignName}</p>
                                 <p className="mobile-description">{formData.numbers.join(', ')}</p>
                             </div>

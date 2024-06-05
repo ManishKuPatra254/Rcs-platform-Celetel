@@ -97,13 +97,13 @@ export default function TemplateList() {
         <Layout>
             <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
                 <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-full lg:col-span-4 lg:w-full sm:w-full">
+                    <div className="flex md:flex-row justify-between items-center mt-3">
+                        <CardTitle>Template List</CardTitle>
+                        <Link to="/addtemplates">
+                            <Button className=''>Add templates</Button>
+                        </Link>
+                    </div>
                     <Paper sx={{ width: '100%', overflow: 'hidden', padding: '20px' }}>
-                        <div className="flex flex-col md:flex-row justify-between mt-3">
-                            <CardTitle>Template List</CardTitle>
-                            <Link to="/addtemplates">
-                                <Button className=''>Add templates</Button>
-                            </Link>
-                        </div>
                         <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
                                 <TableHead>

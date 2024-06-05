@@ -60,6 +60,7 @@ const generateBreadcrumbs = (pathname) => {
 export function Layout({ children }) {
     const location = useLocation();
     const navigate = useNavigate();
+    const username = location.state?.username;
     const breadcrumbs = generateBreadcrumbs(location.pathname);
 
     const handleLogout = () => {
@@ -87,7 +88,7 @@ export function Layout({ children }) {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Link
-                                to="/dashboard"
+                                to="/userdashboard"
                                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                             >
                                 <Home className="h-5 w-5" />
@@ -189,7 +190,7 @@ export function Layout({ children }) {
                                     />
                                 </Link>
                                 <Link
-                                    to={'/dashboard'}
+                                    to={'/userdashboard'}
                                     className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                                 >
                                     <Home className="h-5 w-5" />
@@ -278,6 +279,9 @@ export function Layout({ children }) {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                                {username ? `Welcome, ${username}!` : 'Profile'}
+                            </DropdownMenuItem>
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>Settings</DropdownMenuItem>

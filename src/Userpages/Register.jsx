@@ -44,14 +44,14 @@ export default function Register() {
       if (response.success === true) {
         console.log(response.data);
         setFormData({
-          userName: '',
+          username: '',
           email: '',
           phone: "",
           company: "",
           password: '',
           confirmPassword: "",
         });
-        navigate('/');
+        navigate('/', { state: { username: formData.username } });
         const currentDate = new Date();
         const formattedDate = currentDate.toLocaleString('en-US', {
           weekday: 'long',

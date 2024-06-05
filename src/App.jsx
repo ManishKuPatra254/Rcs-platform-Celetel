@@ -1,15 +1,14 @@
 import { Fragment } from 'react'
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-// import { Layout } from './Layout/Layout'
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import RcsDetails from './pages/RcsDetails';
-import Templatelist from './pages/Templateslist';
-import Addtemplates from './pages/Addtemplate';
-import Profile from './pages/ProfileDash';
-import { Dashboard } from './pages/Dashboard';
+import Login from './Userpages/Login';
+import Register from './Userpages/Register';
+import ForgotPassword from './Userpages/ForgotPassword';
+import RcsDetails from './Userpages/RcsDetails';
+import Templatelist from './Userpages/Templateslist';
+import Addtemplates from './Userpages/Addtemplate';
+import Profile from './Userpages/ProfileDash';
+import { Userdashboard } from './Userpages/Userdashboard';
 
 function App() {
 
@@ -20,7 +19,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" exact element={<Register />}></Route>
           <Route path="/reset-password" exact element={<ForgotPassword />}></Route>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/userdashboard" element={<Userdashboard />} />
           <Route path="/sendrcs" exact element={<RcsDetails />} />
           <Route path="/templateslist" exact element={<Templatelist />} />
           <Route path="/addtemplates" exact element={<Addtemplates />} />

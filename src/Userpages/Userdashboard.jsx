@@ -53,7 +53,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 
-export function Dashboard() {
+export function Userdashboard() {
     const cUrl = `
     curl--location \\
     --request POST 'https://rcsapi.celetel.com/v1/rcs?api_key=3d0d9925-365e-47ca-b30f-6c9a89341339' \\

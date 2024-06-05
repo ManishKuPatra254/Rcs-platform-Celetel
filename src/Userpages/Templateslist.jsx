@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardTitle } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 
 const columns = [
     { id: 'templateName', label: 'Template Name', minWidth: 170 },
@@ -165,7 +166,9 @@ export default function TemplateList() {
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={columns.length} align="center">No templates found</TableCell>
+                                            <TableCell colSpan={columns.length} align="center">
+                                                <Loader2 className="h-8 w-full animate-spin" />
+                                            </TableCell>
                                         </TableRow>
                                     )}
                                 </TableBody>

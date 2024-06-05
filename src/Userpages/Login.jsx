@@ -1,14 +1,11 @@
-import { useState, forwardRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Snackbar from '@mui/material/Snackbar';
 import Stack from '@mui/material/Stack';
-import MuiAlert from '@mui/material/Alert';
-import Slide from '@mui/material/Slide';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
@@ -20,33 +17,28 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { CardTitle } from '@/components/ui/card';
 import { Checkbox } from "@/components/ui/checkbox"
-
-
-
-
-const Alert = forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import { Loader2 } from "lucide-react";
 
 export default function Login() {
-  const [open, setOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLoginUs = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await loginUser(formData);
       console.log('Login response:', response);
 
       if (response.success === true) {
         setFormData({ email: '', password: '' });
-        navigate('/dashboard');
+        navigate('/userdashboard');
         const currentDate = new Date();
         const formattedDate = currentDate.toLocaleString('en-US', {
           weekday: 'long',
@@ -83,8 +75,13 @@ export default function Login() {
       toast('Login Error', {
         description: `Error during login: ${error.message}`,
       });
+    } finally {
+      setLoading(false);
     }
   };
+
+
+
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -93,16 +90,6 @@ export default function Login() {
     }));
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
-  };
-
-  function TransitionLeft(props) {
-    return <Slide {...props} direction="left" />;
-  }
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -112,17 +99,6 @@ export default function Login() {
 
   return (
     <>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        TransitionComponent={TransitionLeft}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-          Failed! Enter correct username and password.
-        </Alert>
-      </Snackbar>
       <div>
         <Navbar />
         <Box sx={{
@@ -250,10 +226,16 @@ export default function Login() {
                         </Grid>
                       </Grid>
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <Button className='w-full mt-5'
-                          type="submit">
-                          Login
-                        </Button>
+                        {loading ? (
+                          <Button className='w-full mt-5' disabled>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Please wait
+                          </Button>
+                        ) : (
+                          <Button className='w-full mt-5' type="submit">
+                            Login
+                          </Button>
+                        )}
                       </Grid>
                       <Grid item xs={12} sx={{ color: 'black' }}>
                         <Stack direction="row" justifyContent="center" alignItems="center" sx={{ height: '100%', textAlign: 'center', mb: 5, mt: 4 }}>

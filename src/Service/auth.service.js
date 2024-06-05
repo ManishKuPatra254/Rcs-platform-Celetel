@@ -171,23 +171,25 @@ export const createCampaigns = async (formData) => {
 }
 
 
-export const startNewCampaign = async (id) => {
-    console.log(id, "idtosatrt");
+export const startCampaign = async (campaignId) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post(`https://157.15.202.251/api/campaigns/start-campaign/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
+        const response = await axios.post(
+            `https://157.15.202.251/api/campaigns/start-campaign/${campaignId}`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             }
-        });
-        console.log(response)
+        );
         return response.data;
     } catch (error) {
-        console.log(error.message);
+        console.error("Error starting campaign:", error.message);
         throw error;
     }
-}
+};
 
 
 export const getTemplateDetailsList = async () => {

@@ -1,5 +1,4 @@
 import { Fragment, useEffect, useState } from 'react';
-import { getCampaignsDetails, startNewCampaign } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CardTitle } from '@/components/ui/card';
@@ -7,6 +6,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePag
 import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { getCampaignsDetails, startCampaign } from '../Service/auth.service'; // Import startCampaign function
 
 const columns = [
     { id: 'templateName', label: 'Template Name', minWidth: 170 },
@@ -17,22 +17,21 @@ const columns = [
 ];
 
 export default function RcsDetails() {
-    const [campaign, setGetCampaigns] = useState([]);
+    const [campaigns, setCampaigns] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     useEffect(() => {
-        const fetchTemplates = async () => {
+        const fetchCampaigns = async () => {
             try {
                 const response = await getCampaignsDetails();
-                console.log(response, "responsercsdetails");
-                setGetCampaigns(response);
+                setCampaigns(response);
             } catch (error) {
-                console.error('Error fetching template data:', error.message);
+                console.error('Error fetching campaign data:', error.message);
             }
         };
 
-        fetchTemplates();
+        fetchCampaigns();
     }, []);
 
     const handleChangePage = (event, newPage) => {
@@ -44,13 +43,12 @@ export default function RcsDetails() {
         setPage(0);
     };
 
-    const handleStartCampaign = async (id) => {
+    const handleStartCampaign = async (campaignId) => {
         try {
-            await startNewCampaign(id);
-            const response = await getCampaignsDetails();
-            console.log(response);
-            setGetCampaigns(response);
-            toast(response.message);
+            await startCampaign(campaignId);
+            const updatedCampaigns = await getCampaignsDetails();
+            setCampaigns(updatedCampaigns);
+            toast("Campaign started successfully");
         } catch (error) {
             console.error('Error starting campaign:', error.message);
         }
@@ -61,7 +59,7 @@ export default function RcsDetails() {
             <Layout>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
                     <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-full lg:col-span-4 lg:w-full sm:w-full">
-                        <div className="flex flex-col md:flex-row justify-between mt-3">
+                        <div className="flex md:flex-row justify-between mt-3">
                             <CardTitle className='text-3xl'>
                                 Send RCS
                             </CardTitle>
@@ -72,7 +70,7 @@ export default function RcsDetails() {
 
                         <Paper sx={{ width: '100%', overflow: 'hidden', padding: '20px' }}>
                             <div className="flex flex-col md:flex-row justify-between mt-3">
-                                <CardTitle className='text-2xl'>Campaign List</CardTitle>
+                                <CardTitle className='text-2xl  mb-4'>Campaign List</CardTitle>
                             </div>
                             <TableContainer>
                                 <Table stickyHeader aria-label="sticky table">
@@ -86,19 +84,19 @@ export default function RcsDetails() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {campaign.length > 0 ? (
-                                            campaign.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
+                                        {campaigns.length > 0 ? (
+                                            campaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((campaign) => (
+                                                <TableRow hover role="checkbox" tabIndex={-1} key={campaign._id}>
                                                     {columns.map((column) => (
                                                         <TableCell key={column.id}>
                                                             {column.id === 'actions' ? (
                                                                 <div className="text-center flex space-x-2">
-                                                                    <Button onClick={() => handleStartCampaign(row._id)}>Start</Button>
+                                                                    <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
                                                                 </div>
                                                             ) : (
                                                                 column.id === 'createdAt' || column.id === 'updatedAt'
-                                                                    ? new Date(row[column.id]).toLocaleString()
-                                                                    : row[column.id]
+                                                                    ? new Date(campaign[column.id]).toLocaleString()
+                                                                    : campaign[column.id]
                                                             )}
                                                         </TableCell>
                                                     ))}
@@ -117,7 +115,7 @@ export default function RcsDetails() {
                             <TablePagination
                                 rowsPerPageOptions={[10, 25, 100]}
                                 component="div"
-                                count={campaign.length}
+                                count={campaigns.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
                                 onPageChange={handleChangePage}

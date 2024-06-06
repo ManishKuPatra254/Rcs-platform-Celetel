@@ -7,9 +7,8 @@ import { Box } from '@mui/material';
 import { CardTitle } from '@/components/ui/card';
 import { createCampaigns, getBots } from "@/Service/auth.service";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
 export default function Createcampaign() {
     const [formData, setFormData] = useState({
@@ -18,29 +17,28 @@ export default function Createcampaign() {
         campaignName: "",
         numbers: [""],
     });
-    const [getBot, setGetBot] = useState()
+
+    const [getBot, setGetBot] = useState();
+
     useEffect(() => {
         const fetchBotId = async () => {
             try {
                 const response = await getBots();
-                console.log(response, "responsebotdetails");
                 setGetBot(response.botIds);
             } catch (error) {
-                console.error('Error fetching template data:', error.message);
+                console.error('Error fetching bot data:', error.message);
             }
         };
 
         fetchBotId();
     }, []);
 
-
     const handleCreateCampaigns = async (e) => {
         e.preventDefault();
         try {
             const response = await createCampaigns(formData);
-            if (response.success === true) {
+            if (response.success) {
                 alert(response.data.message);
-                console.log(response.data);
                 setFormData({
                     templateName: "",
                     botId: "",
@@ -68,11 +66,20 @@ export default function Createcampaign() {
         }
     };
 
+    const formatPhoneNumber = (number) => {
+        // Add country code +91 if not present
+        if (!number.startsWith('+91')) {
+            return `+91${number}`;
+        }
+        return number;
+    };
 
     const handleCreateChange = (e) => {
         const { name, value } = e.target;
         if (name === 'numbers') {
-            const numbersArray = value.split(',').map(number => number.trim());
+            const numbersArray = value.split(',')
+                .map(number => number.trim())
+                .map(number => formatPhoneNumber(number));
             setFormData({
                 ...formData,
                 [name]: numbersArray,
@@ -84,8 +91,6 @@ export default function Createcampaign() {
             });
         }
     };
-
-
 
     return (
         <Fragment>
@@ -104,7 +109,7 @@ export default function Createcampaign() {
                                 <Label htmlFor="botId" className="text-left">Bot Id</Label>
                                 <Select name='botId' value={formData.botId} onValueChange={(value) => setFormData({ ...formData, botId: value })}>
                                     <SelectTrigger className="">
-                                        <SelectValue placeholder="Select a option" />
+                                        <SelectValue placeholder="Select an option" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {getBot && getBot.map((botId) => (
@@ -127,15 +132,13 @@ export default function Createcampaign() {
                                     value={formData.campaignName}
                                     onChange={handleCreateChange} />
 
-
                                 <Label htmlFor="" className="text-left">Phone no</Label>
                                 <Textarea
                                     name='numbers'
-                                    type='number'
                                     value={formData.numbers.join(',')}
                                     onChange={handleCreateChange} />
 
-                                <Button onClick={handleCreateCampaigns}>Submit</Button>
+                                <Button onClick={handleCreateCampaigns}>Create</Button>
                             </Box>
                         </Box>
                     </div>
@@ -145,10 +148,10 @@ export default function Createcampaign() {
                         <s></s>
                         <div className="inner_content">
                             <div className="inner_content_2">
-                                <p className="text-md">{formData.botId}</p>
-                                <p className="text-xs mt-2 break-words text-ellipsis">{formData.templateName}</p>
-                                <p className="mobile-title">{formData.campaignName}</p>
-                                <p className="mobile-description">{formData.numbers.join(', ')}</p>
+                                <p className="text-md text-blue-800 ">{formData.botId}</p>
+                                <p className="text-xl text-blue-900 mt-2 break-words text-ellipsis">{formData.templateName}</p>
+                                <p className="text-sm mt-2 break-words text-ellipsis">{formData.campaignName}</p>
+                                <p className="text-xs mt-2 break-words text-ellipsis">{formData.numbers.join(', ')}</p>
                             </div>
                         </div>
                     </div>

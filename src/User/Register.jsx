@@ -16,6 +16,7 @@ import { registerUser } from "../Service/auth.service";
 import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet";
+import { Loader2 } from "lucide-react";
 
 
 export default function Register() {
@@ -29,6 +30,8 @@ export default function Register() {
     password: '',
     confirmPassword: "",
   });
+  const [loading, setLoading] = useState(false);
+
 
   const handleRegisterUs = async (e) => {
     e.preventDefault();
@@ -78,6 +81,9 @@ export default function Register() {
     } catch (error) {
       console.log(error.message);
     }
+    finally {
+      setLoading(false);
+    }
   };
 
   const handleRegisterChange = (e) => {
@@ -90,12 +96,6 @@ export default function Register() {
   };
 
   const navigate = useNavigate();
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log(data)
-  };
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -169,7 +169,7 @@ export default function Register() {
                   <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmit}
+                    onSubmit={handleRegisterUs}
                     sx={{ mt: 1 }}
                   >
                     <Grid container spacing={1}>
@@ -402,12 +402,16 @@ export default function Register() {
                         />
                       </Grid>
                       <Grid item xs={12} sx={{ padding: "10px", color: "black" }}>
-                        <Button
-                          type="submit"
-                          className='w-full'
-                          onClick={handleRegisterUs}>
-                          Register
-                        </Button>
+                        {loading ? (
+                          <Button className='w-full mt-5' disabled>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Please wait
+                          </Button>
+                        ) : (
+                          <Button className='w-full mt-5' type="submit">
+                            Register
+                          </Button>
+                        )}
                       </Grid>
                       <Grid item xs={12}>
                         <Stack direction="row" spacing={2}
@@ -437,7 +441,7 @@ export default function Register() {
             </Grid>
           </Grid>
         </Box>
-      </div >
+      </div>
     </Fragment>
   );
 }

@@ -10,7 +10,7 @@ import { Pagination } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { Check, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react"
+import { CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react"
 
 // import { cn } from "@/lib/utils"
 import {

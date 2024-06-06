@@ -1,25 +1,66 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
-import { CardTitle } from '@/components/ui/card';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
-import { Loader2 } from 'lucide-react';
+import { CardDescription, CardTitle } from '@/components/ui/card';
+// import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { getCampaignsDetails, startCampaign } from '../Service/auth.service'; // Import startCampaign function
+import { Pagination } from '@/components/ui/pagination';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Check, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react"
 
+// import { cn } from "@/lib/utils"
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+
+// Define columns for the table
 const columns = [
-    { id: 'templateName', label: 'Template Name', minWidth: 170 },
-    { id: 'botId', label: 'Bot ID', minWidth: 100 },
-    { id: 'campaignName', label: 'Campaign Name', minWidth: 100 },
-    { id: 'totalNumbers', label: 'Total Numbers', minWidth: 100 },
-    { id: 'actions', label: 'Actions', minWidth: 100 },
+    { id: 'templateName', label: 'Template Name' },
+    { id: 'botId', label: 'Bot ID' },
+    { id: 'campaignName', label: 'Campaign Name' },
+    { id: 'totalNumbers', label: 'Total Numbers' },
+    { id: 'actions', label: 'Actions' },
 ];
+
+const frameworks = [
+    {
+        value: "inprogress",
+        label: "In Progress",
+        icon: <Clock12 className="h-4 w-4 mr-2" />
+
+    },
+    {
+        value: "completed",
+        label: "Completed",
+        icon: <CircleCheck className="h-4 w-4 mr-2" />,
+    },
+    {
+        value: "failed",
+        label: "Failed",
+        icon: <CircleX className="h-4 w-4 mr-2" />,
+    },
+]
 
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [open, setOpen] = useState(false)
+    const [value, setValue] = useState("")
 
     useEffect(() => {
         const fetchCampaigns = async () => {
@@ -35,7 +76,7 @@ export default function RcsDetails() {
         fetchCampaigns();
     }, []);
 
-    const handleChangePage = (event, newPage) => {
+    const handleChangePage = (newPage) => {
         setPage(newPage);
     };
 
@@ -66,45 +107,95 @@ export default function RcsDetails() {
                             <CardTitle className='text-3xl'>
                                 Send RCS
                             </CardTitle>
+
                             <Link to="/createcampaign">
                                 <Button className=''>Create Campaign</Button>
                             </Link>
                         </div>
 
-                        <Paper sx={{ width: '100%', overflow: 'hidden', padding: '20px' }}>
-                            <div className="flex flex-col md:flex-row justify-between mt-3">
-                                <CardTitle className='text-2xl  mb-4'>Campaign List</CardTitle>
+
+                        <div className=" p-8 border rounded-md overflow-auto">
+                            <CardTitle className='text-2xl mb-4'>Welcome back !</CardTitle>
+                            <CardDescription>
+                                Here is the list of your campaigns
+                            </CardDescription>
+                            <div className="flex flex-wrap gap-4 justify-between items-center">
+                                <Input
+                                    placeholder="Filter templates..."
+                                    className="max-w-xs mt-4 mr-4"
+                                />
+                                <Popover open={open} onOpenChange={setOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={open}
+                                            className="flex justify-between items-center"
+                                        >
+                                            {value ? (
+                                                <Fragment>
+                                                    {frameworks.find((framework) => framework.value === value)?.icon}
+                                                    <span className="ml-2">
+                                                        {frameworks.find((framework) => framework.value === value)?.label}
+                                                    </span>
+                                                </Fragment>
+                                            ) : (
+                                                <span>Status</span>
+                                            )}
+                                            <CirclePlus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[200px] p-0">
+                                        <Command>
+                                            <CommandInput placeholder="Status" />
+                                            <CommandList>
+                                                <CommandEmpty>No templates found.</CommandEmpty>
+                                                <CommandGroup>
+                                                    {frameworks.map((framework) => (
+                                                        <CommandItem
+                                                            key={framework.value}
+                                                            value={framework.value}
+                                                            onSelect={(currentValue) => {
+                                                                setValue(currentValue === value ? "" : currentValue)
+                                                                setOpen(false)
+                                                            }}>
+                                                            {framework.icon}
+                                                            <span className="ml-2">{framework.label}</span>
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
                             </div>
-                            <TableContainer>
-                                <Table stickyHeader aria-label="sticky table">
-                                    <TableHead>
+
+                            <div className="rounded-md border mt-4 overflow-auto">
+                                <Table>
+                                    <TableHeader>
                                         <TableRow>
                                             {columns.map((column) => (
-                                                <TableCell key={column.id} style={{ minWidth: column.minWidth }}>
+                                                <TableCell key={column.id}>
                                                     {column.label}
                                                 </TableCell>
                                             ))}
                                         </TableRow>
-                                    </TableHead>
+                                    </TableHeader>
                                     <TableBody>
                                         {campaigns.length > 0 ? (
                                             campaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((campaign) => (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={campaign._id}>
+                                                <TableRow key={campaign._id}>
                                                     {columns.map((column) => (
                                                         <TableCell key={column.id}>
                                                             {column.id === 'actions' ? (
                                                                 <div className="text-center flex space-x-2">
-                                                                    {campaign.status === 'started' ? (
-                                                                        <Button variant="destructive" disabled>Started</Button>
-                                                                    ) : (
+                                                                    {campaign.status !== 'started' && (
                                                                         <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
                                                                     )}
                                                                     <Button variant="link">View Details</Button>
                                                                 </div>
                                                             ) : (
-                                                                column.id === 'createdAt' || column.id === 'updatedAt'
-                                                                    ? new Date(campaign[column.id]).toLocaleString()
-                                                                    : campaign[column.id]
+                                                                campaign[column.id]
                                                             )}
                                                         </TableCell>
                                                     ))}
@@ -113,14 +204,22 @@ export default function RcsDetails() {
                                         ) : (
                                             <TableRow>
                                                 <TableCell colSpan={columns.length} align="center">
-                                                    <Loader2 className="h-8 w-full animate-spin" />
+                                                    {/* <Loader2 className="h-8 w-full animate-spin" /> */}
+                                                    <div className="flex flex-col space-y-3">
+                                                        <Skeleton className="h-full w-full rounded-xl" />
+                                                        <div className="space-y-2">
+                                                            <Skeleton className="h-4 w-full" />
+                                                            <Skeleton className="h-4 w-full" />
+                                                        </div>
+                                                    </div>
                                                 </TableCell>
                                             </TableRow>
                                         )}
                                     </TableBody>
                                 </Table>
-                            </TableContainer>
-                            <TablePagination
+
+                            </div>
+                            <Pagination
                                 rowsPerPageOptions={[10, 25, 100]}
                                 component="div"
                                 count={campaigns.length}
@@ -129,7 +228,7 @@ export default function RcsDetails() {
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
                             />
-                        </Paper>
+                        </div>
                     </div>
                 </div>
             </Layout>

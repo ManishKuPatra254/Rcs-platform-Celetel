@@ -10,6 +10,7 @@ import Addtemplates from './User/Addtemplate';
 import Profile from './User/ProfileDash';
 import { Userdashboard } from './User/Userdashboard';
 import Createcampaign from './User/Createcampaign';
+import Demotabledesign from './User/Demotabledesign';
 
 function App() {
 
@@ -25,7 +26,9 @@ function App() {
           <Route path="/reset-password" exact element={<ForgotPassword />}></Route>
 
           {/* admin panel  .................................. */}
+          {/* testing new panel  .................................. */}
 
+          <Route path="/designnew" element={<Demotabledesign />} />
 
           {/* user panel  .................................... */}
 

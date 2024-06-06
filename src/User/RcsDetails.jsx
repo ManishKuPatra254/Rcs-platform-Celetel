@@ -6,12 +6,18 @@ import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { getCampaignsDetails, startCampaign } from '../Service/auth.service'; // Import startCampaign function
-import { Pagination } from '@/components/ui/pagination';
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react"
-
+import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react"
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarTrigger,
+} from "@/components/ui/menubar"
 // import { cn } from "@/lib/utils"
 import {
     Command,
@@ -26,8 +32,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-// Define columns for the table
 const columns = [
     { id: 'templateName', label: 'Template Name' },
     { id: 'botId', label: 'Bot ID' },
@@ -61,6 +67,8 @@ export default function RcsDetails() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState("")
+    const [sortOrder, setSortOrder] = useState(null);
+    const [hideBotId, setHideBotId] = useState(false);
 
     useEffect(() => {
         const fetchCampaigns = async () => {
@@ -75,6 +83,16 @@ export default function RcsDetails() {
 
         fetchCampaigns();
     }, []);
+
+    const handleSort = (order) => {
+        setSortOrder(order);
+        const sortedCampaigns = [...campaigns].sort((a, b) => {
+            if (order === 'asc') return a.botId.localeCompare(b.botId);
+            if (order === 'desc') return b.botId.localeCompare(a.botId);
+            return 0;
+        });
+        setCampaigns(sortedCampaigns);
+    };
 
     const handleChangePage = (newPage) => {
         setPage(newPage);
@@ -98,6 +116,10 @@ export default function RcsDetails() {
         }
     };
 
+
+    const totalPages = Math.ceil(campaigns.length / rowsPerPage);
+
+
     return (
         <Fragment>
             <Layout>
@@ -114,60 +136,68 @@ export default function RcsDetails() {
                         </div>
 
 
-                        <div className=" p-8 border rounded-md overflow-auto">
-                            <CardTitle className='text-2xl mb-4'>Welcome back !</CardTitle>
+                        <div className="p-6 border rounded-md overflow-auto">
+                            <CardTitle className='text-2xl mb-1'>Welcome back !</CardTitle>
                             <CardDescription>
                                 Here is the list of your campaigns
                             </CardDescription>
-                            <div className="flex flex-wrap gap-4 justify-between items-center">
-                                <Input
-                                    placeholder="Filter templates..."
-                                    className="max-w-xs mt-4 mr-4"
-                                />
-                                <Popover open={open} onOpenChange={setOpen}>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            role="combobox"
-                                            aria-expanded={open}
-                                            className="flex justify-between items-center"
-                                        >
-                                            {value ? (
-                                                <Fragment>
-                                                    {frameworks.find((framework) => framework.value === value)?.icon}
-                                                    <span className="ml-2">
-                                                        {frameworks.find((framework) => framework.value === value)?.label}
-                                                    </span>
-                                                </Fragment>
-                                            ) : (
-                                                <span>Status</span>
-                                            )}
-                                            <CirclePlus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-[200px] p-0">
-                                        <Command>
-                                            <CommandInput placeholder="Status" />
-                                            <CommandList>
-                                                <CommandEmpty>No templates found.</CommandEmpty>
-                                                <CommandGroup>
-                                                    {frameworks.map((framework) => (
-                                                        <CommandItem
-                                                            key={framework.value}
-                                                            value={framework.value}
-                                                            onSelect={(currentValue) => {
-                                                                setValue(currentValue === value ? "" : currentValue)
-                                                                setOpen(false)
-                                                            }}>
-                                                            {framework.icon}
-                                                            <span className="ml-2">{framework.label}</span>
-                                                        </CommandItem>
-                                                    ))}
-                                                </CommandGroup>
-                                            </CommandList>
-                                        </Command>
-                                    </PopoverContent>
-                                </Popover>
+                            <div className="grid">
+                                <div className="flex flex-wrap justify-start items-center mt-5 gap-1">
+                                    <Input
+                                        placeholder="Filter templates..."
+                                        className="max-w-xs mr-4 text-sm"
+                                    />
+                                    <Popover open={open} onOpenChange={setOpen} className="mt-4">
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                aria-expanded={open}
+                                                className="flex justify-between items-center px-4 py-0 text-xs"
+                                            >
+                                                {value ? (
+                                                    <Fragment>
+                                                        {frameworks.find((framework) => framework.value === value)?.icon}
+                                                        <span className="ml-2">
+                                                            {frameworks.find((framework) => framework.value === value)?.label}
+                                                        </span>
+                                                    </Fragment>
+                                                ) : (
+                                                    <span>Status</span>
+                                                )}
+                                                <CirclePlus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[200px] p-0">
+                                            <Command>
+                                                <CommandInput placeholder="Status" />
+                                                <CommandList>
+                                                    <CommandEmpty>No templates found.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {frameworks.map((framework) => (
+                                                            <CommandItem
+                                                                key={framework.value}
+                                                                value={framework.value}
+                                                                onSelect={(currentValue) => {
+                                                                    setValue(currentValue === value ? "" : currentValue)
+                                                                    setOpen(false)
+                                                                }}>
+                                                                {framework.icon}
+                                                                <span className="ml-2">{framework.label}</span>
+                                                            </CommandItem>
+                                                        ))}
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+                                    <Button
+                                        variant="outline"
+                                        className="ml-auto text-xs bg-transparent">
+                                        <ArrowRightLeft className='h-4 w-4 mr-3' />
+                                        View
+                                    </Button>
+                                </div>
                             </div>
 
                             <div className="rounded-md border mt-4 overflow-auto">
@@ -175,9 +205,27 @@ export default function RcsDetails() {
                                     <TableHeader>
                                         <TableRow>
                                             {columns.map((column) => (
-                                                <TableCell key={column.id}>
-                                                    {column.label}
-                                                </TableCell>
+                                                column.id === 'botId' && hideBotId ? null : (
+                                                    <TableCell key={column.id}>
+                                                        {column.label === 'Bot ID' ? (
+                                                            <Menubar className="bg-transparent border-transparent">
+                                                                <MenubarMenu>
+                                                                    <MenubarTrigger className='flex gap-4 cursor-pointer'>
+                                                                        {column.label}
+                                                                        <ChevronsUpDown className='h-4 w-4 text-gray-400' />
+                                                                    </MenubarTrigger>
+                                                                    <MenubarContent>
+                                                                        <MenubarItem onClick={() => handleSort('asc')}>Ascending</MenubarItem>
+                                                                        <MenubarItem onClick={() => handleSort('desc')}>Descending</MenubarItem>
+                                                                        <MenubarItem onClick={() => setHideBotId(true)}>Hide</MenubarItem>
+                                                                    </MenubarContent>
+                                                                </MenubarMenu>
+                                                            </Menubar>
+                                                        ) : (
+                                                            column.label
+                                                        )}
+                                                    </TableCell>
+                                                )
                                             ))}
                                         </TableRow>
                                     </TableHeader>
@@ -186,18 +234,20 @@ export default function RcsDetails() {
                                             campaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((campaign) => (
                                                 <TableRow key={campaign._id}>
                                                     {columns.map((column) => (
-                                                        <TableCell key={column.id}>
-                                                            {column.id === 'actions' ? (
-                                                                <div className="text-center flex space-x-2">
-                                                                    {campaign.status !== 'started' && (
-                                                                        <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
-                                                                    )}
-                                                                    <Button variant="link">View Details</Button>
-                                                                </div>
-                                                            ) : (
-                                                                campaign[column.id]
-                                                            )}
-                                                        </TableCell>
+                                                        column.id === 'botId' && hideBotId ? null : (
+                                                            <TableCell key={column.id}>
+                                                                {column.id === 'actions' ? (
+                                                                    <div className="text-center flex space-x-2">
+                                                                        {campaign.status !== 'started' && (
+                                                                            <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
+                                                                        )}
+                                                                        <Button variant="link">View Details</Button>
+                                                                    </div>
+                                                                ) : (
+                                                                    campaign[column.id]
+                                                                )}
+                                                            </TableCell>
+                                                        )
                                                     ))}
                                                 </TableRow>
                                             ))
@@ -219,15 +269,58 @@ export default function RcsDetails() {
                                 </Table>
 
                             </div>
-                            <Pagination
-                                rowsPerPageOptions={[10, 25, 100]}
-                                component="div"
-                                count={campaigns.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                            />
+                            {/* <div className="flex justify-end mt-5">
+                                <CardDescription>
+                                    Rows per page:
+                                </CardDescription>
+                                <Select
+                                    value={rowsPerPage}
+                                    onChange={handleChangeRowsPerPage}
+                                    className="ml-2 border rounded-md p-1"
+                                >
+                                    <SelectTrigger className="">
+                                        <SelectValue placeholder="Select an option" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {[10, 20, 30, 50].map((rows) => (
+                                            <SelectItem key={rows} value={rows}>
+                                                {rows}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div> */}
+                            <Pagination className='mt-5 '>
+                                <PaginationContent className='cursor-pointer'>
+                                    <PaginationItem>
+                                        <PaginationPrevious
+                                            onClick={() => handleChangePage(page > 0 ? page - 1 : 0)}
+                                            disabled={page === 0}
+                                        />
+                                    </PaginationItem>
+                                    {Array.from({ length: totalPages }, (_, index) => (
+                                        <PaginationItem key={index}>
+                                            <PaginationLink
+                                                isActive={index === page}
+                                                onClick={() => handleChangePage(index)}
+                                            >
+                                                {index + 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    ))}
+                                    {totalPages > 5 && (
+                                        <PaginationItem>
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                    )}
+                                    <PaginationItem>
+                                        <PaginationNext
+                                            onClick={() => handleChangePage(page < totalPages - 1 ? page + 1 : totalPages - 1)}
+                                            disabled={page >= totalPages - 1}
+                                        />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
                         </div>
                     </div>
                 </div>

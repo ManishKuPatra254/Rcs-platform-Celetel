@@ -25,7 +25,8 @@ export default function RcsDetails() {
         const fetchCampaigns = async () => {
             try {
                 const response = await getCampaignsDetails();
-                setCampaigns(response);
+                const sortedCampaigns = response.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setCampaigns(sortedCampaigns);
             } catch (error) {
                 console.error('Error fetching campaign data:', error.message);
             }
@@ -33,6 +34,7 @@ export default function RcsDetails() {
 
         fetchCampaigns();
     }, []);
+
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -46,7 +48,9 @@ export default function RcsDetails() {
     const handleStartCampaign = async (campaignId) => {
         try {
             await startCampaign(campaignId);
-            const updatedCampaigns = await getCampaignsDetails();
+            const updatedCampaigns = campaigns.map(campaign =>
+                campaign._id === campaignId ? { ...campaign, status: 'started' } : campaign
+            );
             setCampaigns(updatedCampaigns);
             toast("Campaign started successfully");
         } catch (error) {
@@ -91,7 +95,11 @@ export default function RcsDetails() {
                                                         <TableCell key={column.id}>
                                                             {column.id === 'actions' ? (
                                                                 <div className="text-center flex space-x-2">
-                                                                    <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
+                                                                    {campaign.status === 'started' ? (
+                                                                        <Button variant="link">View Details</Button>
+                                                                    ) : (
+                                                                        <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
+                                                                    )}
                                                                 </div>
                                                             ) : (
                                                                 column.id === 'createdAt' || column.id === 'updatedAt'

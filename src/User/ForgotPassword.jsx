@@ -5,57 +5,26 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useState, forwardRef } from "react";
-import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
-import MuiAlert from "@mui/material/Alert";
-import Slide from "@mui/material/Slide";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "./Navbar";
 
-const Alert = forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 
 export default function ForgotPassword() {
-  const [open, setOpen] = useState(false);
   // const [remember, setRemember] = useState(false);
-  const vertical = "top";
-  const horizontal = "right";
+
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
-    setOpen(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log(data);
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
-  };
 
-  function TransitionLeft(props) {
-    return <Slide {...props} direction="left" />;
-  }
 
   return (
     <>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        TransitionComponent={TransitionLeft}
-        anchorOrigin={{ vertical, horizontal }}
-      >
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-          Failed! Enter correct username and password.
-        </Alert>
-      </Snackbar>
       <div>
         <Navbar />
         <Box sx={{

@@ -35,7 +35,6 @@ export default function RcsDetails() {
         fetchCampaigns();
     }, []);
 
-
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -96,10 +95,11 @@ export default function RcsDetails() {
                                                             {column.id === 'actions' ? (
                                                                 <div className="text-center flex space-x-2">
                                                                     {campaign.status === 'started' ? (
-                                                                        <Button variant="link">View Details</Button>
+                                                                        <Button variant="destructive" disabled>Started</Button>
                                                                     ) : (
                                                                         <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
                                                                     )}
+                                                                    <Button variant="link">View Details</Button>
                                                                 </div>
                                                             ) : (
                                                                 column.id === 'createdAt' || column.id === 'updatedAt'

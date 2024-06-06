@@ -1,16 +1,15 @@
 import { Fragment } from 'react'
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Login from './User/Login';
-import Register from './User/Register';
-import ForgotPassword from './User/ForgotPassword';
+import ForgotPassword from './Logs/ForgotPassword';
 import RcsDetails from './User/RcsDetails';
 import Templatelist from './User/Templateslist';
 import Addtemplates from './User/Addtemplate';
 import Profile from './User/ProfileDash';
 import { Userdashboard } from './User/Userdashboard';
 import Createcampaign from './User/Createcampaign';
-import Demotabledesign from './User/Demotabledesign';
+import Login from './Logs/Login';
+import Register from './Logs/Register';
 
 function App() {
 
@@ -26,10 +25,6 @@ function App() {
           <Route path="/reset-password" exact element={<ForgotPassword />}></Route>
 
           {/* admin panel  .................................. */}
-          {/* testing new panel  .................................. */}
-
-          <Route path="/designnew" element={<Demotabledesign />} />
-
           {/* user panel  .................................... */}
 
           <Route path="/userdashboard" element={<Userdashboard />} />

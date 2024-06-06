@@ -1,15 +1,15 @@
 import { Fragment } from 'react'
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ForgotPassword from './Logs/ForgotPassword';
+import ForgotPassword from './Auth/ForgotPassword';
 import RcsDetails from './User/RcsDetails';
 import Templatelist from './User/Templateslist';
 import Addtemplates from './User/Addtemplate';
 import Profile from './User/ProfileDash';
 import { Userdashboard } from './User/Userdashboard';
 import Createcampaign from './User/Createcampaign';
-import Login from './Logs/Login';
-import Register from './Logs/Register';
+import Login from './Auth/Login';
+import Register from './Auth/Register';
 
 function App() {
 

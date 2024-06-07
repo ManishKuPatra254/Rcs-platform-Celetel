@@ -125,7 +125,7 @@ export default function RcsDetails() {
             <Layout>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
                     <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-full lg:col-span-4 lg:w-full sm:w-full">
-                        <div className="flex md:flex-row justify-between mt-3">
+                        <div className="flex md:flex-row justify-between items-center mt-3">
                             <CardTitle className='text-3xl'>
                                 Send RCS
                             </CardTitle>
@@ -144,7 +144,7 @@ export default function RcsDetails() {
                             <div className="grid">
                                 <div className="flex flex-wrap justify-start items-center mt-5 gap-1">
                                     <Input
-                                        placeholder="Filter templates..."
+                                        placeholder="Filter campaigns..."
                                         className="max-w-xs mr-4 text-sm"
                                     />
                                     <Popover open={open} onOpenChange={setOpen} className="mt-4">

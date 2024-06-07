@@ -26,8 +26,11 @@ export const loginUser = async (formData) => {
     try {
         const response = await axios.post(`https://157.15.202.251/auth/login`, formData);
         const token = response.data.token;
-        console.log(token);
+        const typerole = response.data.type;
+        console.log(token, "whilelogintoken");
+        console.log(typerole, "whilelogintyperole");
         localStorage.setItem('token', token);
+        localStorage.setItem('typerole', typerole);
         return response.data;
     } catch (error) {
         console.log("Login error", error.message);

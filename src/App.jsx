@@ -25,6 +25,8 @@ function App() {
           <Route path="/reset-password" exact element={<ForgotPassword />}></Route>
 
           {/* admin panel  .................................. */}
+
+
           {/* user panel  .................................... */}
 
           <Route path="/userdashboard" element={<Userdashboard />} />

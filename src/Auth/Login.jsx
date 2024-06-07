@@ -36,10 +36,24 @@ export default function Login() {
     try {
       const response = await loginUser(formData);
       console.log('Login response:', response);
+      console.log('Login response type:', response.type);
 
       if (response.success === true) {
-        setFormData({ email: '', password: '' });
-        navigate('/userdashboard');
+        setFormData({
+          email: '',
+          password: ''
+        });
+        if (response.type === 'admin') {
+          navigate('/admindashboard');
+          console.log(response.type, "resp1")
+        }
+        else if (response.type === 'user') {
+          navigate('/userdashboard');
+          console.log(response.type, "resp2")
+        }
+        else {
+          toast(response.message);
+        }
         const currentDate = new Date();
         const formattedDate = currentDate.toLocaleString('en-US', {
           weekday: 'long',

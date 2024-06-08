@@ -32,11 +32,14 @@ export const loginUser = async (formData) => {
         localStorage.setItem('token', token);
         localStorage.setItem('typerole', typerole);
         return response.data;
+
     } catch (error) {
         console.log("Login error", error.message);
         throw error;
     }
 }
+
+// user panel apis .............................................................
 
 
 export const getProfile = async () => {
@@ -48,6 +51,9 @@ export const getProfile = async () => {
             }
         });
         console.log(responseContact.data, "responseContact");
+        console.log(responseContact.data.user.username, "res1");
+        const username = responseContact.data.user.username;
+        localStorage.setItem('username', username);
         return responseContact.data;
     } catch (error) {
         console.log("Profile fetch error", error.message);
@@ -275,3 +281,64 @@ export const updateTemplatedataById = async (id, updatedData) => {
 
 
 
+// admin panel apis .............................................................
+
+export const getAllUsers = async () => {
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.get(`https://157.15.202.251/api/admin/users`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+};
+
+
+
+export const getUsersByEmail = async (email) => {
+    console.log(email, "emailid");
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.get(`https://157.15.202.251/api/admin/user/${email}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("Error in getting id", error.message);
+        throw error;
+    }
+};
+
+
+
+export const updateUsersByEmail = async (updateUser) => {
+    console.log(updateUser, "updateusers");
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.put(`https://157.15.202.251/api/admin/user`, updateUser, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+};

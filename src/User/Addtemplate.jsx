@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select"
 import { Button } from '@/components/ui/button';
 import { Box } from '@mui/material';
-import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { ChevronLeft, Globe, Info, Mail, PhoneCall } from 'lucide-react';
 import {
     Tooltip,
@@ -23,15 +22,34 @@ import {
 import { createNewTemplates } from '@/Service/auth.service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CiBatteryFull } from "react-icons/ci";
-import { FaSignal } from "react-icons/fa";
+import { FaPlus, FaSignal } from "react-icons/fa";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import { toast } from 'sonner';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
+
 
 export default function Addtemplates() {
-    // const [selectedImage, setSelectedImage] = useState(null);
-    // const [imagePreviewUrl, setImagePreviewUrl] = useState('');
-    // const [cardTitle, setCardTitle] = useState('');
-    // const [cardDescription, setCardDescription] = useState('');
-
-
     const [realtime, setRealtime] = useState(() => {
         const currentDate = new Date();
         return currentDate.toLocaleString('en-US', {
@@ -55,10 +73,8 @@ export default function Addtemplates() {
         return () => clearInterval(interval);
     }, []);
 
-
-    // 'text_message', 'rich_card', 'carousel'
+    const [accTemptype, setAccTemptype] = useState('');
     const [createTemplates, setCreateTemplates] = useState({
-        // "userId": "",
         botId: "",
         templateName: "",
         templateType: "",
@@ -71,8 +87,7 @@ export default function Addtemplates() {
         cardDescription: "",
         mediaUrl: "",
         thumbnailUrl: "",
-        fileName: "",
-        thumbnailFileName: "",
+        suggestions: []
     });
 
     const handleCreateTemplates = async (e) => {
@@ -100,37 +115,35 @@ export default function Addtemplates() {
                     thumbnailFileName: "",
                 });
             } else {
-                alert("Registration completed successfully");
+                toast("Registration completed successfully");
             }
         } catch (error) {
             console.log(error.message);
         }
     };
 
-    // const handleImageChange = (event) => {
-    //     if (event.target.files && event.target.files[0]) {
-    //         const file = event.target.files[0];
-    //         setSelectedImage(file);
-    //         setImagePreviewUrl(URL.createObjectURL(file));
-    //     }
-    // };
-
-    // const handleUrlChange = () => {
-    //     // will be handling URL change logic here
-    // };
-
-    // const handleCardTitleChange = (event) => {
-    //     setCardTitle(event.target.value);
-    // };
-
-    // const handleCardDescriptionChange = (event) => {
-    //     setCardDescription(event.target.value);
-    // };
-
-
     const handleCreateTemplateChange = (e) => {
-        e.preventDefault();
         const { name, value } = e.target;
+        if (name === 'cardTitle') {
+            const wordCount = value.trim().split(/\s+/).length;
+            if (wordCount <= 200) {
+                setCreateTemplates({
+                    ...createTemplates,
+                    [name]: value
+                });
+            }
+        }
+
+
+        else if (name === 'cardDescription') {
+            const wordCount = value.trim().split(/\s+/).length;
+            if (wordCount <= 2000) {
+                setCreateTemplates({
+                    ...createTemplates,
+                    [name]: value
+                });
+            }
+        }
         setCreateTemplates((prevData) => ({
             ...prevData,
             [name]: value,
@@ -142,6 +155,41 @@ export default function Addtemplates() {
             ...prevData,
             templateType: value,
         }));
+        setAccTemptype(value);
+    };
+
+    const handleOrientationChange = (value) => {
+        setCreateTemplates((prevData) => ({
+            ...prevData,
+            orientation: value,
+        }));
+    };
+
+    const handleAlignmentChange = (value) => {
+        setCreateTemplates((prevData) => ({
+            ...prevData,
+            alignment: value,
+        }));
+    };
+
+    const handleHeightChange = (value) => {
+        setCreateTemplates((prevData) => ({
+            ...prevData,
+            height: value,
+        }));
+    };
+
+    const [cards, setCards] = useState([1, 2]); // Initially 2 cards
+    const [selectedCard, setSelectedCard] = useState(null);
+
+    const handleAddCard = () => {
+        if (cards.length < 10) {
+            setCards([...cards, cards.length + 1]);
+        }
+    };
+
+    const handleSelectedCard = (card) => {
+        setSelectedCard(card);
     };
 
     return (
@@ -169,7 +217,7 @@ export default function Addtemplates() {
                                     name='templateName'
                                     value={createTemplates.templateName}
                                     onChange={handleCreateTemplateChange} />
-                                {/* // 'text_message', 'rich_card', 'carousel' */}
+
                                 <Label htmlFor="" className="text-left">Template type</Label>
                                 <Select name='templateType' value={createTemplates.templateType}
                                     onValueChange={handleTemplateTypeChange}>
@@ -182,32 +230,309 @@ export default function Addtemplates() {
                                         <SelectItem value="carousel">Rich Card Carousel</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <div className="form-group flex flex-col">
-                                    <Label htmlFor="textMessageContent" className="text-left flex items-center">
-                                        Message content
-                                        <TooltipProvider>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <span className="ml-2">
-                                                        <Info size={15} className="text-slate-900 text-sm cursor-pointer" />
-                                                    </span>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>0/(2500) characters used.</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
 
-                                    </Label>
-                                    <Textarea
-                                        placeholder="Message content"
-                                        variant="outlined"
-                                        name='textMessageContent'
-                                        value={createTemplates.textMessageContent}
-                                        onChange={handleCreateTemplateChange}
-                                        className="mt-2 border rounded px-2 py-1"
-                                    />
-                                </div>
+                                {/* text_message .................................................................. */}
+
+
+                                {accTemptype === 'text_message' && (
+                                    <Fragment>
+                                        <div className="form-group flex flex-col">
+                                            <Label htmlFor="textMessageContent" className="text-left flex items-center">
+                                                Message content
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <span className="ml-2">
+                                                                <Info size={15} className="text-slate-900 text-sm cursor-pointer" />
+                                                            </span>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>0/(2500) characters used.</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            </Label>
+                                            <Textarea
+                                                placeholder="Message content"
+                                                variant="outlined"
+                                                name='textMessageContent'
+                                                value={createTemplates.textMessageContent}
+                                                onChange={handleCreateTemplateChange}
+                                                className="mt-2 border rounded px-2 py-1"
+                                            />
+                                        </div>
+                                    </Fragment>
+                                )}
+
+
+                                {/* rich card ................................................................*/}
+
+
+                                {accTemptype === 'rich_card' && (
+                                    <Fragment>
+
+                                        <Label htmlFor="" className="text-left">Orientation</Label>
+                                        <Select name="orientation" value={createTemplates.orientation} onValueChange={handleOrientationChange}>
+                                            <SelectTrigger className="">
+                                                <SelectValue placeholder="Select Orientation" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="VERTICAL">Vertical</SelectItem>
+                                                <SelectItem value="HORIZONTAL">Horizontal</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+
+                                        {createTemplates.orientation === 'HORIZONTAL' && (
+                                            <Fragment>
+                                                <Label htmlFor="" className="text-left">Alignment</Label>
+                                                <Select name="alignment" value={createTemplates.alignment} onValueChange={handleAlignmentChange} >
+                                                    <SelectTrigger className="">
+                                                        <SelectValue placeholder="Select Alignment" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="LEFT">Left</SelectItem>
+                                                        <SelectItem value="RIGHT">Right</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </Fragment>
+                                        )}
+                                        {createTemplates.orientation === 'VERTICAL' && (
+                                            <Fragment>
+                                                <Label htmlFor="" className="text-left">Height</Label>
+                                                <Select name="height" value={createTemplates.height} onValueChange={handleHeightChange}>
+                                                    <SelectTrigger className="">
+                                                        <SelectValue placeholder="Select height" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="SHORT_HEIGHT">Short Height</SelectItem>
+                                                        <SelectItem value="MEDIUM_HEIGHT">Medium Height</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </Fragment>
+                                        )}
+
+                                        <Label htmlFor="" className="text-left">Image/Video</Label>
+                                        <div className="flex items-center gap-4">
+                                            <Input className="" type="file" />
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button>Upload</Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[825px]">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Select an Image/Video Url</DialogTitle>
+                                                        <DialogDescription>
+                                                            Select an Image/Video and click upload when youre done.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="grid">
+
+                                                        <Tabs defaultValue="upload" className="w-full">
+                                                            <TabsList className="grid w-full grid-cols-3">
+                                                                <TabsTrigger value="upload">Upload</TabsTrigger>
+                                                                <TabsTrigger value="uploadurl">Upload from URL</TabsTrigger>
+                                                                <TabsTrigger value="uploadimagevideo">Variable Image/Video URL</TabsTrigger>
+                                                            </TabsList>
+                                                            <TabsContent value="upload">
+                                                                <Card>
+                                                                    <CardHeader>
+                                                                        <CardTitle>Upload Image</CardTitle>
+                                                                        <CardDescription className="text-xs mt-2">
+                                                                            The image you specify must be 3:1 aspect ratio, have a max file size of 2MB, have an optimal resolution of 1440 pixels x 480 pixels, and should be a JPEG, JPG, PNG, or GIF. If the image you select doesn’t meet these requirements, you’ll have the opportunity to edit it. If you are uploading a video, the max file size is 10MB.
+                                                                        </CardDescription>
+                                                                    </CardHeader>
+                                                                    <CardContent className="space-y-2">
+
+                                                                    </CardContent>
+                                                                    <CardFooter className="flex w-full justify-end">
+                                                                        <Button>Upload</Button>
+                                                                    </CardFooter>
+                                                                </Card>
+                                                            </TabsContent>
+
+
+
+                                                            <TabsContent value="uploadurl">
+                                                                <Card>
+                                                                    <CardHeader>
+                                                                        <CardTitle>Upload from Url</CardTitle>
+                                                                        <CardDescription className="text-xs mt-2">
+                                                                            The image you specify must be 3:1 aspect ratio, have a max file size of 2MB, have an optimal resolution of 1440 pixels x 480 pixels, and should be a JPEG, JPG, PNG, or GIF, and be located at a publicly available URL. If the image you upload doesn’t meet these requirements, you’ll have the opportunity to edit it. If you are uploading a video, the max file size is 10MB.
+                                                                        </CardDescription>
+                                                                    </CardHeader>
+                                                                    <CardContent className="space-y-2">
+                                                                        <div className="space-y-1">
+                                                                            <Label htmlFor="new">Upload the image url</Label>
+                                                                            <Input type="url" name="thumbnailUrl" value={createTemplates.thumbnailUrl} onChange={handleCreateTemplateChange} className="mt-2" />
+                                                                        </div>
+                                                                    </CardContent>
+                                                                    <CardFooter className="flex w-full justify-end">
+                                                                        <Button>Upload</Button>
+                                                                    </CardFooter>
+                                                                </Card>
+                                                            </TabsContent>
+
+                                                            <TabsContent value="uploadimagevideo">
+                                                                <Card>
+                                                                    <CardHeader>
+                                                                        <CardTitle>Upload Image / Video</CardTitle>
+                                                                        <CardDescription className="text-xs mt-2">
+                                                                            The image you specify must be 3:1 aspect ratio, have a max file size of 2MB, have an optimal resolution of 1440 pixels x 480 pixels, and should be a JPEG, JPG, PNG, or GIF.The image must be publicly available after the variable is replaced at run-time. If the image you upload doesn’t meet these requirements, it may appear cropped or distorted. If you are uploading a video, the max file size is 10MB..
+                                                                        </CardDescription>
+                                                                    </CardHeader>
+                                                                    <CardContent className="space-y-2">
+                                                                        <div className="space-y-1">
+                                                                            <Label htmlFor="new">Upload the image/video url</Label>
+                                                                            <Input type="url" className="mt-2" name="mediaUrl" value={createTemplates.mediaUrl} onChange={handleCreateTemplateChange} />
+                                                                        </div>
+                                                                    </CardContent>
+                                                                    <CardFooter className="flex w-full justify-end">
+                                                                        <Button>Upload</Button>
+                                                                    </CardFooter>
+                                                                </Card>
+                                                            </TabsContent>
+                                                        </Tabs>
+                                                    </div>
+
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
+
+
+
+                                        <Label htmlFor="" className="text-left">Card Title</Label>
+                                        <Input type="text" name="cardTitle" value={createTemplates.cardTitle} onChange={handleCreateTemplateChange} />
+
+
+                                        <Label htmlFor="" className="text-left">Card Description</Label>
+                                        <Textarea name="cardDescription" value={createTemplates.cardDescription} onChange={handleCreateTemplateChange}></Textarea>
+                                    </Fragment>
+                                )}
+
+
+                                {/* carosel ....................................................................... */}
+
+                                {accTemptype === "carousel" && (
+                                    <Fragment>
+
+                                        <div className="flex flex-wrap gap-4 p-4">
+                                            {cards.map((card, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="bg-gray-200 border border-gray-300 rounded p-4 min-w-[100px] text-sm text-center shadow cursor-pointer"
+                                                    onClick={() => handleSelectedCard(card)}
+                                                >
+                                                    Card {card}
+                                                </div>
+                                            ))}
+                                            {cards.length < 10 && (
+                                                <div
+                                                    className="flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded p-4 min-w-[100px] cursor-pointer shadow transition hover:bg-gray-100"
+                                                    onClick={handleAddCard}
+                                                >
+                                                    <FaPlus size={15} />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <Label htmlFor="" className="text-left">Image/Video</Label>
+                                        <div className="flex items-center gap-4">
+                                            <Input className="" type="file" />
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button>Upload</Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-[825px]">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Select an Image/Video Url</DialogTitle>
+                                                        <DialogDescription>
+                                                            Select an Image/Video and click upload when youre done.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="grid">
+
+                                                        <Tabs defaultValue="upload" className="w-full">
+                                                            <TabsList className="grid w-full grid-cols-3">
+                                                                <TabsTrigger value="upload">Upload</TabsTrigger>
+                                                                <TabsTrigger value="uploadurl">Upload from URL</TabsTrigger>
+                                                                <TabsTrigger value="uploadimagevideo">Variable Image/Video URL</TabsTrigger>
+                                                            </TabsList>
+                                                            <TabsContent value="upload">
+                                                                <Card>
+                                                                    <CardHeader>
+                                                                        <CardTitle>Upload Image</CardTitle>
+                                                                        <CardDescription className="text-xs mt-2">
+                                                                            The image you specify must be 3:1 aspect ratio, have a max file size of 2MB, have an optimal resolution of 1440 pixels x 480 pixels, and should be a JPEG, JPG, PNG, or GIF. If the image you select doesn’t meet these requirements, you’ll have the opportunity to edit it. If you are uploading a video, the max file size is 10MB.
+                                                                        </CardDescription>
+                                                                    </CardHeader>
+                                                                    <CardContent className="space-y-2">
+
+                                                                    </CardContent>
+                                                                    <CardFooter className="flex w-full justify-end">
+                                                                        <Button>Upload</Button>
+                                                                    </CardFooter>
+                                                                </Card>
+                                                            </TabsContent>
+
+
+
+                                                            <TabsContent value="uploadurl">
+                                                                <Card>
+                                                                    <CardHeader>
+                                                                        <CardTitle>Upload from Url</CardTitle>
+                                                                        <CardDescription className="text-xs mt-2">
+                                                                            The image you specify must be 3:1 aspect ratio, have a max file size of 2MB, have an optimal resolution of 1440 pixels x 480 pixels, and should be a JPEG, JPG, PNG, or GIF, and be located at a publicly available URL. If the image you upload doesn’t meet these requirements, you’ll have the opportunity to edit it. If you are uploading a video, the max file size is 10MB.
+                                                                        </CardDescription>
+                                                                    </CardHeader>
+                                                                    <CardContent className="space-y-2">
+                                                                        <div className="space-y-1">
+                                                                            <Label htmlFor="new">Upload the image url</Label>
+                                                                            <Input type="url" name="thumbnailUrl" value={createTemplates.thumbnailUrl} onChange={handleCreateTemplateChange} className="mt-2" />
+                                                                        </div>
+                                                                    </CardContent>
+                                                                    <CardFooter className="flex w-full justify-end">
+                                                                        <Button>Upload</Button>
+                                                                    </CardFooter>
+                                                                </Card>
+                                                            </TabsContent>
+
+                                                            <TabsContent value="uploadimagevideo">
+                                                                <Card>
+                                                                    <CardHeader>
+                                                                        <CardTitle>Upload Image / Video</CardTitle>
+                                                                        <CardDescription className="text-xs mt-2">
+                                                                            The image you specify must be 3:1 aspect ratio, have a max file size of 2MB, have an optimal resolution of 1440 pixels x 480 pixels, and should be a JPEG, JPG, PNG, or GIF.The image must be publicly available after the variable is replaced at run-time. If the image you upload doesn’t meet these requirements, it may appear cropped or distorted. If you are uploading a video, the max file size is 10MB..
+                                                                        </CardDescription>
+                                                                    </CardHeader>
+                                                                    <CardContent className="space-y-2">
+                                                                        <div className="space-y-1">
+                                                                            <Label htmlFor="new">Upload the image/video url</Label>
+                                                                            <Input type="url" className="mt-2" name="mediaUrl" value={createTemplates.mediaUrl} onChange={handleCreateTemplateChange} />
+                                                                        </div>
+                                                                    </CardContent>
+                                                                    <CardFooter className="flex w-full justify-end">
+                                                                        <Button>Upload</Button>
+                                                                    </CardFooter>
+                                                                </Card>
+                                                            </TabsContent>
+                                                        </Tabs>
+                                                    </div>
+
+                                                </DialogContent>
+                                            </Dialog>
+                                        </div>
+
+                                        <Label htmlFor="" className="text-left">Card Title</Label>
+                                        <Input type="text" name="cardTitle" value={createTemplates.cardTitle} onChange={handleCreateTemplateChange} />
+
+
+                                        <Label htmlFor="" className="text-left">Card Description</Label>
+                                        <Textarea name="cardDescription" value={createTemplates.cardDescription} onChange={handleCreateTemplateChange}></Textarea>
+                                    </Fragment>
+                                )}
+
+
+
                                 <Button onClick={handleCreateTemplates}>Start</Button>
                             </Box>
                         </Box>
@@ -219,7 +544,7 @@ export default function Addtemplates() {
                             <TabsTrigger value="businessinfo">Business Info</TabsTrigger>
                         </TabsList>
                         <TabsContent value="conversation">
-                            <Card className='border-2 h-[550px] overflow-auto'>
+                            <Card className='border-2 h-[550px] overflow-auto custom-scrollbar'>
                                 <div className="iphone-x">
                                     <div className="status-bar">
                                         <span className='font-semibold text-sm'>{realtime}</span>
@@ -229,22 +554,41 @@ export default function Addtemplates() {
                                             <CiBatteryFull className='text-md' />
                                         </div>
                                     </div>
-                                    <div className="p-2 bg-[#F5F5F5] grid grid-cols-3 items-center">
+                                    <div className="p-2 bg-[#F5F5F5] flex gap-2  items-center">
                                         <ChevronLeft size={20} strokeWidth={2.5} color='#0079FF' cursor='pointer' />
                                         <p className='break-words text-ellipsis font-semibold'>{createTemplates.botId}</p>
                                     </div>
-                                    {/* <i>Speaker</i>
-                                    <b>Camera</b>
-                                    <s></s> */}
                                     <div className="inner_content">
                                         <div className="inner_content_2">
+                                            {selectedCard !== null && (
+                                                <div className="p-4">
+                                                    <Carousel className="w-full max-w-xs">
+                                                        <CarouselContent>
+                                                            {cards.map((card, index) => (
+                                                                <CarouselItem key={index}>
+                                                                    <div className="p-1">
+                                                                        <Card>
+                                                                            <CardContent className="flex aspect-auto items-center justify-center p-6">
+                                                                                <span className="text-sm font-semibold">{card}</span>
+                                                                            </CardContent>
+                                                                        </Card>
+                                                                    </div>
+                                                                </CarouselItem>
+                                                            ))}
+                                                        </CarouselContent>
+                                                        <CarouselPrevious className="border text-black" />
+                                                        <CarouselNext className="text-black" />
+                                                    </Carousel>
+                                                </div>
+                                            )}
+                                            <p className='break-words text-sm font-semibold text-ellipsis text-justify'>{createTemplates.cardTitle}</p>
+                                            <p className='break-words mt-2 text-gray-500 text-ellipsis text-xs text-justify'>{createTemplates.cardDescription}</p>
                                             <p className='break-words text-ellipsis text-xs text-justify'>{createTemplates.textMessageContent}</p>
                                         </div>
                                     </div>
                                 </div>
                             </Card>
                         </TabsContent>
-
 
                         <TabsContent value="businessinfo">
                             <Card className='border-2 h-[550px] overflow-auto'>
@@ -261,9 +605,6 @@ export default function Addtemplates() {
                                         <ChevronLeft size={20} strokeWidth={2.5} color='#0079FF' cursor='pointer' />
                                         <p className='break-words text-ellipsis font-semibold'>Info & options</p>
                                     </div>
-                                    {/* <i>Speaker</i>
-                                    <b>Camera</b>
-                                    <s></s> */}
                                     <div className="inner_content">
                                         <div className="inner_content_2">
                                             <p className='text-slate-900 text-md font-semibold'>{createTemplates.botId}</p>
@@ -286,7 +627,7 @@ export default function Addtemplates() {
                                                 <div className='p-4'>
                                                     <h2 className='font-bold'>Info</h2>
                                                     <CardDescription className="text-xs mt-2">
-                                                        Multiple options are avaliable here choose any to see the details.
+                                                        Multiple options are available here, choose any to see the details.
                                                     </CardDescription>
                                                     <div className="mt-4">
                                                         <p className='scroll-m-20 border-b pb-2 text-sm flex mt-4 gap-2 text-slate-500 font-semibold tracking-tight first:mt-0'>
@@ -299,7 +640,6 @@ export default function Addtemplates() {
                                                         </p>
                                                     </div>
                                                 </div>
-
                                             </Card>
                                         </TabsContent>
                                         <TabsContent value="options">
@@ -307,7 +647,7 @@ export default function Addtemplates() {
                                                 <div className='p-4'>
                                                     <h2 className='font-bold'>Options</h2>
                                                     <CardDescription className="text-xs mt-2">
-                                                        Multiple options are avaliable here choose any to see the details.
+                                                        Multiple options are available here, choose any to see the details.
                                                     </CardDescription>
                                                     <div className="mt-4">
                                                         <p className='scroll-m-20 border-b pb-2 text-sm  mt-2 font-semibold tracking-tight first:mt-0 text-slate-500'>Notification</p>

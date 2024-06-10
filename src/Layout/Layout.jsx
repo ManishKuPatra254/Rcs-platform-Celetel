@@ -318,13 +318,15 @@ const UserLayout = ({ children }) => {
     };
 
     const username = localStorage.getItem('username');
+    const firstLetter = username ? username.charAt(0).toUpperCase() : '';
+
     // const initialname = username.charAt(0);
 
 
     return (
         <Fragment>
             <div className="flex min-h-screen w-full flex-col bg-muted/40">
-                {/* this is the sidebar content  */}
+
                 <aside className="fixed inset-y-0 left-0 z-10 hidden w-16 flex-col border-r bg-background sm:flex">
                     <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
                         <Link
@@ -352,7 +354,7 @@ const UserLayout = ({ children }) => {
                             <TooltipTrigger asChild>
                                 <Link
                                     to={'/sendrcs'}
-                                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                                 >
                                     <Send className="h-5 w-5" />
                                     <span className="sr-only">Send Rcs</span>
@@ -520,16 +522,10 @@ const UserLayout = ({ children }) => {
                                     size="icon"
                                     className="overflow-hidden rounded-full"
                                 >
-                                    {/* <img
-                                        src="/src/assets/main_logo.svg"
-                                        width={36}
-                                        height={36}
-                                        alt={username}
-                                        className="overflow-hidden rounded-full"
-                                    /> */}
+
                                     <Avatar>
                                         <AvatarImage src="" alt={username} />
-                                        <AvatarFallback>{username}</AvatarFallback>
+                                        <AvatarFallback>{firstLetter}</AvatarFallback>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>

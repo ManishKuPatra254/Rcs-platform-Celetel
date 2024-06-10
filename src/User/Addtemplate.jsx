@@ -19,7 +19,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { createNewTemplates } from '@/Service/auth.service';
+import { createNewTemplates, getBots } from '@/Service/auth.service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CiBatteryFull } from "react-icons/ci";
 import { FaPlus, FaSignal } from "react-icons/fa";
@@ -76,51 +76,105 @@ export default function Addtemplates() {
     const [accTemptype, setAccTemptype] = useState('');
     const [createTemplates, setCreateTemplates] = useState({
         botId: "",
-        templateName: "",
-        templateType: "",
+        name: "",
+        type: "",
         textMessageContent: "",
         orientation: "",
-        alignment: "",
         height: "",
         width: "",
         cardTitle: "",
         cardDescription: "",
         mediaUrl: "",
         thumbnailUrl: "",
-        suggestions: []
+        carouselList: [
+            {
+                cardTitle: "",
+                cardDescription: "",
+                mediaUrl: "",
+                thumbnailUrl: "",
+            }
+        ]
     });
 
     const handleCreateTemplates = async (e) => {
         e.preventDefault();
         try {
-            const response = await createNewTemplates(createTemplates);
+            let payload = { ...createTemplates };
+
+            if (accTemptype === 'text_message') {
+                delete payload.cardTitle;
+                delete payload.cardDescription;
+                delete payload.mediaUrl;
+                delete payload.thumbnailUrl;
+                delete payload.orientation;
+                delete payload.alignment;
+                delete payload.height;
+                delete payload.width;
+            }
+            else if (accTemptype === 'rich_card') {
+                delete payload.textMessageContent;
+                delete payload.width;
+                delete payload.mediaUrl;
+                delete payload.carouselList;
+
+            }
+            else if (accTemptype === 'carousel') {
+                delete payload.textMessageContent;
+                delete payload.orientation;
+                delete payload.alignment;
+            }
+
+            const response = await createNewTemplates(payload);
             console.log(response.data, "checkbefore")
             if (response.success === true) {
                 alert(response.data.message);
                 console.log(response.data, "response data");
                 setCreateTemplates({
                     botId: "",
-                    templateName: "",
-                    templateType: "",
+                    name: "",
+                    type: "",
                     textMessageContent: "",
                     orientation: "",
-                    alignment: "",
                     height: "",
                     width: "",
                     cardTitle: "",
                     cardDescription: "",
                     mediaUrl: "",
                     thumbnailUrl: "",
-                    fileName: "",
-                    thumbnailFileName: "",
+                    carouselList: [
+                        {
+                            cardTitle: "",
+                            cardDescription: "",
+                            mediaUrl: "",
+                            thumbnailUrl: "",
+                        }
+                    ]
                 });
             } else {
-                toast("Registration completed successfully");
+                toast("Template created successfully");
             }
         } catch (error) {
             console.log(error.message);
         }
     };
+
+
+
+    const [getAllBots, setGetAllBots] = useState();
+
+    useEffect(() => {
+        const fetchBotIdsToTemp = async () => {
+            try {
+                const response = await getBots();
+                setGetAllBots(response.botIds);
+            } catch (error) {
+                console.error('Error fetching bot data:', error.message);
+            }
+        };
+
+        fetchBotIdsToTemp();
+    }, []);
+
 
     const handleCreateTemplateChange = (e) => {
         const { name, value } = e.target;
@@ -133,29 +187,22 @@ export default function Addtemplates() {
     const handleTemplateTypeChange = (value) => {
         setCreateTemplates((prevData) => ({
             ...prevData,
-            templateType: value,
+            type: value,
         }));
         setAccTemptype(value);
     };
 
-    const handleOrientationChange = (value) => {
+    const handleFieldChange = (field, value) => {
         setCreateTemplates((prevData) => ({
             ...prevData,
-            orientation: value,
+            [field]: value,
         }));
     };
 
-    const handleAlignmentChange = (value) => {
+    const handleFieldChangeCarousel = (field, value) => {
         setCreateTemplates((prevData) => ({
             ...prevData,
-            alignment: value,
-        }));
-    };
-
-    const handleHeightChange = (value) => {
-        setCreateTemplates((prevData) => ({
-            ...prevData,
-            height: value,
+            [field]: value,
         }));
     };
 
@@ -167,6 +214,10 @@ export default function Addtemplates() {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result);
+                setCreateTemplates((prevData) => ({
+                    ...prevData,
+                    thumbnailUrl: reader.result
+                }));
             };
             reader.readAsDataURL(file);
         }
@@ -213,19 +264,27 @@ export default function Addtemplates() {
                                 <CardTitle className='text-3xl'>Add Templates</CardTitle>
 
                                 <Label htmlFor="" className="text-left">Bot Id</Label>
-                                <Input
-                                    name='botId'
-                                    value={createTemplates.botId}
-                                    onChange={handleCreateTemplateChange} />
+                                <Select name='botId' value={createTemplates.botId} onValueChange={(value) => setCreateTemplates({ ...createTemplates, botId: value })}>
+                                    <SelectTrigger className="">
+                                        <SelectValue placeholder="Select an option" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {getAllBots && getAllBots.map((botId) => (
+                                            <SelectItem key={botId} value={botId}>
+                                                {botId}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
 
                                 <Label htmlFor="" className="text-left">Template name/code</Label>
                                 <Input
-                                    name='templateName'
-                                    value={createTemplates.templateName}
+                                    name='name'
+                                    value={createTemplates.name}
                                     onChange={handleCreateTemplateChange} />
 
                                 <Label htmlFor="" className="text-left">Template type</Label>
-                                <Select name='templateType' value={createTemplates.templateType}
+                                <Select name='type' value={createTemplates.type}
                                     onValueChange={handleTemplateTypeChange}>
                                     <SelectTrigger className="">
                                         <SelectValue placeholder="Select a option" />
@@ -278,7 +337,7 @@ export default function Addtemplates() {
                                     <Fragment>
 
                                         <Label htmlFor="" className="text-left">Orientation</Label>
-                                        <Select name="orientation" value={createTemplates.orientation} onValueChange={handleOrientationChange}>
+                                        <Select name="orientation" onValueChange={(value) => handleFieldChange('orientation', value)}>
                                             <SelectTrigger className="">
                                                 <SelectValue placeholder="Select Orientation" />
                                             </SelectTrigger>
@@ -291,7 +350,7 @@ export default function Addtemplates() {
                                         {createTemplates.orientation === 'HORIZONTAL' && (
                                             <Fragment>
                                                 <Label htmlFor="" className="text-left">Alignment</Label>
-                                                <Select name="alignment" value={createTemplates.alignment} onValueChange={handleAlignmentChange} >
+                                                <Select name="height" onValueChange={(value) => handleFieldChange('height', value)}>
                                                     <SelectTrigger className="">
                                                         <SelectValue placeholder="Select Alignment" />
                                                     </SelectTrigger>
@@ -305,7 +364,7 @@ export default function Addtemplates() {
                                         {createTemplates.orientation === 'VERTICAL' && (
                                             <Fragment>
                                                 <Label htmlFor="" className="text-left">Height</Label>
-                                                <Select name="height" value={createTemplates.height} onValueChange={handleHeightChange}>
+                                                <Select name="height" onValueChange={(value) => handleFieldChange('height', value)}>
                                                     <SelectTrigger className="">
                                                         <SelectValue placeholder="Select height" />
                                                     </SelectTrigger>
@@ -321,6 +380,7 @@ export default function Addtemplates() {
                                         <div className="flex items-center gap-4">
                                             <Input className=""
                                                 type="file"
+                                                name="thumbnailUrl"
                                                 onChange={handleImageChange}
                                                 accept="image/*" />
                                             <Dialog>
@@ -444,6 +504,32 @@ export default function Addtemplates() {
                                             )}
                                         </div>
 
+
+                                        <Fragment>
+                                            <Label htmlFor="" className="text-left">Height</Label>
+                                            <Select name="height" onValueChange={(value) => handleFieldChangeCarousel('height', value)}>
+                                                <SelectTrigger className="">
+                                                    <SelectValue placeholder="Select height" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="SHORT_HEIGHT">Short Height</SelectItem>
+                                                    <SelectItem value="MEDIUM_HEIGHT">Medium Height</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </Fragment>
+
+
+                                        <Label htmlFor="" className="text-left">Width</Label>
+                                        <Select name="width" onValueChange={(value) => handleFieldChange('width', value)}>
+                                            <SelectTrigger className="">
+                                                <SelectValue placeholder="Select width" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="SHORT_WIDTH">Short Width</SelectItem>
+                                                <SelectItem value="MEDIUM_WIDTH">Medium Width</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+
                                         <Label htmlFor="" className="text-left">Image/Video</Label>
                                         <div className="flex items-center gap-4">
                                             <Input className="" type="file" />
@@ -532,7 +618,7 @@ export default function Addtemplates() {
                                         </div>
 
                                         <Label htmlFor="" className="text-left">Card Title</Label>
-                                        <Input type="text" name="cardTitle" value={createTemplates.cardTitle} onChange={handleCreateTemplateChange} />
+                                        <Input type="text" name="cardTitle" value={createTemplates.carouselList.cardTitle} onChange={handleCreateTemplateChange} />
 
 
                                         <Label htmlFor="" className="text-left">Card Description</Label>

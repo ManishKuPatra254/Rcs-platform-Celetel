@@ -226,7 +226,7 @@ export const createNewTemplates = async (createTemplates) => {
     console.log(createTemplates, "createtemplates")
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post(`https://main-rcs.vercel.app/api/template/create`, createTemplates, {
+        const response = await axios.post(`https://main-rcs.vercel.app/api/template`, createTemplates, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'

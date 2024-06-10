@@ -525,7 +525,7 @@ const UserLayout = ({ children }) => {
 
                                     <Avatar>
                                         <AvatarImage src="" alt={username} />
-                                        <AvatarFallback>{firstLetter}</AvatarFallback>
+                                        <AvatarFallback className="font-extrabold">{firstLetter}</AvatarFallback>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>

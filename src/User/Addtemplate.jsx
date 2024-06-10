@@ -124,6 +124,26 @@ export default function Addtemplates() {
 
     const handleCreateTemplateChange = (e) => {
         const { name, value } = e.target;
+        if (name === 'cardTitle') {
+            const wordCount = value.trim().split(/\s+/).length;
+            if (wordCount <= 200) {
+                setCreateTemplates({
+                    ...createTemplates,
+                    [name]: value
+                });
+            }
+        }
+
+
+        else if (name === 'cardDescription') {
+            const wordCount = value.trim().split(/\s+/).length;
+            if (wordCount <= 2000) {
+                setCreateTemplates({
+                    ...createTemplates,
+                    [name]: value
+                });
+            }
+        }
         setCreateTemplates((prevData) => ({
             ...prevData,
             [name]: value,
@@ -524,7 +544,7 @@ export default function Addtemplates() {
                             <TabsTrigger value="businessinfo">Business Info</TabsTrigger>
                         </TabsList>
                         <TabsContent value="conversation">
-                            <Card className='border-2 h-[550px] overflow-auto'>
+                            <Card className='border-2 h-[550px] overflow-auto custom-scrollbar'>
                                 <div className="iphone-x">
                                     <div className="status-bar">
                                         <span className='font-semibold text-sm'>{realtime}</span>
@@ -534,7 +554,7 @@ export default function Addtemplates() {
                                             <CiBatteryFull className='text-md' />
                                         </div>
                                     </div>
-                                    <div className="p-2 bg-[#F5F5F5] grid grid-cols-3 items-center">
+                                    <div className="p-2 bg-[#F5F5F5] flex gap-2  items-center">
                                         <ChevronLeft size={20} strokeWidth={2.5} color='#0079FF' cursor='pointer' />
                                         <p className='break-words text-ellipsis font-semibold'>{createTemplates.botId}</p>
                                     </div>
@@ -561,6 +581,8 @@ export default function Addtemplates() {
                                                     </Carousel>
                                                 </div>
                                             )}
+                                            <p className='break-words text-sm font-semibold text-ellipsis text-justify'>{createTemplates.cardTitle}</p>
+                                            <p className='break-words mt-2 text-gray-500 text-ellipsis text-xs text-justify'>{createTemplates.cardDescription}</p>
                                             <p className='break-words text-ellipsis text-xs text-justify'>{createTemplates.textMessageContent}</p>
                                         </div>
                                     </div>

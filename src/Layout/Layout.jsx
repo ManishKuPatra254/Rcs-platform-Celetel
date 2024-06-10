@@ -318,6 +318,8 @@ const UserLayout = ({ children }) => {
     };
 
     const username = localStorage.getItem('username');
+    const firstLetter = username ? username.charAt(0).toUpperCase() : '';
+
     // const initialname = username.charAt(0);
 
 
@@ -520,16 +522,10 @@ const UserLayout = ({ children }) => {
                                     size="icon"
                                     className="overflow-hidden rounded-full"
                                 >
-                                    {/* <img
-                                        src="/src/assets/main_logo.svg"
-                                        width={36}
-                                        height={36}
-                                        alt={username}
-                                        className="overflow-hidden rounded-full"
-                                    /> */}
+
                                     <Avatar>
                                         <AvatarImage src="" alt={username} />
-                                        <AvatarFallback>{username}</AvatarFallback>
+                                        <AvatarFallback>{firstLetter}</AvatarFallback>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>

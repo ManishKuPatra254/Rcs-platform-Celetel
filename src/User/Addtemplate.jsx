@@ -124,31 +124,11 @@ export default function Addtemplates() {
 
     const handleCreateTemplateChange = (e) => {
         const { name, value } = e.target;
-        if (name === 'cardTitle') {
-            const wordCount = value.trim().split(/\s+/).length;
-            if (wordCount <= 200) {
-                setCreateTemplates({
-                    ...createTemplates,
-                    [name]: value
-                });
-            }
-        }
-
-
-        else if (name === 'cardDescription') {
-            const wordCount = value.trim().split(/\s+/).length;
-            if (wordCount <= 2000) {
-                setCreateTemplates({
-                    ...createTemplates,
-                    [name]: value
-                });
-            }
-        }
         setCreateTemplates((prevData) => ({
             ...prevData,
             [name]: value,
         }));
-    };
+    }
 
     const handleTemplateTypeChange = (value) => {
         setCreateTemplates((prevData) => ({
@@ -179,7 +159,30 @@ export default function Addtemplates() {
         }));
     };
 
-    const [cards, setCards] = useState([1, 2]); // Initially 2 cards
+    const [imagePreview, setImagePreview] = useState(null);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleUploadClick = () => {
+        const { thumbnailUrl } = createTemplates;
+        if (thumbnailUrl.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+            setImagePreview(thumbnailUrl);
+        } else {
+            setImagePreview('');
+        }
+    };
+
+
+    const [cards, setCards] = useState([1, 2]);
     const [selectedCard, setSelectedCard] = useState(null);
 
     const handleAddCard = () => {
@@ -191,6 +194,9 @@ export default function Addtemplates() {
     const handleSelectedCard = (card) => {
         setSelectedCard(card);
     };
+
+
+
 
     return (
         <Fragment>
@@ -313,7 +319,10 @@ export default function Addtemplates() {
 
                                         <Label htmlFor="" className="text-left">Image/Video</Label>
                                         <div className="flex items-center gap-4">
-                                            <Input className="" type="file" />
+                                            <Input className=""
+                                                type="file"
+                                                onChange={handleImageChange}
+                                                accept="image/*" />
                                             <Dialog>
                                                 <DialogTrigger asChild>
                                                     <Button>Upload</Button>
@@ -367,7 +376,7 @@ export default function Addtemplates() {
                                                                         </div>
                                                                     </CardContent>
                                                                     <CardFooter className="flex w-full justify-end">
-                                                                        <Button>Upload</Button>
+                                                                        <Button onClick={handleUploadClick}>Upload</Button>
                                                                     </CardFooter>
                                                                 </Card>
                                                             </TabsContent>
@@ -581,6 +590,7 @@ export default function Addtemplates() {
                                                     </Carousel>
                                                 </div>
                                             )}
+                                            <img src={imagePreview} alt="" />
                                             <p className='break-words text-sm font-semibold text-ellipsis text-justify'>{createTemplates.cardTitle}</p>
                                             <p className='break-words mt-2 text-gray-500 text-ellipsis text-xs text-justify'>{createTemplates.cardDescription}</p>
                                             <p className='break-words text-ellipsis text-xs text-justify'>{createTemplates.textMessageContent}</p>

@@ -14,6 +14,8 @@ import Admindashboard from './Admin/Admindashboard';
 import Userlists from './Admin/Userlists';
 import AdminProfile from './Admin/Adminprofile';
 import Chatdetails from './User/Chatsinfo';
+import ProtectedRoute from './Routes/Protectedroute';
+import PageNotFound from './Routes/Page404';
 
 function App() {
 
@@ -36,13 +38,14 @@ function App() {
 
           {/* user panel  .................................... */}
 
-          <Route path="/userdashboard" element={<Userdashboard />} />
-          <Route path="/sendrcs" exact element={<RcsDetails />} />
-          <Route path="/templateslist" exact element={<Templatelist />} />
-          <Route path="/addtemplates" exact element={<Addtemplates />} />
-          <Route path="/createcampaign" exact element={<Createcampaign />} />
-          <Route path="/userprofile" exact element={<Profile />} />
-          <Route path="/chatdetails" exact element={<Chatdetails />} />
+          <Route path="/userdashboard" element={<ProtectedRoute Component={Userdashboard} />} />
+          <Route path="/sendrcs" exact element={<ProtectedRoute Component={RcsDetails} />} />
+          <Route path="/templateslist" exact element={<ProtectedRoute Component={Templatelist} />} />
+          <Route path="/addtemplates" exact element={<ProtectedRoute Component={Addtemplates} />} />
+          <Route path="/createcampaign" exact element={<ProtectedRoute Component={Createcampaign} />} />
+          <Route path="/userprofile" exact element={<ProtectedRoute Component={Profile} />} />
+          <Route path="/chatdetails" exact element={<ProtectedRoute Component={Chatdetails} />} />
+          <Route path="*" exact element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>
     </Fragment>

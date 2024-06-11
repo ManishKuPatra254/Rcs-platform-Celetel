@@ -30,7 +30,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -68,6 +68,8 @@ export default function RcsDetails() {
     const [hideBotId, setHideBotId] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
+
+    console.log(sortOrder);
 
     useEffect(() => {
         const fetchCampaigns = async () => {
@@ -312,7 +314,7 @@ export default function RcsDetails() {
                     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                         <DrawerContent className="p-8">
                             <div className="mx-auto w-full max-w-full">
-                                <DrawerHeader className="flex justify-between items-center">
+                                <DrawerHeader className="flex justify-between items-center flex-col sm:flex-row">
                                     <div>
                                         <DrawerTitle className="text-4xl">Campaign Details</DrawerTitle>
                                         <DrawerDescription className="mt-2">Campaign Name - {selectedCampaign.campaignName}</DrawerDescription>
@@ -320,25 +322,21 @@ export default function RcsDetails() {
                                     <Button variant="destructive" className="ml-auto">Download summary (pdf)</Button>
                                 </DrawerHeader>
 
-                                <div className="flex items-center justify-between px-5">
-                                    <p className="text-sm font-semibold">Template Name -
-                                        <span className=' font-light'>{selectedCampaign.templateName}</span></p>
-                                    <p className="text-sm mt-3 font-semibold">Bot ID -
-                                        <span className='font-light'> {selectedCampaign.botId}</span>
-                                    </p>
-                                </div>
-
-                                <div className="flex items-center justify-between px-5 mt-2">
+                                <div className="flex flex-col sm:flex-row items-center justify-between px-5">
+                                    <p className="text-sm font-semibold">Template Name - <span className=' font-light'>{selectedCampaign.templateName}</span></p>
+                                    <p className="text-sm mt-3 font-semibold">Bot ID - <span className='font-light'> {selectedCampaign.botId}</span></p>
                                     <p className="text-sm">Total Numbers - {selectedCampaign.totalNumbers}</p>
-                                    <p className="text-sm">Created at - {selectedCampaign.createdAt}</p>
                                 </div>
 
-                                <div className="flex items-center justify-between px-5 mt-2">
+                                <div className="border-4 flex flex-col sm:flex-row items-center justify-between px-5 mt-2">
+                                    <p className="text-sm">Created at - {selectedCampaign.createdAt}</p>
                                     <p className="text-sm">Updated at - {selectedCampaign.updatedAt}</p>
                                     <p className="text-sm">Send Count - {selectedCampaign.sentCount}</p>
                                 </div>
 
-                                <p className="text-sm mt-2 px-5">Delivered Count - {selectedCampaign.deliveredCount}</p>
+                                <div className="flex items-center justify-between px-5 mt-2">
+                                    <p className="text-sm mt-2">Delivered Count - {selectedCampaign.deliveredCount}</p>
+                                </div>
                                 <DrawerFooter>
                                     <Button onClick={() => setDrawerOpen(false)}>Close</Button>
                                 </DrawerFooter>

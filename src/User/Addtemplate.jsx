@@ -195,13 +195,25 @@ export default function Addtemplates() {
     }, []);
 
 
-    const handleCreateTemplateChange = (e) => {
+    const handleCreateTemplateChange = (e, index = null) => {
         const { name, value } = e.target;
-        setCreateTemplates((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    }
+        if (index !== null) {
+            setCreateTemplates((prevData) => {
+                const updatedCarouselList = prevData.carouselList.map((item, i) =>
+                    i === index ? { ...item, [name]: value } : item
+                );
+                return {
+                    ...prevData,
+                    carouselList: updatedCarouselList,
+                };
+            });
+        } else {
+            setCreateTemplates((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
+    };
 
     const handleTemplateTypeChange = (value) => {
         setCreateTemplates((prevData) => ({
@@ -601,7 +613,6 @@ export default function Addtemplates() {
                                                             </TabsContent>
 
 
-
                                                             <TabsContent value="uploadurl">
                                                                 <Card>
                                                                     <CardHeader>
@@ -643,17 +654,33 @@ export default function Addtemplates() {
                                                             </TabsContent>
                                                         </Tabs>
                                                     </div>
-
                                                 </DialogContent>
                                             </Dialog>
                                         </div>
 
-                                        <Label htmlFor="" className="text-left">Card Title</Label>
-                                        <Input type="text" name="cardTitle" value={createTemplates.carouselList.cardTitle} onChange={handleCreateTemplateChange} />
+
+                                        {createTemplates.carouselList.map((item, index) => (
+                                            <div key={index}>
+                                                <Label htmlFor={`cardTitle-${index}`} className="text-left">Card Title</Label>
+                                                <Input
+                                                    type="text"
+                                                    name="cardTitle"
+                                                    htmlFor={`cardTitle-${index}`}
+                                                    className="mt-2"
+                                                    value={item.cardTitle}
+                                                    onChange={(e) => handleCreateTemplateChange(e, index)}
+                                                />
+
+                                                <Label htmlFor={`cardDescription-${index}`} className="text-left">Card Description</Label>
+                                                <Textarea className="mt-2" id={`cardDescription-${index}`}
+                                                    name="cardDescription" value={item.cardDescription}
+                                                    onChange={(e) => handleCreateTemplateChange(e, index)}>
+                                                </Textarea>
+                                            </div>
+                                        ))}
 
 
-                                        <Label htmlFor="" className="text-left">Card Description</Label>
-                                        <Textarea name="cardDescription" value={createTemplates.cardDescription} onChange={handleCreateTemplateChange}></Textarea>
+
                                     </Fragment>
                                 )}
 
@@ -674,7 +701,7 @@ export default function Addtemplates() {
                                 <div className="iphone-x">
                                     <div className="status-bar">
                                         <span className='font-semibold text-sm'>{realtime}</span>
-                                        <div className="flex gap-1">
+                                        <div className="flex gap-1.5">
                                             <FaSignal className='' />
                                             <p className='font-semibold text-sm'>5G</p>
                                             <CiBatteryFull className='text-md' />
@@ -686,9 +713,6 @@ export default function Addtemplates() {
                                     </div>
                                     <div className="inner_content">
                                         <div className="inner_content_2">
-
-
-
                                             {selectedPrev === "text_message" && (
                                                 <p className='break-words text-ellipsis text-xs text-justify'>{createTemplates.textMessageContent}</p>
                                             )}
@@ -714,6 +738,13 @@ export default function Addtemplates() {
                                                                             </CardContent>
                                                                         </Card>
                                                                     </div>
+                                                                    {createTemplates.carouselList.map((item, index) => (
+                                                                        <div key={index} className=" border-2 p-2 mt-2">
+                                                                            <h3>{item.cardTitle}</h3>
+                                                                            <p>{item.cardDescription}</p>
+                                                                            {item.mediaUrl && <img src={item.mediaUrl} alt={item.cardTitle} style={{ maxWidth: '100%' }} />}
+                                                                        </div>
+                                                                    ))}
                                                                 </CarouselItem>
                                                             ))}
                                                         </CarouselContent>
@@ -809,6 +840,6 @@ export default function Addtemplates() {
                     </Tabs>
                 </div>
             </Layout>
-        </Fragment>
+        </Fragment >
     );
 }

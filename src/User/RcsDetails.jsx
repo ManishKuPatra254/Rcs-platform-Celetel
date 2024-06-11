@@ -2,23 +2,21 @@ import { useState, useEffect, Fragment } from 'react';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
-// import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getCampaignsDetails, startCampaign } from '../Service/auth.service'; // Import startCampaign function
+import { getCampaignsDetails, startCampaign } from '../Service/auth.service';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react"
+import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react";
 import {
     Menubar,
     MenubarContent,
     MenubarItem,
     MenubarMenu,
     MenubarTrigger,
-} from "@/components/ui/menubar"
-// import { cn } from "@/lib/utils"
+} from "@/components/ui/menubar";
 import {
     Command,
     CommandEmpty,
@@ -26,13 +24,13 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+} from "@/components/ui/popover";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -47,7 +45,6 @@ const frameworks = [
         value: "inprogress",
         label: "In Progress",
         icon: <Clock12 className="h-4 w-4 mr-2" />
-
     },
     {
         value: "completed",
@@ -59,16 +56,18 @@ const frameworks = [
         label: "Failed",
         icon: <CircleX className="h-4 w-4 mr-2" />,
     },
-]
+];
 
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [open, setOpen] = useState(false)
-    const [value, setValue] = useState("")
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState("");
     const [sortOrder, setSortOrder] = useState(null);
     const [hideBotId, setHideBotId] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedCampaign, setSelectedCampaign] = useState(null);
 
     useEffect(() => {
         const fetchCampaigns = async () => {
@@ -103,6 +102,8 @@ export default function RcsDetails() {
         setPage(0);
     };
 
+    console.log(handleChangeRowsPerPage)
+
     const handleStartCampaign = async (campaignId) => {
         try {
             await startCampaign(campaignId);
@@ -116,9 +117,12 @@ export default function RcsDetails() {
         }
     };
 
+    const handleViewDetails = (campaign) => {
+        setSelectedCampaign(campaign);
+        setDrawerOpen(true);
+    };
 
     const totalPages = Math.ceil(campaigns.length / rowsPerPage);
-
 
     return (
         <Fragment>
@@ -134,7 +138,6 @@ export default function RcsDetails() {
                                 <Button className=''>Create Campaign</Button>
                             </Link>
                         </div>
-
 
                         <div className="p-6 border rounded-md overflow-auto">
                             <CardTitle className='text-2xl mb-1'>Welcome back !</CardTitle>
@@ -179,8 +182,8 @@ export default function RcsDetails() {
                                                                 key={framework.value}
                                                                 value={framework.value}
                                                                 onSelect={(currentValue) => {
-                                                                    setValue(currentValue === value ? "" : currentValue)
-                                                                    setOpen(false)
+                                                                    setValue(currentValue === value ? "" : currentValue);
+                                                                    setOpen(false);
                                                                 }}>
                                                                 {framework.icon}
                                                                 <span className="ml-2">{framework.label}</span>
@@ -241,7 +244,9 @@ export default function RcsDetails() {
                                                                         {campaign.status !== 'started' && (
                                                                             <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
                                                                         )}
-                                                                        <Button variant="link">View Details</Button>
+                                                                        <Button variant="link" onClick={() => handleViewDetails(campaign)}>
+                                                                            View Details
+                                                                        </Button>
                                                                     </div>
                                                                 ) : (
                                                                     campaign[column.id]
@@ -254,7 +259,6 @@ export default function RcsDetails() {
                                         ) : (
                                             <TableRow>
                                                 <TableCell colSpan={columns.length} align="center">
-                                                    {/* <Loader2 className="h-8 w-full animate-spin" /> */}
                                                     <div className="flex flex-col space-y-3">
                                                         <Skeleton className="h-full w-full rounded-xl" />
                                                         <div className="space-y-2">
@@ -267,29 +271,8 @@ export default function RcsDetails() {
                                         )}
                                     </TableBody>
                                 </Table>
-
                             </div>
-                            {/* <div className="flex justify-end mt-5">
-                                <CardDescription>
-                                    Rows per page:
-                                </CardDescription>
-                                <Select
-                                    value={rowsPerPage}
-                                    onChange={handleChangeRowsPerPage}
-                                    className="ml-2 border rounded-md p-1"
-                                >
-                                    <SelectTrigger className="">
-                                        <SelectValue placeholder="Select an option" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {[10, 20, 30, 50].map((rows) => (
-                                            <SelectItem key={rows} value={rows}>
-                                                {rows}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div> */}
+
                             <Pagination className='mt-5 '>
                                 <PaginationContent className='cursor-pointer'>
                                     <PaginationItem>
@@ -324,6 +307,45 @@ export default function RcsDetails() {
                         </div>
                     </div>
                 </div>
+
+                {selectedCampaign && (
+                    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+                        <DrawerContent className="p-8">
+                            <div className="mx-auto w-full max-w-full">
+                                <DrawerHeader className="flex justify-between items-center">
+                                    <div>
+                                        <DrawerTitle className="text-4xl">Campaign Details</DrawerTitle>
+                                        <DrawerDescription className="mt-2">Campaign Name - {selectedCampaign.campaignName}</DrawerDescription>
+                                    </div>
+                                    <Button variant="destructive" className="ml-auto">Download summary (pdf)</Button>
+                                </DrawerHeader>
+
+                                <div className="flex items-center justify-between px-5">
+                                    <p className="text-sm font-semibold">Template Name -
+                                        <span className=' font-light'>{selectedCampaign.templateName}</span></p>
+                                    <p className="text-sm mt-3 font-semibold">Bot ID -
+                                        <span className='font-light'> {selectedCampaign.botId}</span>
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center justify-between px-5 mt-2">
+                                    <p className="text-sm">Total Numbers - {selectedCampaign.totalNumbers}</p>
+                                    <p className="text-sm">Created at - {selectedCampaign.createdAt}</p>
+                                </div>
+
+                                <div className="flex items-center justify-between px-5 mt-2">
+                                    <p className="text-sm">Updated at - {selectedCampaign.updatedAt}</p>
+                                    <p className="text-sm">Send Count - {selectedCampaign.sentCount}</p>
+                                </div>
+
+                                <p className="text-sm mt-2 px-5">Delivered Count - {selectedCampaign.deliveredCount}</p>
+                                <DrawerFooter>
+                                    <Button onClick={() => setDrawerOpen(false)}>Close</Button>
+                                </DrawerFooter>
+                            </div>
+                        </DrawerContent>
+                    </Drawer>
+                )}
             </Layout>
         </Fragment>
     );

@@ -30,7 +30,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -68,6 +68,8 @@ export default function RcsDetails() {
     const [hideBotId, setHideBotId] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
+
+    console.log(sortOrder);
 
     useEffect(() => {
         const fetchCampaigns = async () => {

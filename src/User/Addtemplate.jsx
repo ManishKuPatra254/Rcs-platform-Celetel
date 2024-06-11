@@ -22,7 +22,7 @@ import {
 import { createNewTemplates, getBots } from '@/Service/auth.service';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CiBatteryFull } from "react-icons/ci";
-import { FaPlus, FaSignal } from "react-icons/fa";
+import { FaPlus, FaSignal, FaTimes } from "react-icons/fa";
 import {
     Dialog,
     DialogContent,
@@ -74,12 +74,15 @@ export default function Addtemplates() {
     }, []);
 
     const [accTemptype, setAccTemptype] = useState('');
+    // change the preview acc to the rich card or message or carousel ...............
+    const [selectedPrev, setSelectedPrev] = useState('');
     const [createTemplates, setCreateTemplates] = useState({
         botId: "",
         name: "",
         type: "",
         textMessageContent: "",
         orientation: "",
+        alignment: "",
         height: "",
         width: "",
         cardTitle: "",
@@ -96,6 +99,16 @@ export default function Addtemplates() {
         ]
     });
 
+    // fetching bots .........................
+    const [getAllBots, setGetAllBots] = useState();
+
+    // for image preview .......................
+    const [imagePreview, setImagePreview] = useState(null);
+
+    // for adding cards and preview ..................
+    const [cards, setCards] = useState([1, 2]);
+    const [selectedCard, setSelectedCard] = useState(null);
+
     const handleCreateTemplates = async (e) => {
         e.preventDefault();
         try {
@@ -110,6 +123,7 @@ export default function Addtemplates() {
                 delete payload.alignment;
                 delete payload.height;
                 delete payload.width;
+                delete payload.carouselList;
             }
             else if (accTemptype === 'rich_card') {
                 delete payload.textMessageContent;
@@ -122,6 +136,12 @@ export default function Addtemplates() {
                 delete payload.textMessageContent;
                 delete payload.orientation;
                 delete payload.alignment;
+            }
+
+            if (createTemplates.orientation === 'VERTICAL') {
+                delete payload.alignment;
+            } else if (createTemplates.orientation === 'HORIZONTAL') {
+                delete payload.height;
             }
 
             const response = await createNewTemplates(payload);
@@ -160,7 +180,6 @@ export default function Addtemplates() {
 
 
 
-    const [getAllBots, setGetAllBots] = useState();
 
     useEffect(() => {
         const fetchBotIdsToTemp = async () => {
@@ -176,13 +195,25 @@ export default function Addtemplates() {
     }, []);
 
 
-    const handleCreateTemplateChange = (e) => {
+    const handleCreateTemplateChange = (e, index = null) => {
         const { name, value } = e.target;
-        setCreateTemplates((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    }
+        if (index !== null) {
+            setCreateTemplates((prevData) => {
+                const updatedCarouselList = prevData.carouselList.map((item, i) =>
+                    i === index ? { ...item, [name]: value } : item
+                );
+                return {
+                    ...prevData,
+                    carouselList: updatedCarouselList,
+                };
+            });
+        } else {
+            setCreateTemplates((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
+    };
 
     const handleTemplateTypeChange = (value) => {
         setCreateTemplates((prevData) => ({
@@ -190,6 +221,8 @@ export default function Addtemplates() {
             type: value,
         }));
         setAccTemptype(value);
+        setSelectedPrev(value);
+
     };
 
     const handleFieldChange = (field, value) => {
@@ -206,7 +239,6 @@ export default function Addtemplates() {
         }));
     };
 
-    const [imagePreview, setImagePreview] = useState(null);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -233,13 +265,15 @@ export default function Addtemplates() {
     };
 
 
-    const [cards, setCards] = useState([1, 2]);
-    const [selectedCard, setSelectedCard] = useState(null);
 
     const handleAddCard = () => {
         if (cards.length < 10) {
             setCards([...cards, cards.length + 1]);
         }
+    };
+
+    const handleDeleteCard = (index) => {
+        setCards(cards.filter((_, cardIndex) => cardIndex !== index));
     };
 
     const handleSelectedCard = (card) => {
@@ -350,7 +384,7 @@ export default function Addtemplates() {
                                         {createTemplates.orientation === 'HORIZONTAL' && (
                                             <Fragment>
                                                 <Label htmlFor="" className="text-left">Alignment</Label>
-                                                <Select name="height" onValueChange={(value) => handleFieldChange('height', value)}>
+                                                <Select name="alignment" onValueChange={(value) => handleFieldChange('alignment', value)}>
                                                     <SelectTrigger className="">
                                                         <SelectValue placeholder="Select Alignment" />
                                                     </SelectTrigger>
@@ -488,9 +522,18 @@ export default function Addtemplates() {
                                             {cards.map((card, index) => (
                                                 <div
                                                     key={index}
-                                                    className="bg-gray-200 border border-gray-300 rounded p-4 min-w-[100px] text-sm text-center shadow cursor-pointer"
+                                                    className="relative bg-gray-400 border rounded p-4 min-w-[100px] text-xs font-semibold text-center shadow cursor-pointer"
                                                     onClick={() => handleSelectedCard(card)}
                                                 >
+                                                    <div
+                                                        className="absolute bg-white rounded-full p-1 top-1 right-1 text-red-500 cursor-pointer"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteCard(index);
+                                                        }}
+                                                    >
+                                                        <FaTimes />
+                                                    </div>
                                                     Card {card}
                                                 </div>
                                             ))}
@@ -570,7 +613,6 @@ export default function Addtemplates() {
                                                             </TabsContent>
 
 
-
                                                             <TabsContent value="uploadurl">
                                                                 <Card>
                                                                     <CardHeader>
@@ -612,17 +654,33 @@ export default function Addtemplates() {
                                                             </TabsContent>
                                                         </Tabs>
                                                     </div>
-
                                                 </DialogContent>
                                             </Dialog>
                                         </div>
 
-                                        <Label htmlFor="" className="text-left">Card Title</Label>
-                                        <Input type="text" name="cardTitle" value={createTemplates.carouselList.cardTitle} onChange={handleCreateTemplateChange} />
+
+                                        {createTemplates.carouselList.map((item, index) => (
+                                            <div key={index}>
+                                                <Label htmlFor={`cardTitle-${index}`} className="text-left">Card Title</Label>
+                                                <Input
+                                                    type="text"
+                                                    name="cardTitle"
+                                                    htmlFor={`cardTitle-${index}`}
+                                                    className="mt-2"
+                                                    value={item.cardTitle}
+                                                    onChange={(e) => handleCreateTemplateChange(e, index)}
+                                                />
+
+                                                <Label htmlFor={`cardDescription-${index}`} className="text-left">Card Description</Label>
+                                                <Textarea className="mt-2" id={`cardDescription-${index}`}
+                                                    name="cardDescription" value={item.cardDescription}
+                                                    onChange={(e) => handleCreateTemplateChange(e, index)}>
+                                                </Textarea>
+                                            </div>
+                                        ))}
 
 
-                                        <Label htmlFor="" className="text-left">Card Description</Label>
-                                        <Textarea name="cardDescription" value={createTemplates.cardDescription} onChange={handleCreateTemplateChange}></Textarea>
+
                                     </Fragment>
                                 )}
 
@@ -643,7 +701,7 @@ export default function Addtemplates() {
                                 <div className="iphone-x">
                                     <div className="status-bar">
                                         <span className='font-semibold text-sm'>{realtime}</span>
-                                        <div className="flex gap-1">
+                                        <div className="flex gap-1.5">
                                             <FaSignal className='' />
                                             <p className='font-semibold text-sm'>5G</p>
                                             <CiBatteryFull className='text-md' />
@@ -655,7 +713,19 @@ export default function Addtemplates() {
                                     </div>
                                     <div className="inner_content">
                                         <div className="inner_content_2">
-                                            {selectedCard !== null && (
+                                            {selectedPrev === "text_message" && (
+                                                <p className='break-words text-ellipsis text-xs text-justify'>{createTemplates.textMessageContent}</p>
+                                            )}
+
+                                            {selectedPrev === 'rich_card' && (
+                                                <Fragment>
+                                                    <img src={imagePreview} alt="" />
+                                                    <p className='break-words text-sm font-semibold text-ellipsis text-justify'>{createTemplates.cardTitle}</p>
+                                                    <p className='break-words mt-2 text-gray-500 text-ellipsis text-xs text-justify'>{createTemplates.cardDescription}</p>
+                                                </Fragment>
+                                            )}
+
+                                            {selectedPrev === 'carousel' && selectedCard !== null && (
                                                 <div className="p-4">
                                                     <Carousel className="w-full max-w-xs">
                                                         <CarouselContent>
@@ -668,6 +738,13 @@ export default function Addtemplates() {
                                                                             </CardContent>
                                                                         </Card>
                                                                     </div>
+                                                                    {createTemplates.carouselList.map((item, index) => (
+                                                                        <div key={index} className=" border-2 p-2 mt-2">
+                                                                            <h3>{item.cardTitle}</h3>
+                                                                            <p>{item.cardDescription}</p>
+                                                                            {item.mediaUrl && <img src={item.mediaUrl} alt={item.cardTitle} style={{ maxWidth: '100%' }} />}
+                                                                        </div>
+                                                                    ))}
                                                                 </CarouselItem>
                                                             ))}
                                                         </CarouselContent>
@@ -675,11 +752,8 @@ export default function Addtemplates() {
                                                         <CarouselNext className="text-black" />
                                                     </Carousel>
                                                 </div>
+
                                             )}
-                                            <img src={imagePreview} alt="" />
-                                            <p className='break-words text-sm font-semibold text-ellipsis text-justify'>{createTemplates.cardTitle}</p>
-                                            <p className='break-words mt-2 text-gray-500 text-ellipsis text-xs text-justify'>{createTemplates.cardDescription}</p>
-                                            <p className='break-words text-ellipsis text-xs text-justify'>{createTemplates.textMessageContent}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -766,6 +840,6 @@ export default function Addtemplates() {
                     </Tabs>
                 </div>
             </Layout>
-        </Fragment>
+        </Fragment >
     );
 }

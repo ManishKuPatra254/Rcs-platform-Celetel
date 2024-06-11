@@ -16,6 +16,7 @@ import AdminProfile from './Admin/Adminprofile';
 import Chatdetails from './User/Chatsinfo';
 import ProtectedRoute from './Routes/Protectedroute';
 import PageNotFound from './Routes/Page404';
+import Reports from './User/Reports';
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
           <Route path="/createcampaign" exact element={<ProtectedRoute Component={Createcampaign} />} />
           <Route path="/userprofile" exact element={<ProtectedRoute Component={Profile} />} />
           <Route path="/chatdetails" exact element={<ProtectedRoute Component={Chatdetails} />} />
+          <Route path="/reports/:campaignId" exact element={<ProtectedRoute Component={Reports} />} />
           <Route path="*" exact element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>

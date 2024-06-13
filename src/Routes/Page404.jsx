@@ -23,9 +23,9 @@ export default function PageNotFound() {
                             Please go back to the homepage.
                         </p>
                         <div className="w-full flex justify-center mt-2">
-                            <Link to={'/'}>
+                            <Link to={'/userdashboard'}>
                                 <Button className="mt-4 px-4 py-2 font-bold rounded-md">
-                                    Go Home
+                                    Go To Dashboard
                                 </Button>
                             </Link>
                         </div>

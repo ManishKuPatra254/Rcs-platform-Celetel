@@ -2,23 +2,21 @@ import { useState, useEffect, Fragment } from 'react';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
-// import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getCampaignsDetails, startCampaign } from '../Service/auth.service'; // Import startCampaign function
+import { getCampaignsDetails, startCampaign } from '../Service/auth.service';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react"
+import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react";
 import {
     Menubar,
     MenubarContent,
     MenubarItem,
     MenubarMenu,
     MenubarTrigger,
-} from "@/components/ui/menubar"
-// import { cn } from "@/lib/utils"
+} from "@/components/ui/menubar";
 import {
     Command,
     CommandEmpty,
@@ -26,19 +24,22 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { InitWebSocket } from '@/Routes/Websocket';
+import { Progress } from '@/components/ui/progress';
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
     { id: 'botId', label: 'Bot ID' },
     { id: 'campaignName', label: 'Campaign Name' },
     { id: 'totalNumbers', label: 'Total Numbers' },
-    { id: 'actions', label: 'Actions' },
+    { id: 'status', label: 'Status' },
 ];
 
 const frameworks = [
@@ -46,7 +47,6 @@ const frameworks = [
         value: "inprogress",
         label: "In Progress",
         icon: <Clock12 className="h-4 w-4 mr-2" />
-
     },
     {
         value: "completed",
@@ -58,22 +58,31 @@ const frameworks = [
         label: "Failed",
         icon: <CircleX className="h-4 w-4 mr-2" />,
     },
-]
+];
 
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [open, setOpen] = useState(false)
-    const [value, setValue] = useState("")
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState("");
     const [sortOrder, setSortOrder] = useState(null);
     const [hideBotId, setHideBotId] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [selectedCampaign, setSelectedCampaign] = useState(null);
+    const [progress, setProgress] = useState(0)
+
+    useEffect(() => {
+        InitWebSocket(setProgress);
+    }, [])
+
     console.log(sortOrder);
 
     useEffect(() => {
         const fetchCampaigns = async () => {
             try {
                 const response = await getCampaignsDetails();
+                console.log(response.campaigns, "cam")
                 const sortedCampaigns = response.campaigns.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setCampaigns(sortedCampaigns);
             } catch (error) {
@@ -103,7 +112,7 @@ export default function RcsDetails() {
         setPage(0);
     };
 
-    console.log(handleChangeRowsPerPage);
+    console.log(handleChangeRowsPerPage)
 
     const handleStartCampaign = async (campaignId) => {
         try {
@@ -118,9 +127,14 @@ export default function RcsDetails() {
         }
     };
 
+    console.log(handleStartCampaign);
+
+    const handleViewDetails = (campaign) => {
+        setSelectedCampaign(campaign);
+        setDrawerOpen(true);
+    };
 
     const totalPages = Math.ceil(campaigns.length / rowsPerPage);
-
 
     return (
         <Fragment>
@@ -136,7 +150,6 @@ export default function RcsDetails() {
                                 <Button className=''>Create Campaign</Button>
                             </Link>
                         </div>
-
 
                         <div className="p-6 border rounded-md overflow-auto">
                             <CardTitle className='text-2xl mb-1'>Welcome back !</CardTitle>
@@ -181,8 +194,8 @@ export default function RcsDetails() {
                                                                 key={framework.value}
                                                                 value={framework.value}
                                                                 onSelect={(currentValue) => {
-                                                                    setValue(currentValue === value ? "" : currentValue)
-                                                                    setOpen(false)
+                                                                    setValue(currentValue === value ? "" : currentValue);
+                                                                    setOpen(false);
                                                                 }}>
                                                                 {framework.icon}
                                                                 <span className="ml-2">{framework.label}</span>
@@ -238,18 +251,28 @@ export default function RcsDetails() {
                                                     {columns.map((column) => (
                                                         column.id === 'botId' && hideBotId ? null : (
                                                             <TableCell key={column.id}>
-                                                                {column.id === 'actions' ? (
+                                                                {column.id === 'status' ? (
                                                                     <div className="text-center flex space-x-2">
                                                                         {campaign.status !== 'started' && (
-                                                                            <Button variant="ghost">{campaign.status}</Button>
+                                                                            <Button variant="ghost"
+                                                                            // onClick={() => handleStartCampaign(campaign._id)}
+                                                                            >{campaign.status}</Button>
                                                                         )}
-                                                                        <Link to={`/reports/${campaign._id}`}>
-                                                                            <Button variant="link">View Details</Button>
-                                                                        </Link>
+                                                                        <Button variant="outline" onClick={() => handleViewDetails(campaign)}>
+                                                                            View Details
+                                                                        </Button>
+
+                                                                        <div>
+                                                                            <Progress value={progress} className="" />
+                                                                            <Button variant="ghost">{progress}%</Button>
+                                                                        </div>
                                                                     </div>
                                                                 ) : (
-                                                                    campaign[column.id]
-                                                                )}
+                                                                    column.id === 'campaignName' ? (
+                                                                        <span className="block w-48 truncate">{campaign[column.id]}</span>
+                                                                    ) : (
+                                                                        campaign[column.id]
+                                                                    ))}
                                                             </TableCell>
                                                         )
                                                     ))}
@@ -270,7 +293,6 @@ export default function RcsDetails() {
                                         )}
                                     </TableBody>
                                 </Table>
-
                             </div>
 
                             <Pagination className='mt-5 '>
@@ -307,6 +329,74 @@ export default function RcsDetails() {
                         </div>
                     </div>
                 </div>
+
+                {/* {selectedCampaign && (
+                    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+                        <DrawerContent className="p-8">
+                            <div className="flex items-end justify-end">
+                                <X onClick={() => setDrawerOpen(false)} className='hover:bg-slate-300 rounded-full' />
+                            </div>
+                            <div className="mx-auto w-full max-w-full">
+                                <DrawerHeader className="flex justify-between items-center flex-col sm:flex-row">
+                                    <DrawerTitle className="text-5xl">Campaign Details</DrawerTitle>
+                                    <Button variant="outline" className="ml-auto">Download summary (pdf)</Button>
+                                </DrawerHeader>
+
+                                <div className="grid grid-rows-3 grid-flow-col gap-4 mt-6">
+                                    <div className="row-span-3 bg-[#E0FBE2] p-4 rounded-md">
+                                        <Label htmlFor="" className="text-4xl font-semibold">Template Name - </Label>
+                                        <span className='text-md font-light'>{selectedCampaign.templateName}</span>
+                                        <Label htmlFor="" className='text-2xl font-bold'> Campaign Name - </Label>
+                                        <span className='text-md font-light'>{selectedCampaign.campaignName}</span>
+                                    </div>
+
+                                    <div className="col-span-2 bg-[#FFEFEF] p-4 rounded-md">
+                                        <Label htmlFor="" className="font-semibold text-4xl">Bot Id :  </Label>
+                                        <span className='text-md font-medium ml-2'> {selectedCampaign.botId}</span>
+                                    </div>
+
+                                    <div className="row-span-2 col-span-2 bg-[#FDF7E4] p-4 rounded-md">
+                                        <p className="text-sm">Created at : {selectedCampaign.createdAt}</p>
+                                        <p className="text-sm">Updated at : {selectedCampaign.updatedAt}</p>
+                                        <p className="text-sm">Total Numbers : {selectedCampaign.totalNumbers}</p>
+                                        <p className="text-sm">Status : {selectedCampaign.status}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </DrawerContent>
+                    </Drawer>
+                )} */}
+
+                {selectedCampaign && (
+                    <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+                        <SheetContent>
+                            <SheetHeader>
+                                <SheetTitle className="text-2xl">Campaign Details</SheetTitle>
+                                <SheetDescription>
+                                    You can see the detail view of the campaign.
+                                </SheetDescription>
+                            </SheetHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid items-center gap-4">
+                                    <p className='text-sm font-semibold'>Template Name : {selectedCampaign.templateName}</p>
+                                    <p className='text-sm font-semibold'>Campaign Name  : {selectedCampaign.campaignName}</p>
+                                    <p className="text-sm font-semibold">Created at : {selectedCampaign.createdAt}</p>
+                                    <p className="text-sm font-semibold">Updated at : {selectedCampaign.updatedAt}</p>
+                                    <p className="text-sm font-semibold">Total Numbers : {selectedCampaign.totalNumbers}</p>
+                                    <p className="text-sm font-semibold">Status : {selectedCampaign.status}</p>
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+
+                                </div>
+                            </div>
+                            <SheetFooter>
+                                <SheetClose asChild>
+                                    <Button variant="outline" className="ml-auto">Download summary (pdf)</Button>
+                                </SheetClose>
+                            </SheetFooter>
+                        </SheetContent>
+                    </Sheet>
+                )}
             </Layout>
         </Fragment>
     );

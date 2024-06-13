@@ -17,6 +17,7 @@ import Chatdetails from './User/Chatsinfo';
 import ProtectedRoute from './Routes/Protectedroute';
 import PageNotFound from './Routes/Page404';
 import Reports from './User/Reports';
+import { InitWebSocket } from './Routes/Websocket';
 
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="/chatdetails" exact element={<ProtectedRoute Component={Chatdetails} />} />
           <Route path="/reports/:campaignId" exact element={<ProtectedRoute Component={Reports} />} />
           <Route path="*" exact element={<PageNotFound />} />
+          <Route path="/webhook" exact element={<InitWebSocket />} />
         </Routes>
       </BrowserRouter>
     </Fragment>

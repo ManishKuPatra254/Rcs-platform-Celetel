@@ -330,43 +330,6 @@ export default function RcsDetails() {
                     </div>
                 </div>
 
-                {/* {selectedCampaign && (
-                    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-                        <DrawerContent className="p-8">
-                            <div className="flex items-end justify-end">
-                                <X onClick={() => setDrawerOpen(false)} className='hover:bg-slate-300 rounded-full' />
-                            </div>
-                            <div className="mx-auto w-full max-w-full">
-                                <DrawerHeader className="flex justify-between items-center flex-col sm:flex-row">
-                                    <DrawerTitle className="text-5xl">Campaign Details</DrawerTitle>
-                                    <Button variant="outline" className="ml-auto">Download summary (pdf)</Button>
-                                </DrawerHeader>
-
-                                <div className="grid grid-rows-3 grid-flow-col gap-4 mt-6">
-                                    <div className="row-span-3 bg-[#E0FBE2] p-4 rounded-md">
-                                        <Label htmlFor="" className="text-4xl font-semibold">Template Name - </Label>
-                                        <span className='text-md font-light'>{selectedCampaign.templateName}</span>
-                                        <Label htmlFor="" className='text-2xl font-bold'> Campaign Name - </Label>
-                                        <span className='text-md font-light'>{selectedCampaign.campaignName}</span>
-                                    </div>
-
-                                    <div className="col-span-2 bg-[#FFEFEF] p-4 rounded-md">
-                                        <Label htmlFor="" className="font-semibold text-4xl">Bot Id :  </Label>
-                                        <span className='text-md font-medium ml-2'> {selectedCampaign.botId}</span>
-                                    </div>
-
-                                    <div className="row-span-2 col-span-2 bg-[#FDF7E4] p-4 rounded-md">
-                                        <p className="text-sm">Created at : {selectedCampaign.createdAt}</p>
-                                        <p className="text-sm">Updated at : {selectedCampaign.updatedAt}</p>
-                                        <p className="text-sm">Total Numbers : {selectedCampaign.totalNumbers}</p>
-                                        <p className="text-sm">Status : {selectedCampaign.status}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </DrawerContent>
-                    </Drawer>
-                )} */}
-
                 {selectedCampaign && (
                     <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
                         <SheetContent>

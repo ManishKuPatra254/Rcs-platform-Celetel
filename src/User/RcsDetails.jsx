@@ -258,7 +258,7 @@ export default function RcsDetails() {
                                                                             // onClick={() => handleStartCampaign(campaign._id)}
                                                                             >{campaign.status}</Button>
                                                                         )}
-                                                                        <Button variant="outline" onClick={() => handleViewDetails(campaign)}>
+                                                                        <Button variant="link" onClick={() => handleViewDetails(campaign)}>
                                                                             View Details
                                                                         </Button>
 

@@ -1,49 +1,24 @@
-export function InitWebSocket(setProgress) {
-    const socket = new WebSocket('ws://157.15.202.251:8080');
-
-    socket.onopen = function () {
-        console.log('WebSocket connection opened');
-    };
-
-    socket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        console.log('Received data:', data);
-
-        if (data.processedCount !== undefined && data.totalNumbers !== undefined) {
-            const progress = (data.processedCount / data.totalNumbers) * 100;
-            console.log('Calculated progress:', progress);
-            setProgress(progress);
-        }
-    };
-
-    socket.onclose = function () {
-        console.log('WebSocket connection closed');
-    };
-
-    socket.onerror = function (error) {
-        console.error('WebSocket error:', error);
-    };
-}
-
 import { useState, useEffect, Fragment } from 'react';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
+// import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getCampaignsDetails, startCampaign } from '../Service/auth.service';
+import { getCampaignsDetails, startCampaign } from '../Service/auth.service'; // Import startCampaign function
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12, X } from "lucide-react";
+import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react"
 import {
     Menubar,
     MenubarContent,
     MenubarItem,
     MenubarMenu,
     MenubarTrigger,
-} from "@/components/ui/menubar";
+} from "@/components/ui/menubar"
+// import { cn } from "@/lib/utils"
 import {
     Command,
     CommandEmpty,
@@ -51,24 +26,19 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command";
+} from "@/components/ui/command"
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Label } from '@/components/ui/label';
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-// import { InitWebSocket } from '@/Routes/Websocket';
-import { Progress } from '@/components/ui/progress';
+} from "@/components/ui/popover"
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
     { id: 'botId', label: 'Bot ID' },
     { id: 'campaignName', label: 'Campaign Name' },
     { id: 'totalNumbers', label: 'Total Numbers' },
-    { id: 'status', label: 'Status' },
+    { id: 'actions', label: 'Actions' },
 ];
 
 const frameworks = [
@@ -76,6 +46,7 @@ const frameworks = [
         value: "inprogress",
         label: "In Progress",
         icon: <Clock12 className="h-4 w-4 mr-2" />
+
     },
     {
         value: "completed",
@@ -87,34 +58,22 @@ const frameworks = [
         label: "Failed",
         icon: <CircleX className="h-4 w-4 mr-2" />,
     },
-];
+]
 
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("");
+    const [open, setOpen] = useState(false)
+    const [value, setValue] = useState("")
     const [sortOrder, setSortOrder] = useState(null);
     const [hideBotId, setHideBotId] = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [selectedCampaign, setSelectedCampaign] = useState(null);
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        console.log("Initializing WebSocket...");
-        InitWebSocket(setProgress);
-    }, []);
-
-    useEffect(() => {
-        console.log("Progress updated:", progress);
-    }, [progress]);
+    console.log(sortOrder);
 
     useEffect(() => {
         const fetchCampaigns = async () => {
             try {
                 const response = await getCampaignsDetails();
-                console.log(response.campaigns, "cam");
                 const sortedCampaigns = response.campaigns.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setCampaigns(sortedCampaigns);
             } catch (error) {
@@ -144,6 +103,8 @@ export default function RcsDetails() {
         setPage(0);
     };
 
+    console.log(handleChangeRowsPerPage);
+
     const handleStartCampaign = async (campaignId) => {
         try {
             await startCampaign(campaignId);
@@ -157,12 +118,9 @@ export default function RcsDetails() {
         }
     };
 
-    const handleViewDetails = (campaign) => {
-        setSelectedCampaign(campaign);
-        setDrawerOpen(true);
-    };
 
     const totalPages = Math.ceil(campaigns.length / rowsPerPage);
+
 
     return (
         <Fragment>
@@ -178,6 +136,7 @@ export default function RcsDetails() {
                                 <Button className=''>Create Campaign</Button>
                             </Link>
                         </div>
+
 
                         <div className="p-6 border rounded-md overflow-auto">
                             <CardTitle className='text-2xl mb-1'>Welcome back !</CardTitle>
@@ -222,12 +181,11 @@ export default function RcsDetails() {
                                                                 key={framework.value}
                                                                 value={framework.value}
                                                                 onSelect={(currentValue) => {
-                                                                    setValue(currentValue === value ? "" : currentValue);
-                                                                    setOpen(false);
-                                                                }}
-                                                            >
+                                                                    setValue(currentValue === value ? "" : currentValue)
+                                                                    setOpen(false)
+                                                                }}>
                                                                 {framework.icon}
-                                                                {framework.label}
+                                                                <span className="ml-2">{framework.label}</span>
                                                             </CommandItem>
                                                         ))}
                                                     </CommandGroup>
@@ -235,182 +193,121 @@ export default function RcsDetails() {
                                             </Command>
                                         </PopoverContent>
                                     </Popover>
-
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button variant="outline" className="mt-4 ml-2 flex justify-between items-center px-4 py-0 text-xs">
-                                                Columns <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-[200px] p-4">
-                                            <div className="flex flex-col space-y-2">
-                                                <div className="flex justify-between items-center">
-                                                    <Label htmlFor="showBotId" className="text-sm">
-                                                        Show Bot ID
-                                                    </Label>
-                                                    <input
-                                                        type="checkbox"
-                                                        id="showBotId"
-                                                        checked={!hideBotId}
-                                                        onChange={() => setHideBotId(!hideBotId)}
-                                                        className="form-checkbox"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button variant="outline" className="mt-4 ml-2 flex justify-between items-center px-4 py-0 text-xs">
-                                                Sort <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-[200px] p-4">
-                                            <div className="flex flex-col space-y-2">
-                                                <div
-                                                    className="flex justify-between items-center cursor-pointer"
-                                                    onClick={() => handleSort('asc')}
-                                                >
-                                                    <span className="text-sm">Sort by Bot ID (Asc)</span>
-                                                </div>
-                                                <div
-                                                    className="flex justify-between items-center cursor-pointer"
-                                                    onClick={() => handleSort('desc')}
-                                                >
-                                                    <span className="text-sm">Sort by Bot ID (Desc)</span>
-                                                </div>
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-
-                                <div className="relative overflow-auto mt-4">
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                {columns.map((column) => (
-                                                    <TableCell key={column.id} className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        {column.label}
-                                                    </TableCell>
-                                                ))}
-                                                <TableCell className="text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</TableCell>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {campaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((campaign) => (
-                                                <TableRow key={campaign._id}>
-                                                    <TableCell className="text-sm text-gray-900">{campaign.templateName}</TableCell>
-                                                    <TableCell className="text-sm text-gray-900">{hideBotId ? '****' : campaign.botId}</TableCell>
-                                                    <TableCell className="text-sm text-gray-900">{campaign.campaignName}</TableCell>
-                                                    <TableCell className="text-sm text-gray-900">{campaign.totalNumbers}</TableCell>
-                                                    <TableCell className="text-sm text-gray-900">
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className={`ml-2 ${campaign.status === 'inprogress' ? 'text-blue-500' : campaign.status === 'completed' ? 'text-green-500' : 'text-red-500'}`}
-                                                        >
-                                                            {campaign.status}
-                                                        </Button>
-                                                    </TableCell>
-                                                    <TableCell className="text-sm text-gray-900">
-                                                        <Button onClick={() => handleStartCampaign(campaign._id)} className="mr-2" variant="outline" size="sm">
-                                                            Start
-                                                        </Button>
-                                                        <Button onClick={() => handleViewDetails(campaign)} variant="outline" size="sm">
-                                                            View
-                                                        </Button>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </div>
-
-                                <div className="flex justify-between items-center py-2">
-                                    <div>
-                                        <Pagination>
-                                            <PaginationPrevious
-                                                disabled={page === 0}
-                                                onClick={() => handleChangePage(page - 1)}
-                                            >
-                                                Previous
-                                            </PaginationPrevious>
-                                            <PaginationContent>
-                                                {[...Array(totalPages)].map((_, index) => (
-                                                    <PaginationItem key={index}>
-                                                        <PaginationLink
-                                                            active={page === index}
-                                                            onClick={() => handleChangePage(index)}
-                                                        >
-                                                            {index + 1}
-                                                        </PaginationLink>
-                                                    </PaginationItem>
-                                                ))}
-                                            </PaginationContent>
-                                            <PaginationNext
-                                                disabled={page === totalPages - 1}
-                                                onClick={() => handleChangePage(page + 1)}
-                                            >
-                                                Next
-                                            </PaginationNext>
-                                        </Pagination>
-                                    </div>
-
-                                    <div>
-                                        <select
-                                            value={rowsPerPage}
-                                            onChange={handleChangeRowsPerPage}
-                                            className="form-select mt-1 block w-full"
-                                        >
-                                            {[10, 20, 30].map((value) => (
-                                                <option key={value} value={value}>
-                                                    {value}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        className="ml-auto text-xs bg-transparent">
+                                        <ArrowRightLeft className='h-4 w-4 mr-3' />
+                                        View
+                                    </Button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="w-full grid auto-rows-max items-start gap-4 lg:col-span-4 lg:w-full sm:w-full">
-                        <div className="p-6 border rounded-md overflow-auto">
-                            <CardTitle className='text-2xl mb-1'>Campaign Progress</CardTitle>
-                            <Progress value={progress} className="mt-2" />
-                            <p className="mt-2 text-sm text-gray-600">Progress: {progress.toFixed(2)}%</p>
+                            <div className="rounded-md border mt-4 overflow-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            {columns.map((column) => (
+                                                column.id === 'botId' && hideBotId ? null : (
+                                                    <TableCell key={column.id}>
+                                                        {column.label === 'Bot ID' ? (
+                                                            <Menubar className="bg-transparent border-transparent">
+                                                                <MenubarMenu>
+                                                                    <MenubarTrigger className='flex gap-4 cursor-pointer'>
+                                                                        {column.label}
+                                                                        <ChevronsUpDown className='h-4 w-4 text-gray-400' />
+                                                                    </MenubarTrigger>
+                                                                    <MenubarContent>
+                                                                        <MenubarItem onClick={() => handleSort('asc')}>Ascending</MenubarItem>
+                                                                        <MenubarItem onClick={() => handleSort('desc')}>Descending</MenubarItem>
+                                                                        <MenubarItem onClick={() => setHideBotId(true)}>Hide</MenubarItem>
+                                                                    </MenubarContent>
+                                                                </MenubarMenu>
+                                                            </Menubar>
+                                                        ) : (
+                                                            column.label
+                                                        )}
+                                                    </TableCell>
+                                                )
+                                            ))}
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {campaigns.length > 0 ? (
+                                            campaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((campaign) => (
+                                                <TableRow key={campaign._id}>
+                                                    {columns.map((column) => (
+                                                        column.id === 'botId' && hideBotId ? null : (
+                                                            <TableCell key={column.id}>
+                                                                {column.id === 'actions' ? (
+                                                                    <div className="text-center flex space-x-2">
+                                                                        {campaign.status !== 'started' && (
+                                                                            <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
+                                                                        )}
+                                                                        <Link to={`/reports/${campaign._id}`}>
+                                                                            <Button variant="link">View Details</Button>
+                                                                        </Link>
+                                                                    </div>
+                                                                ) : (
+                                                                    campaign[column.id]
+                                                                )}
+                                                            </TableCell>
+                                                        )
+                                                    ))}
+                                                </TableRow>
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={columns.length} align="center">
+                                                    <div className="flex flex-col space-y-3">
+                                                        <Skeleton className="h-full w-full rounded-xl" />
+                                                        <div className="space-y-2">
+                                                            <Skeleton className="h-4 w-full" />
+                                                            <Skeleton className="h-4 w-full" />
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+
+                            </div>
+
+                            <Pagination className='mt-5 '>
+                                <PaginationContent className='cursor-pointer'>
+                                    <PaginationItem>
+                                        <PaginationPrevious
+                                            onClick={() => handleChangePage(page > 0 ? page - 1 : 0)}
+                                            disabled={page === 0}
+                                        />
+                                    </PaginationItem>
+                                    {Array.from({ length: totalPages }, (_, index) => (
+                                        <PaginationItem key={index}>
+                                            <PaginationLink
+                                                isActive={index === page}
+                                                onClick={() => handleChangePage(index)}
+                                            >
+                                                {index + 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    ))}
+                                    {totalPages > 5 && (
+                                        <PaginationItem>
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                    )}
+                                    <PaginationItem>
+                                        <PaginationNext
+                                            onClick={() => handleChangePage(page < totalPages - 1 ? page + 1 : totalPages - 1)}
+                                            disabled={page >= totalPages - 1}
+                                        />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
                         </div>
                     </div>
                 </div>
             </Layout>
-
-            {/* <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                <DrawerContent>
-                    <DrawerHeader>
-                        <DrawerTitle>Campaign Details</DrawerTitle>
-                        <DrawerDescription>
-                            View the details of your selected campaign.
-                        </DrawerDescription>
-                    </DrawerHeader>
-                    <DrawerBody>
-                        {selectedCampaign && (
-                            <div>
-                                <p className="text-sm">Template Name: {selectedCampaign.templateName}</p>
-                                <p className="text-sm">Bot ID: {selectedCampaign.botId}</p>
-                                <p className="text-sm">Campaign Name: {selectedCampaign.campaignName}</p>
-                                <p className="text-sm">Total Numbers: {selectedCampaign.totalNumbers}</p>
-                                <p className="text-sm">Status: {selectedCampaign.status}</p>
-                            </div>
-                        )}
-                    </DrawerBody>
-                    <DrawerFooter>
-                        <Button onClick={() => setDrawerOpen(false)} variant="outline">
-                            Close
-                        </Button>
-                    </DrawerFooter>
-                </DrawerContent>
-            </Drawer> */}
         </Fragment>
     );
 }

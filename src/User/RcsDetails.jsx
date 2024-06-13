@@ -241,7 +241,7 @@ export default function RcsDetails() {
                                                                 {column.id === 'actions' ? (
                                                                     <div className="text-center flex space-x-2">
                                                                         {campaign.status !== 'started' && (
-                                                                            <Button onClick={() => handleStartCampaign(campaign._id)}>Start</Button>
+                                                                            <Button variant="ghost">{campaign.status}</Button>
                                                                         )}
                                                                         <Link to={`/reports/${campaign._id}`}>
                                                                             <Button variant="link">View Details</Button>

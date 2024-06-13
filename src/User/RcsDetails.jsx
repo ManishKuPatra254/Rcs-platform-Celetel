@@ -33,6 +33,12 @@ import {
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { InitWebSocket } from '@/Routes/Websocket';
 import { Progress } from '@/components/ui/progress';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -40,6 +46,7 @@ const columns = [
     { id: 'campaignName', label: 'Campaign Name' },
     { id: 'totalNumbers', label: 'Total Numbers' },
     { id: 'status', label: 'Status' },
+    { id: 'actions', label: 'Actions' },
 ];
 
 const frameworks = [
@@ -127,7 +134,7 @@ export default function RcsDetails() {
         }
     };
 
-    console.log(handleStartCampaign);
+    // console.log(handleStartCampaign);
 
     const handleViewDetails = (campaign) => {
         setSelectedCampaign(campaign);
@@ -221,7 +228,7 @@ export default function RcsDetails() {
                                         <TableRow>
                                             {columns.map((column) => (
                                                 column.id === 'botId' && hideBotId ? null : (
-                                                    <TableCell key={column.id}>
+                                                    <TableCell key={column.id} className="text-center">
                                                         {column.label === 'Bot ID' ? (
                                                             <Menubar className="bg-transparent border-transparent">
                                                                 <MenubarMenu>
@@ -233,6 +240,7 @@ export default function RcsDetails() {
                                                                         <MenubarItem onClick={() => handleSort('asc')}>Ascending</MenubarItem>
                                                                         <MenubarItem onClick={() => handleSort('desc')}>Descending</MenubarItem>
                                                                         <MenubarItem onClick={() => setHideBotId(true)}>Hide</MenubarItem>
+                                                                        <MenubarItem onClick={() => setHideBotId(false)}>Show</MenubarItem>
                                                                     </MenubarContent>
                                                                 </MenubarMenu>
                                                             </Menubar>
@@ -250,22 +258,37 @@ export default function RcsDetails() {
                                                 <TableRow key={campaign._id}>
                                                     {columns.map((column) => (
                                                         column.id === 'botId' && hideBotId ? null : (
-                                                            <TableCell key={column.id}>
+                                                            <TableCell key={column.id} className="text-center">
                                                                 {column.id === 'status' ? (
-                                                                    <div className="text-center flex space-x-2">
-                                                                        {campaign.status !== 'started' && (
-                                                                            <Button variant="ghost"
-                                                                            // onClick={() => handleStartCampaign(campaign._id)}
-                                                                            >{campaign.status}</Button>
-                                                                        )}
-                                                                        <Button variant="outline" onClick={() => handleViewDetails(campaign)}>
-                                                                            View Details
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className={`ml-2 ${campaign.status === 'inprogress' ? 'text-blue-500' : campaign.status === 'completed' ? 'text-green-500' : 'text-red-500'}`}
+                                                                    >
+                                                                        {campaign.status}
+                                                                    </Button>
+                                                                ) : column.id === 'actions' ? (
+                                                                    <div className="flex space-x-2">
+                                                                        <Button onClick={() => handleStartCampaign(campaign._id)} className="mr-2" variant="outline" size="sm">
+                                                                            Start
                                                                         </Button>
 
-                                                                        <div>
-                                                                            <Progress value={progress} className="" />
-                                                                            <Button variant="ghost">{progress}%</Button>
-                                                                        </div>
+                                                                        <TooltipProvider>
+                                                                            <Tooltip>
+                                                                                <TooltipTrigger asChild>
+                                                                                    <Button variant='ghost'>
+                                                                                        <Progress value={progress} className="w-32 h-2" />
+                                                                                    </Button>
+                                                                                </TooltipTrigger>
+                                                                                <TooltipContent className="text-sm">
+                                                                                    <p>{progress}%</p>
+                                                                                </TooltipContent>
+                                                                            </Tooltip>
+                                                                        </TooltipProvider>
+
+                                                                        <Button variant="link" onClick={() => handleViewDetails(campaign)}>
+                                                                            View Details
+                                                                        </Button>
                                                                     </div>
                                                                 ) : (
                                                                     column.id === 'campaignName' ? (
@@ -329,43 +352,6 @@ export default function RcsDetails() {
                         </div>
                     </div>
                 </div>
-
-                {/* {selectedCampaign && (
-                    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-                        <DrawerContent className="p-8">
-                            <div className="flex items-end justify-end">
-                                <X onClick={() => setDrawerOpen(false)} className='hover:bg-slate-300 rounded-full' />
-                            </div>
-                            <div className="mx-auto w-full max-w-full">
-                                <DrawerHeader className="flex justify-between items-center flex-col sm:flex-row">
-                                    <DrawerTitle className="text-5xl">Campaign Details</DrawerTitle>
-                                    <Button variant="outline" className="ml-auto">Download summary (pdf)</Button>
-                                </DrawerHeader>
-
-                                <div className="grid grid-rows-3 grid-flow-col gap-4 mt-6">
-                                    <div className="row-span-3 bg-[#E0FBE2] p-4 rounded-md">
-                                        <Label htmlFor="" className="text-4xl font-semibold">Template Name - </Label>
-                                        <span className='text-md font-light'>{selectedCampaign.templateName}</span>
-                                        <Label htmlFor="" className='text-2xl font-bold'> Campaign Name - </Label>
-                                        <span className='text-md font-light'>{selectedCampaign.campaignName}</span>
-                                    </div>
-
-                                    <div className="col-span-2 bg-[#FFEFEF] p-4 rounded-md">
-                                        <Label htmlFor="" className="font-semibold text-4xl">Bot Id :  </Label>
-                                        <span className='text-md font-medium ml-2'> {selectedCampaign.botId}</span>
-                                    </div>
-
-                                    <div className="row-span-2 col-span-2 bg-[#FDF7E4] p-4 rounded-md">
-                                        <p className="text-sm">Created at : {selectedCampaign.createdAt}</p>
-                                        <p className="text-sm">Updated at : {selectedCampaign.updatedAt}</p>
-                                        <p className="text-sm">Total Numbers : {selectedCampaign.totalNumbers}</p>
-                                        <p className="text-sm">Status : {selectedCampaign.status}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </DrawerContent>
-                    </Drawer>
-                )} */}
 
                 {selectedCampaign && (
                     <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>

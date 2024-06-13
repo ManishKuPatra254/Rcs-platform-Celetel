@@ -15,7 +15,7 @@ export default function Reports() {
             try {
                 const response = await getCampaignsDetails();
                 console.log(response, "responsereports");
-                const details = response.find(campaign => campaign._id === campaignId);
+                const details = response.campaigns.find(campaign => campaign._id === campaignId);
                 console.log(details, "detailsinreports");
                 setCampaignDetails(details || {});
             } catch (error) {

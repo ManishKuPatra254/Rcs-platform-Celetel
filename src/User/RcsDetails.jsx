@@ -33,6 +33,12 @@ import {
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { InitWebSocket } from '@/Routes/Websocket';
 import { Progress } from '@/components/ui/progress';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -40,6 +46,7 @@ const columns = [
     { id: 'campaignName', label: 'Campaign Name' },
     { id: 'totalNumbers', label: 'Total Numbers' },
     { id: 'status', label: 'Status' },
+    { id: 'actions', label: 'Actions' },
 ];
 
 const frameworks = [
@@ -127,7 +134,7 @@ export default function RcsDetails() {
         }
     };
 
-    console.log(handleStartCampaign);
+    // console.log(handleStartCampaign);
 
     const handleViewDetails = (campaign) => {
         setSelectedCampaign(campaign);
@@ -221,7 +228,7 @@ export default function RcsDetails() {
                                         <TableRow>
                                             {columns.map((column) => (
                                                 column.id === 'botId' && hideBotId ? null : (
-                                                    <TableCell key={column.id}>
+                                                    <TableCell key={column.id} className="text-center">
                                                         {column.label === 'Bot ID' ? (
                                                             <Menubar className="bg-transparent border-transparent">
                                                                 <MenubarMenu>
@@ -233,6 +240,7 @@ export default function RcsDetails() {
                                                                         <MenubarItem onClick={() => handleSort('asc')}>Ascending</MenubarItem>
                                                                         <MenubarItem onClick={() => handleSort('desc')}>Descending</MenubarItem>
                                                                         <MenubarItem onClick={() => setHideBotId(true)}>Hide</MenubarItem>
+                                                                        <MenubarItem onClick={() => setHideBotId(false)}>Show</MenubarItem>
                                                                     </MenubarContent>
                                                                 </MenubarMenu>
                                                             </Menubar>
@@ -250,22 +258,37 @@ export default function RcsDetails() {
                                                 <TableRow key={campaign._id}>
                                                     {columns.map((column) => (
                                                         column.id === 'botId' && hideBotId ? null : (
-                                                            <TableCell key={column.id}>
+                                                            <TableCell key={column.id} className="text-center">
                                                                 {column.id === 'status' ? (
-                                                                    <div className="text-center flex space-x-2">
-                                                                        {campaign.status !== 'started' && (
-                                                                            <Button variant="ghost"
-                                                                            // onClick={() => handleStartCampaign(campaign._id)}
-                                                                            >{campaign.status}</Button>
-                                                                        )}
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className={`ml-2 ${campaign.status === 'inprogress' ? 'text-blue-500' : campaign.status === 'completed' ? 'text-green-500' : 'text-red-500'}`}
+                                                                    >
+                                                                        {campaign.status}
+                                                                    </Button>
+                                                                ) : column.id === 'actions' ? (
+                                                                    <div className="flex space-x-2">
+                                                                        <Button onClick={() => handleStartCampaign(campaign._id)} className="mr-2" variant="outline" size="sm">
+                                                                            Start
+                                                                        </Button>
+
+                                                                        <TooltipProvider>
+                                                                            <Tooltip>
+                                                                                <TooltipTrigger asChild>
+                                                                                    <Button variant='ghost'>
+                                                                                        <Progress value={progress} className="w-32 h-2" />
+                                                                                    </Button>
+                                                                                </TooltipTrigger>
+                                                                                <TooltipContent className="text-sm">
+                                                                                    <p>{progress}%</p>
+                                                                                </TooltipContent>
+                                                                            </Tooltip>
+                                                                        </TooltipProvider>
+
                                                                         <Button variant="link" onClick={() => handleViewDetails(campaign)}>
                                                                             View Details
                                                                         </Button>
-
-                                                                        <div>
-                                                                            <Progress value={progress} className="" />
-                                                                            <Button variant="ghost">{progress}%</Button>
-                                                                        </div>
                                                                     </div>
                                                                 ) : (
                                                                     column.id === 'campaignName' ? (

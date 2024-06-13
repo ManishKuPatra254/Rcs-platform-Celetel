@@ -1,6 +1,6 @@
 
 export function InitWebSocket(setProgress) {
-    const socket = new WebSocket('ws://157.15.202.251:8080');
+    const socket = new WebSocket('wss://157.15.202.251:8080');
 
     socket.onopen = function () {
         console.log('WebSocket connection opened');

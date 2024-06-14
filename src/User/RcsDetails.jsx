@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useRef } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,8 +39,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+
+
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -70,7 +70,6 @@ const frameworks = [
 ];
 
 export default function RcsDetails() {
-    const printRef = useRef()
     const [campaigns, setCampaigns] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -142,22 +141,6 @@ export default function RcsDetails() {
         setDrawerOpen(true);
     };
 
-    function downloadPdfFormat() {
-        const input = printRef.current;
-        html2canvas(input).then((canvas) => {
-            const imageData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4', true);
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = pdf.internal.pageSize.getHeight();
-            const imageWidth = canvas.width;
-            const imageHeight = canvas.height;
-            const ratio = Math.min(pdfWidth / imageWidth, pdfHeight / imageHeight);
-            const imageX = (pdfWidth - imageWidth * ratio) / 2
-            const imageY = 30;
-            pdf.addImage(imageData, 'PNG', imageX, imageY, imageWidth * ratio, imageHeight * ratio);
-            pdf.save('Untitled document.pdf')
-        })
-    }
 
     const totalPages = Math.ceil(campaigns.length / rowsPerPage);
 
@@ -402,7 +385,7 @@ export default function RcsDetails() {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between gap-2 w-auto p-4 ">
-                                    <Button variant="outline" onClick={downloadPdfFormat} className="">Download summary (pdf)</Button>
+                                    <Button variant="outline" className="">Download summary (pdf)</Button>
                                     <Link to={`/reports/campaign/${selectedCampaign._id}`}>
                                         <Button variant="outline" className=""> Individual number data</Button>
                                     </Link>

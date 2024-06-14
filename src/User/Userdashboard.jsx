@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { Layout } from "../Layout/Layout"
 import {
     Activity,
@@ -26,69 +26,18 @@ import { Progress } from "@/components/ui/progress"
 import { XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { AreaChart, Area } from 'recharts';
 import { BarChart, Bar, Rectangle } from 'recharts';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { getCampaignsDetails } from "@/Service/auth.service"
+import { Skeleton } from "@/components/ui/skeleton"
 
+const columns = [
+    { id: 'templateName', label: 'Template Name' },
+    { id: 'botId', label: 'Bot ID' },
+    { id: 'campaignName', label: 'Campaign Name' },
+    { id: 'totalNumbers', label: 'Total Numbers' },
+    { id: 'status', label: 'Status' },
+];
 
-const campaigntable = [
-    {
-        slno: "1",
-        paymentStatus: "In progress",
-        botId: "Quiz India Movement",
-        totalAmount: "$250.00",
-        templateName: "Template 1",
-        campaignName: "Campaign 1"
-    },
-    {
-        slno: "2",
-        paymentStatus: "Pending",
-        botId: "Health Potli",
-        totalAmount: "$150.00",
-        templateName: "Template 2",
-        campaignName: "Campaign 2"
-
-    },
-    {
-        slno: "3",
-        paymentStatus: "Completed",
-        botId: "Database Solutions Services",
-        totalAmount: "$350.00",
-        templateName: "Template 3",
-        campaignName: "Campaign 3"
-
-    },
-    {
-        slno: "4",
-        paymentStatus: "In progress",
-        botId: "Manipal TRUtest",
-        totalAmount: "$450.00",
-        templateName: "Template 4",
-        campaignName: "Campaign 4"
-    },
-    {
-        slno: "5",
-        paymentStatus: "Completed",
-        botId: "Atlytic",
-        totalAmount: "$550.00",
-        templateName: "Template 5",
-        campaignName: "Campaign 5"
-    },
-    {
-        slno: "6",
-        paymentStatus: "In progress",
-        botId: "VAPP",
-        totalAmount: "$200.00",
-        templateName: "Template 6",
-        campaignName: "Campaign 6"
-    },
-    {
-        slno: "7",
-        paymentStatus: "Failed",
-        botId: "LOANSI",
-        totalAmount: "$300.00",
-        templateName: "Template 7",
-        campaignName: "Campaign 7"
-    },
-]
 
 const getStatusColor = (status) => {
     if (status === "In progress") {
@@ -106,6 +55,25 @@ const getStatusColor = (status) => {
 
 
 export function Userdashboard() {
+
+    const [campaigns, setCampaigns] = useState([]);
+
+    useEffect(() => {
+        const fetchCampaigns = async () => {
+            try {
+                const response = await getCampaignsDetails();
+                console.log(response.campaigns, "cam")
+                const sortedCampaigns = response.campaigns.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setCampaigns(sortedCampaigns);
+            } catch (error) {
+                console.error('Error fetching campaign data:', error.message);
+            }
+        };
+
+        fetchCampaigns();
+    }, []);
+
+
 
     const revenuemonthlystats = [
         {
@@ -192,8 +160,8 @@ export function Userdashboard() {
         },
         {
             name: 'Page G',
-            uv: 3490,
-            pv: 4300,
+            date: 3490,
+            time: 4300,
             amt: 2100,
         },
     ];
@@ -444,35 +412,52 @@ export function Userdashboard() {
 
                                     <TabsContent value="monthlycamp">
                                         <Card x-chunk="dashboard-05-chunk-3" className="mb-4">
-                                            <CardHeader className="px-7">
-                                                <CardTitle></CardTitle>
-                                                <CardDescription>
-                                                </CardDescription>
-                                            </CardHeader>
                                             <CardContent>
-                                                <div className="rounded-md border mt-4 overflow-auto">
+                                                <div className="rounded-md border mt-4 text-center overflow-auto">
                                                     <Table>
-                                                        <TableCaption></TableCaption>
                                                         <TableHeader>
                                                             <TableRow>
-                                                                <TableHead className="w-[100px]">Sl No.</TableHead>
-                                                                <TableHead>Template Name</TableHead>
-                                                                <TableHead>Bot Id</TableHead>
-                                                                <TableHead>Campaign Name</TableHead>
-                                                                <TableHead>Status</TableHead>
+                                                                {columns.map((column) => (
+                                                                    <TableHead key={column.id} className="text-center">
+                                                                        {column.label}
+                                                                    </TableHead>
+                                                                ))}
                                                             </TableRow>
                                                         </TableHeader>
                                                         <TableBody>
-                                                            {campaigntable.map((invoice) => (
-                                                                <TableRow key={invoice.slno}>
-                                                                    <TableCell className="font-medium">{invoice.slno}</TableCell>
-                                                                    <TableCell>{invoice.templateName}</TableCell>
-                                                                    <TableCell>{invoice.botId}</TableCell>
-                                                                    <TableCell>{invoice.campaignName}</TableCell>
-                                                                    <TableCell className={getStatusColor(invoice.paymentStatus)}>
-                                                                        {invoice.paymentStatus}
-                                                                    </TableCell>                                                                </TableRow>
-                                                            ))}
+                                                            {campaigns.length > 0 ? (
+                                                                campaigns.map((campaign) => (
+                                                                    <TableRow key={campaign._id}>
+                                                                        {columns.map((column) => (
+                                                                            column.id === 'status' ? (
+                                                                                <TableCell key={column.id} className={`text-center ${getStatusColor(campaign[column.id])}`}>
+                                                                                    {campaign[column.id]}
+                                                                                </TableCell>
+                                                                            ) : column.id === 'actions' ? null : (
+                                                                                <TableCell key={column.id} className="text-center">
+                                                                                    {column.id === 'campaignName' ? (
+                                                                                        <span className="block  truncate text-center">{campaign[column.id]}</span>
+                                                                                    ) : (
+                                                                                        campaign[column.id]
+                                                                                    )}
+                                                                                </TableCell>
+                                                                            )
+                                                                        ))}
+                                                                    </TableRow>
+                                                                ))
+                                                            ) : (
+                                                                <TableRow>
+                                                                    <TableCell colSpan={columns.length} align="center">
+                                                                        <div className="flex flex-col space-y-3">
+                                                                            <Skeleton className="h-full w-full rounded-xl" />
+                                                                            <div className="space-y-2">
+                                                                                <Skeleton className="h-4 w-full" />
+                                                                                <Skeleton className="h-4 w-full" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            )}
                                                         </TableBody>
 
                                                     </Table>

@@ -1,7 +1,7 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useRef } from 'react';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
-import { CardDescription, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { getCampaignsDetails, startCampaign } from '../Service/auth.service';
@@ -30,7 +30,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { InitWebSocket } from '@/Routes/Websocket';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -39,6 +39,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -68,6 +70,7 @@ const frameworks = [
 ];
 
 export default function RcsDetails() {
+    const printRef = useRef()
     const [campaigns, setCampaigns] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -134,12 +137,27 @@ export default function RcsDetails() {
         }
     };
 
-    // console.log(handleStartCampaign);
-
     const handleViewDetails = (campaign) => {
         setSelectedCampaign(campaign);
         setDrawerOpen(true);
     };
+
+    function downloadPdfFormat() {
+        const input = printRef.current;
+        html2canvas(input).then((canvas) => {
+            const imageData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4', true);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imageWidth = canvas.width;
+            const imageHeight = canvas.height;
+            const ratio = Math.min(pdfWidth / imageWidth, pdfHeight / imageHeight);
+            const imageX = (pdfWidth - imageWidth * ratio) / 2
+            const imageY = 30;
+            pdf.addImage(imageData, 'PNG', imageX, imageY, imageWidth * ratio, imageHeight * ratio);
+            pdf.save('Untitled document.pdf')
+        })
+    }
 
     const totalPages = Math.ceil(campaigns.length / rowsPerPage);
 
@@ -354,31 +372,43 @@ export default function RcsDetails() {
                 </div>
 
                 {selectedCampaign && (
-                    <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-                        <SheetContent>
+                    <Sheet open={drawerOpen} onOpenChange={setDrawerOpen} className='border-2'>
+                        <SheetContent className='w-auto border-4'>
                             <SheetHeader>
                                 <SheetTitle className="text-2xl">Campaign Details</SheetTitle>
                                 <SheetDescription>
                                     You can see the detail view of the campaign.
                                 </SheetDescription>
                             </SheetHeader>
-                            <div className="grid gap-4 py-4">
-                                <div className="grid items-center gap-4">
-                                    <p className='text-sm font-semibold'>Template Name : {selectedCampaign.templateName}</p>
-                                    <p className='text-sm font-semibold'>Campaign Name  : {selectedCampaign.campaignName}</p>
-                                    <p className="text-sm font-semibold">Created at : {selectedCampaign.createdAt}</p>
-                                    <p className="text-sm font-semibold">Updated at : {selectedCampaign.updatedAt}</p>
-                                    <p className="text-sm font-semibold">Total Numbers : {selectedCampaign.totalNumbers}</p>
-                                    <p className="text-sm font-semibold">Status : {selectedCampaign.status}</p>
-                                </div>
-                                <div className="grid grid-cols-4 items-center gap-4">
+                            <Card className="w-auto mt-4">
+                                <CardHeader>
+                                    <CardTitle>Details</CardTitle>
+                                    <CardDescription>You can see the detail view of the campaign.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className='w-auto'>
+                                    <div className="grid gap-4 py-4">
+                                        <div className="grid items-center gap-4">
+                                            <p className='text-sm font-semibold'>Template Name : {selectedCampaign.templateName}</p>
+                                            <p className='text-sm font-semibold'>Campaign Name  : {selectedCampaign.campaignName}</p>
+                                            <p className="text-sm font-semibold">Created at : {selectedCampaign.createdAt}</p>
+                                            <p className="text-sm font-semibold">Updated at : {selectedCampaign.updatedAt}</p>
+                                            <p className="text-sm font-semibold">Total Numbers : {selectedCampaign.totalNumbers}</p>
+                                            <p className="text-sm font-semibold">Status : {selectedCampaign.status}</p>
+                                        </div>
+                                        {/* <div className="flex items-center gap-4">
 
-                                </div>
-                            </div>
+                                        </div> */}
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="flex justify-between gap-2 w-auto p-4 ">
+                                    <Button variant="outline" onClick={downloadPdfFormat} className="">Download summary (pdf)</Button>
+                                    <Link to={`/reports/campaign/${selectedCampaign._id}`}>
+                                        <Button variant="outline" className=""> Individual number data</Button>
+                                    </Link>
+                                </CardFooter>
+                            </Card>
                             <SheetFooter>
-                                <SheetClose asChild>
-                                    <Button variant="outline" className="ml-auto">Download summary (pdf)</Button>
-                                </SheetClose>
                             </SheetFooter>
                         </SheetContent>
                     </Sheet>

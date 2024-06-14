@@ -34,6 +34,9 @@ export const loginUser = async (formData) => {
         // setting to the local storage....................................
         localStorage.setItem('token', token);
         localStorage.setItem('typerole', typerole);
+        console.log(response.data.username, "res1");
+        const username = response.data.username;
+        localStorage.setItem('username', username);
         return response.data;
 
     } catch (error) {
@@ -54,9 +57,6 @@ export const getProfile = async () => {
             }
         });
         console.log(responseContact.data, "responseContact");
-        console.log(responseContact.data.user.username, "res1");
-        const username = responseContact.data.user.username;
-        localStorage.setItem('username', username);
         return responseContact.data;
     } catch (error) {
         console.log("Profile fetch error", error.message);
@@ -269,6 +269,26 @@ export const updateTemplatedataById = async (id, updatedData) => {
 
     try {
         const response = await axios.put(`https://157.15.202.251/api/template/update/${id}`, updatedData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("Profile update error", error.message);
+        throw error;
+    }
+};
+
+
+export const getCampaignsDetailsResponse = async (campaignId) => {
+    console.log(campaignId, "campaignresponse");
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.get(`https://157.15.202.251/api/campaigns/responses?campaignId=${campaignId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'

@@ -157,13 +157,21 @@ export const getCampaignsDetails = async () => {
                 Authorization: `Bearer ${token}`
             }
         });
+
         console.log(responseContact.data, "responseContact");
+        if (responseContact.data.campaigns && Array.isArray(responseContact.data.campaigns)) {
+            console.log(responseContact.data.campaigns[0]._id, "first campaign id");
+        } else {
+            console.log("Campaigns data is not in the expected format or is missing");
+        }
+
         return responseContact.data;
     } catch (error) {
         console.log("Profile fetch error", error.message);
         throw error;
     }
 }
+
 
 
 export const createCampaigns = async (formData) => {

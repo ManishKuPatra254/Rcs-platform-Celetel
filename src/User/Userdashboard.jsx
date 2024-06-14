@@ -185,7 +185,7 @@ export function Userdashboard() {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Progress value={70} aria-label="12% increase" />
+                            {/* <Progress value={70} aria-label="12% increase" /> */}
                         </CardFooter>
                     </Card>
 
@@ -204,7 +204,7 @@ export function Userdashboard() {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Progress value={30} aria-label="12% increase" />
+                            {/* <Progress value={30} aria-label="12% increase" /> */}
                         </CardFooter>
                     </Card>
 
@@ -223,7 +223,7 @@ export function Userdashboard() {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Progress value={50} aria-label="12% increase" />
+                            {/* <Progress value={50} aria-label="12% increase" /> */}
                         </CardFooter>
                     </Card>
 
@@ -242,7 +242,7 @@ export function Userdashboard() {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Progress value={90} aria-label="12% increase" />
+                            {/* <Progress value={90} aria-label="12% increase" /> */}
                         </CardFooter>
                     </Card>
                 </div>

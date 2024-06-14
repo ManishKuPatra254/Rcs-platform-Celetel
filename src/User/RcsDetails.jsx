@@ -32,14 +32,6 @@ import {
 } from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { InitWebSocket } from '@/Routes/Websocket';
-import { Progress } from '@/components/ui/progress';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
-
 
 
 const columns = [
@@ -79,7 +71,7 @@ export default function RcsDetails() {
     const [hideBotId, setHideBotId] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
-    const [progress, setProgress] = useState(0)
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         InitWebSocket(setProgress);
@@ -274,7 +266,7 @@ export default function RcsDetails() {
                                                                             Start
                                                                         </Button>
 
-                                                                        <TooltipProvider>
+                                                                        {/* <TooltipProvider>
                                                                             <Tooltip>
                                                                                 <TooltipTrigger asChild>
                                                                                     <Button variant='ghost'>
@@ -285,7 +277,7 @@ export default function RcsDetails() {
                                                                                     <p>{progress}%</p>
                                                                                 </TooltipContent>
                                                                             </Tooltip>
-                                                                        </TooltipProvider>
+                                                                        </TooltipProvider> */}
 
                                                                         <Button variant="link" onClick={() => handleViewDetails(campaign)}>
                                                                             View Details

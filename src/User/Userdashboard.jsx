@@ -257,7 +257,7 @@ export function Userdashboard() {
 
                 <main className="w-full grid mt-4 flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-16">
                     <div className="flex flex-col w-full gap-4 xl:flex-row lg:flex-row md:flex-col sm:flex-col">
-                        <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 min-w-[675px]">
+                        <div className="grid justify-between gap-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 w-full">
                             <Card className="rounded-md">
                                 <CardHeader className="flex justify-between">
                                     <Tabs defaultValue="monthly" className="w-full">
@@ -331,7 +331,7 @@ export function Userdashboard() {
                             </Card>
                         </div>
 
-                        <div className="min-w-[675px]">
+                        <div className="w-full">
                             <Card className="rounded-md">
                                 <CardHeader className="flex justify-between">
                                     <Tabs defaultValue="monthlyorder" className="w-full">

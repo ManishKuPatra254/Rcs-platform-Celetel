@@ -328,8 +328,8 @@ export default function RcsDetails() {
                 </div>
 
                 {selectedCampaign && (
-                    <Sheet open={drawerOpen} onOpenChange={setDrawerOpen} className='border-2'>
-                        <SheetContent className='w-auto border-4'>
+                    <Sheet open={drawerOpen} onOpenChange={setDrawerOpen} className=''>
+                        <SheetContent className='w-auto'>
                             <SheetHeader>
                                 <SheetTitle className="text-2xl">Campaign Details</SheetTitle>
                                 <SheetDescription>
@@ -357,10 +357,10 @@ export default function RcsDetails() {
                                         </div> */}
                                     </div>
                                 </CardContent>
-                                <CardFooter className="flex justify-between gap-2 w-auto p-4 ">
-                                    <Button variant="outline" className="">Download summary (pdf)</Button>
-                                    <Link to={`/reports/campaign/${selectedCampaign._id}`}>
-                                        <Button variant="outline" className=""> Individual number data</Button>
+                                <CardFooter className="flex justify-between gap-2 w-auto p-4 flex-col lg:flex-row xl:flex-row md:flex-col sm:flex-col">
+                                    <Button variant="outline" className="w-full">Download summary (pdf)</Button>
+                                    <Link to={`/reports/campaign/${selectedCampaign._id}`} className='w-full'>
+                                        <Button variant="outline" className="w-full"> Individual number data</Button>
                                     </Link>
                                 </CardFooter>
                             </Card>

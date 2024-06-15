@@ -29,6 +29,9 @@ import { BarChart, Bar, Rectangle } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { getCampaignsDetails } from "@/Service/auth.service"
 import { Skeleton } from "@/components/ui/skeleton"
+import { InitWebSocket } from "@/Routes/Websocket"
+import { Button } from "@/components/ui/button"
+import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -57,6 +60,11 @@ const getStatusColor = (status) => {
 export function Userdashboard() {
 
     const [campaigns, setCampaigns] = useState([]);
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        InitWebSocket(setProgress);
+    }, [])
 
     useEffect(() => {
         const fetchCampaigns = async () => {
@@ -411,7 +419,7 @@ export function Userdashboard() {
                                     </div>
 
                                     <TabsContent value="monthlycamp">
-                                        <Card x-chunk="dashboard-05-chunk-3" className="mb-4">
+                                        <Card x-chunk="dashboard-05-chunk-3" className="mb-4 border-transparent">
                                             <CardContent>
                                                 <div className="rounded-md border mt-4 text-center overflow-auto">
                                                     <Table>
@@ -432,6 +440,18 @@ export function Userdashboard() {
                                                                             column.id === 'status' ? (
                                                                                 <TableCell key={column.id} className={`text-center ${getStatusColor(campaign[column.id])}`}>
                                                                                     {campaign[column.id]}
+                                                                                    <TooltipProvider>
+                                                                                        <Tooltip>
+                                                                                            <TooltipTrigger asChild>
+                                                                                                <Button variant='ghost'>
+                                                                                                    <Progress value={progress} className="w-32 h-2" />
+                                                                                                </Button>
+                                                                                            </TooltipTrigger>
+                                                                                            <TooltipContent className="text-sm">
+                                                                                                <p>{progress}%</p>
+                                                                                            </TooltipContent>
+                                                                                        </Tooltip>
+                                                                                    </TooltipProvider>
                                                                                 </TableCell>
                                                                             ) : column.id === 'actions' ? null : (
                                                                                 <TableCell key={column.id} className="text-center">

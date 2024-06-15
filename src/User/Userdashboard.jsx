@@ -27,7 +27,7 @@ import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recha
 import { AreaChart, Area } from 'recharts';
 import { BarChart, Bar, Rectangle } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { getCampaignsDetails } from "@/Service/auth.service"
+import { getCampaignsDetails, getDashboardData, getWeelyAndDaliyStats } from "@/Service/auth.service"
 import { Skeleton } from "@/components/ui/skeleton"
 import { InitWebSocket } from "@/Routes/Websocket"
 import { Button } from "@/components/ui/button"
@@ -61,6 +61,10 @@ export function Userdashboard() {
 
     const [campaigns, setCampaigns] = useState([]);
     const [progress, setProgress] = useState(0);
+    const [dashboardData, setDashboardData] = useState('')
+    const [weeklyData, setWeeklyData] = useState([]);
+    const [dailyData, setDailyData] = useState([]);
+
 
     useEffect(() => {
         InitWebSocket(setProgress);
@@ -82,6 +86,54 @@ export function Userdashboard() {
     }, []);
 
 
+    useEffect(() => {
+        const fetchDashboardDetails = async () => {
+            try {
+                const response = await getDashboardData();
+                console.log(response, "dash")
+                setDashboardData(response);
+            } catch (error) {
+                console.error('Error fetching campaign data:', error.message);
+            }
+        };
+
+        fetchDashboardDetails();
+    }, []);
+
+
+
+
+    useEffect(() => {
+        const fetchGraphDetailsTodayWeekly = async () => {
+            try {
+                const response = await getWeelyAndDaliyStats();
+                console.log(response, "stats");
+
+                // Transform the data to include only weekly stats
+                const weeklyStats = response.weeklyStats.map(stat => ({
+                    name: stat.week,
+                    sent: stat.sent,
+                    delivered: stat.delivered,
+                    failed: stat.failed,
+                }));
+
+                setWeeklyData(weeklyStats);
+
+                const dailyStats = response.dailyStats.map(stat => ({
+                    name: stat.day,
+                    sent: stat.sent,
+                    delivered: stat.delivered,
+                    failed: stat.failed,
+                }));
+
+                setDailyData(dailyStats);
+            } catch (error) {
+                console.error('Error fetching campaign data:', error.message);
+            }
+        };
+
+        fetchGraphDetailsTodayWeekly();
+    }, []);
 
     const revenuemonthlystats = [
         {
@@ -181,9 +233,10 @@ export function Userdashboard() {
                     <Card x-chunk="dashboard-05-chunk-0" className="flex-1 min-w-[250px] m-2 hover:bg-gray-200 transition">
                         <CardHeader className="pb-2">
                             <CardDescription className="flex gap-4 items-center">Total Campaigns </CardDescription>
-                            <CardTitle className="text-xl flex justify-between gap-4 items-center">550 each min  <div className="bg-gray-300 p-1.5 rounded-sm">
-                                <Send size={18} />
-                            </div>
+                            <CardTitle className="text-xl flex justify-between gap-4 items-center">{dashboardData.totalCampaigns} Campaigns
+                                <div className="bg-gray-300 p-1.5 rounded-sm">
+                                    <Send size={18} />
+                                </div>
                             </CardTitle>
 
                         </CardHeader>
@@ -200,7 +253,7 @@ export function Userdashboard() {
                     <Card x-chunk="dashboard-05-chunk-1" className="flex-1 min-w-[250px] m-2 hover:bg-gray-200 transition">
                         <CardHeader className="pb-2">
                             <CardDescription >Total Delivered</CardDescription>
-                            <CardTitle className="text-xl flex justify-between gap-4 items-center">₹550 million
+                            <CardTitle className="text-xl flex justify-between gap-4 items-center">{dashboardData.totalMessagesDelivered} Message Delivered
                                 <div className="bg-red-300 p-1.5 rounded-sm">
                                     <PackageCheck size={18} />
                                 </div>
@@ -219,7 +272,7 @@ export function Userdashboard() {
                     <Card x-chunk="dashboard-05-chunk-2" className="flex-1 min-w-[250px] m-2 hover:bg-gray-200 transition">
                         <CardHeader className="pb-2">
                             <CardDescription>Total Actions</CardDescription>
-                            <CardTitle className="text-xl flex justify-between gap-4 items-center">₹550 million
+                            <CardTitle className="text-xl flex justify-between gap-4 items-center">{dashboardData.deliveredChange} Actions
                                 <div className="bg-purple-300 p-1.5 rounded-sm">
                                     <Activity size={18} />
                                 </div>
@@ -237,8 +290,8 @@ export function Userdashboard() {
 
                     <Card x-chunk="dashboard-05-chunk-3" className="flex-1 min-w-[250px] m-2 hover:bg-gray-200 transition">
                         <CardHeader className="pb-2">
-                            <CardDescription>Total Read</CardDescription>
-                            <CardTitle className="text-xl flex justify-between gap-4 items-center">₹550 million
+                            <CardDescription>Total Read Status</CardDescription>
+                            <CardTitle className="text-xl flex justify-between gap-4 items-center">{dashboardData.totalReadStatus} Read
                                 <div className="bg-blue-300 p-1.5 rounded-sm">
                                     <BookOpenCheck size={18} />
                                 </div>
@@ -295,6 +348,7 @@ export function Userdashboard() {
                                                             <Tooltip />
                                                             <Area type="monotone" dataKey="uv" stroke="#C80036" fill="#C80036" />
                                                             <Area type="monotone" dataKey="pv" stroke="#EF9C66" fill="#EF9C66" />
+                                                            <Area type="monotone" dataKey="amt" stroke="#000" fill="#000" />
                                                         </AreaChart>
                                                     </ResponsiveContainer>
 
@@ -310,6 +364,25 @@ export function Userdashboard() {
                                                     </CardDescription>
                                                 </CardHeader>
                                                 <CardContent>
+                                                    <ResponsiveContainer width="100%" height={300}>
+                                                        <AreaChart
+                                                            data={weeklyData}
+                                                            margin={{
+                                                                top: 10,
+                                                                right: 30,
+                                                                left: 0,
+                                                                bottom: 0,
+                                                            }}
+                                                        >
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="name" className="font-semibold text-xs" />
+                                                            <YAxis className="font-semibold text-xs" />
+                                                            <Tooltip />
+                                                            <Area type="monotone" dataKey="sent" stroke="#C80036" fill="#C80036" />
+                                                            <Area type="monotone" dataKey="delivered" stroke="#EF9C66" fill="#EF9C66" />
+                                                            <Area type="monotone" dataKey="failed" stroke="#000" fill="#000" />
+                                                        </AreaChart>
+                                                    </ResponsiveContainer>
                                                 </CardContent>
                                             </Card>
                                         </TabsContent>
@@ -323,6 +396,25 @@ export function Userdashboard() {
                                                     </CardDescription>
                                                 </CardHeader>
                                                 <CardContent>
+                                                    <ResponsiveContainer width="100%" height={300}>
+                                                        <AreaChart
+                                                            data={dailyData}
+                                                            margin={{
+                                                                top: 10,
+                                                                right: 30,
+                                                                left: 0,
+                                                                bottom: 0,
+                                                            }}
+                                                        >
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="name" className="font-semibold text-xs" />
+                                                            <YAxis className="font-semibold text-xs" />
+                                                            <Tooltip />
+                                                            <Area type="monotone" dataKey="sent" stroke="#435585" fill="#435585" />
+                                                            <Area type="monotone" dataKey="delivered" stroke="#ED2B2A" fill="#ED2B2A" />
+                                                            <Area type="monotone" dataKey="failed" stroke="#005B41" fill="#005B41" />
+                                                        </AreaChart>
+                                                    </ResponsiveContainer>
                                                 </CardContent>
                                             </Card>
                                         </TabsContent>

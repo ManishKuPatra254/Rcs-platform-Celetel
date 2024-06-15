@@ -312,6 +312,46 @@ export const getCampaignsDetailsResponse = async (campaignId) => {
 
 
 
+export const getDashboardData = async () => {
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.get(`https://157.15.202.251/api/dashboard/stats`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("error", error.message);
+        throw error;
+    }
+};
+
+
+export const getWeelyAndDaliyStats = async () => {
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.get(`https://157.15.202.251/api/dashboard/weekly-daily-stats`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("error", error.message);
+        throw error;
+    }
+};
+
+
+
+
 // admin panel apis .............................................................
 
 export const getAllUsers = async () => {

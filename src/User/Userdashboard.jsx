@@ -421,66 +421,70 @@ export function Userdashboard() {
                                     <TabsContent value="monthlycamp">
                                         <Card x-chunk="dashboard-05-chunk-3" className="mb-4 border-transparent">
                                             <CardContent>
-                                                <div className="rounded-md border mt-4 text-center overflow-auto">
-                                                    <Table>
-                                                        <TableHeader>
-                                                            <TableRow>
-                                                                {columns.map((column) => (
-                                                                    <TableHead key={column.id} className="text-center">
-                                                                        {column.label}
-                                                                    </TableHead>
-                                                                ))}
-                                                            </TableRow>
-                                                        </TableHeader>
-                                                        <TableBody>
-                                                            {campaigns.length > 0 ? (
-                                                                campaigns.map((campaign) => (
-                                                                    <TableRow key={campaign._id}>
+                                                <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
+                                                    <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-full lg:col-span-4 lg:w-full sm:w-full">
+                                                        <div className="rounded-md border mt-4 text-center overflow-auto">
+                                                            <Table>
+                                                                <TableHeader>
+                                                                    <TableRow>
                                                                         {columns.map((column) => (
-                                                                            column.id === 'status' ? (
-                                                                                <TableCell key={column.id} className={`text-center ${getStatusColor(campaign[column.id])}`}>
-                                                                                    {campaign[column.id]}
-                                                                                    <TooltipProvider>
-                                                                                        <Tooltip>
-                                                                                            <TooltipTrigger asChild>
-                                                                                                <Button variant='ghost'>
-                                                                                                    <Progress value={progress} className="w-32 h-2" />
-                                                                                                </Button>
-                                                                                            </TooltipTrigger>
-                                                                                            <TooltipContent className="text-sm">
-                                                                                                <p>{progress}%</p>
-                                                                                            </TooltipContent>
-                                                                                        </Tooltip>
-                                                                                    </TooltipProvider>
-                                                                                </TableCell>
-                                                                            ) : column.id === 'actions' ? null : (
-                                                                                <TableCell key={column.id} className="text-center">
-                                                                                    {column.id === 'campaignName' ? (
-                                                                                        <span className="block  truncate text-center">{campaign[column.id]}</span>
-                                                                                    ) : (
-                                                                                        campaign[column.id]
-                                                                                    )}
-                                                                                </TableCell>
-                                                                            )
+                                                                            <TableHead key={column.id} className="text-center">
+                                                                                {column.label}
+                                                                            </TableHead>
                                                                         ))}
                                                                     </TableRow>
-                                                                ))
-                                                            ) : (
-                                                                <TableRow>
-                                                                    <TableCell colSpan={columns.length} align="center">
-                                                                        <div className="flex flex-col space-y-3">
-                                                                            <Skeleton className="h-full w-full rounded-xl" />
-                                                                            <div className="space-y-2">
-                                                                                <Skeleton className="h-4 w-full" />
-                                                                                <Skeleton className="h-4 w-full" />
-                                                                            </div>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            )}
-                                                        </TableBody>
+                                                                </TableHeader>
+                                                                <TableBody>
+                                                                    {campaigns.length > 0 ? (
+                                                                        campaigns.map((campaign) => (
+                                                                            <TableRow key={campaign._id}>
+                                                                                {columns.map((column) => (
+                                                                                    column.id === 'status' ? (
+                                                                                        <TableCell key={column.id} className={`text-center ${getStatusColor(campaign[column.id])}`}>
+                                                                                            {campaign[column.id]}
+                                                                                            <TooltipProvider>
+                                                                                                <Tooltip>
+                                                                                                    <TooltipTrigger asChild>
+                                                                                                        <Button variant='ghost'>
+                                                                                                            <Progress value={progress} className="w-32 h-2" />
+                                                                                                        </Button>
+                                                                                                    </TooltipTrigger>
+                                                                                                    <TooltipContent className="text-sm">
+                                                                                                        <p>{progress}%</p>
+                                                                                                    </TooltipContent>
+                                                                                                </Tooltip>
+                                                                                            </TooltipProvider>
+                                                                                        </TableCell>
+                                                                                    ) : column.id === 'actions' ? null : (
+                                                                                        <TableCell key={column.id} className="text-center">
+                                                                                            {column.id === 'campaignName' ? (
+                                                                                                <span className="block  truncate text-center">{campaign[column.id]}</span>
+                                                                                            ) : (
+                                                                                                campaign[column.id]
+                                                                                            )}
+                                                                                        </TableCell>
+                                                                                    )
+                                                                                ))}
+                                                                            </TableRow>
+                                                                        ))
+                                                                    ) : (
+                                                                        <TableRow>
+                                                                            <TableCell colSpan={columns.length} align="center">
+                                                                                <div className="flex flex-col space-y-3">
+                                                                                    <Skeleton className="h-full w-full rounded-xl" />
+                                                                                    <div className="space-y-2">
+                                                                                        <Skeleton className="h-4 w-full" />
+                                                                                        <Skeleton className="h-4 w-full" />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </TableCell>
+                                                                        </TableRow>
+                                                                    )}
+                                                                </TableBody>
 
-                                                    </Table>
+                                                            </Table>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </CardContent>
                                         </Card>
@@ -516,6 +520,6 @@ export function Userdashboard() {
                     </div>
                 </main>
             </Layout>
-        </Fragment>
+        </Fragment >
     )
 }

@@ -39,6 +39,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Link as RouterLink } from 'react-router-dom';
 import { Fragment } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import mainceltellogo from '../assets/Group (1).svg'
 
 // import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
@@ -333,7 +334,7 @@ const UserLayout = ({ children }) => {
                             className="group flex h-12 w-12 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
                         >
                             <img
-                                src="/src/assets/Group (1).svg"
+                                src={mainceltellogo}
                                 alt="Description"
                                 className="h-auto w-auto transition-all group-hover:scale-110 object-cover"
                             />

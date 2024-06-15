@@ -250,16 +250,17 @@ export default function RcsDetails() {
                                                                     <Button
                                                                         variant="ghost"
                                                                         size="sm"
-                                                                        className={`ml-2 ${campaign.status === 'inprogress' ? 'text-blue-500' : campaign.status === 'completed' ? 'text-green-500' : 'text-red-500'}`}
+                                                                        className={`ml-2 font-bold ${campaign.status === 'started' ? 'text-blue-500' : campaign.status === 'Completed' ? 'text-green-500' : 'text-red-500'}`}
                                                                     >
-                                                                        {campaign.status}
+                                                                        {campaign[column.id]}
                                                                     </Button>
                                                                 ) : column.id === 'actions' ? (
                                                                     <div className="flex space-x-2">
-                                                                        <Button onClick={() => handleStartCampaign(campaign._id)} className="mr-2" variant="outline" size="sm">
-                                                                            Start
-                                                                        </Button>
-
+                                                                        {campaign.status !== 'started' && (
+                                                                            <Button variant="secondary" onClick={() => handleStartCampaign(campaign._id)}>
+                                                                                Start
+                                                                            </Button>
+                                                                        )}
                                                                         <Button variant="link" onClick={() => handleViewDetails(campaign)}>
                                                                             View Details
                                                                         </Button>
@@ -352,9 +353,6 @@ export default function RcsDetails() {
                                             <p className="text-sm font-semibold">Total Numbers : {selectedCampaign.totalNumbers}</p>
                                             <p className="text-sm font-semibold">Status : {selectedCampaign.status}</p>
                                         </div>
-                                        {/* <div className="flex items-center gap-4">
-
-                                        </div> */}
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between gap-2 w-auto p-4 flex-col lg:flex-row xl:flex-row md:flex-col sm:flex-col">
@@ -370,6 +368,6 @@ export default function RcsDetails() {
                     </Sheet>
                 )}
             </Layout>
-        </Fragment>
+        </Fragment >
     );
 }

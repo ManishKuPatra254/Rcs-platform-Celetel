@@ -202,10 +202,12 @@ export default function Createcampaign() {
                                     Create</Button>
                                 {campaignCreated && campaigns.map(campaign => (
                                     <div key={campaign._id} className="flex justify-end py-6 gap-4">
-                                        <Button type="button" className="px-10 bg-slate-500" onClick={() => handleStartCampaign(campaign._id)}>
-                                            <CirclePlay className="mr-3 h-4 w-4" />
-                                            Start Now
-                                        </Button>
+                                        {campaign.status !== 'started' && (
+                                            <Button type="button" className="px-10 bg-slate-500" onClick={() => handleStartCampaign(campaign._id)}>
+                                                <CirclePlay className="mr-3 h-4 w-4" />
+                                                Start Now
+                                            </Button>
+                                        )}
                                         <Link to={'/sendrcs'}>
                                             <Button type="button" className="bg-slate-500 px-10">
                                                 <SendToBack className="mr-3 h-4 w-4" />
@@ -331,6 +333,6 @@ export default function Createcampaign() {
                     </Tabs>
                 </div>
             </Layout>
-        </Fragment >
+        </Fragment>
     )
 }

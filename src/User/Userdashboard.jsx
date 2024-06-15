@@ -23,7 +23,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import { XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AreaChart, Area } from 'recharts';
 import { BarChart, Bar, Rectangle } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -256,7 +256,7 @@ export function Userdashboard() {
                 </div>
 
                 <main className="w-full grid mt-4 flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-16">
-                    <div className="flex w-full gap-4 lg:flex-row md:flex-col sm:flex-col">
+                    <div className="flex flex-col w-full gap-4 xl:flex-row lg:flex-row md:flex-col sm:flex-col">
                         <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 min-w-[675px]">
                             <Card className="rounded-md">
                                 <CardHeader className="flex justify-between">
@@ -279,24 +279,24 @@ export function Userdashboard() {
                                                     </CardDescription>
                                                 </CardHeader>
                                                 <CardContent>
-                                                    <AreaChart
-                                                        width={600}
-                                                        height={300}
-                                                        data={revenuemonthlystats}
-                                                        margin={{
-                                                            top: 10,
-                                                            right: 30,
-                                                            left: 0,
-                                                            bottom: 0,
-                                                        }}
-                                                    >
-                                                        <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis dataKey="name" className="font-semibold text-xs" />
-                                                        <YAxis className="font-semibold text-xs" />
-                                                        <Tooltip />
-                                                        <Area type="monotone" dataKey="uv" stroke="#C80036" fill="#C80036" />
-                                                        <Area type="monotone" dataKey="pv" stroke="#EF9C66" fill="#EF9C66" />
-                                                    </AreaChart>
+                                                    <ResponsiveContainer width="100%" height={300}>
+                                                        <AreaChart
+                                                            data={revenuemonthlystats}
+                                                            margin={{
+                                                                top: 10,
+                                                                right: 30,
+                                                                left: 0,
+                                                                bottom: 0,
+                                                            }}
+                                                        >
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="name" className="font-semibold text-xs" />
+                                                            <YAxis className="font-semibold text-xs" />
+                                                            <Tooltip />
+                                                            <Area type="monotone" dataKey="uv" stroke="#C80036" fill="#C80036" />
+                                                            <Area type="monotone" dataKey="pv" stroke="#EF9C66" fill="#EF9C66" />
+                                                        </AreaChart>
+                                                    </ResponsiveContainer>
 
                                                 </CardContent>
                                             </Card>
@@ -352,25 +352,25 @@ export function Userdashboard() {
                                                     </CardDescription>
                                                 </CardHeader>
                                                 <CardContent>
-                                                    <BarChart
-                                                        width={600}
-                                                        height={300}
-                                                        data={ordermonthly}
-                                                        margin={{
-                                                            top: 5,
-                                                            right: 30,
-                                                            left: 20,
-                                                            bottom: 5,
-                                                        }}
-                                                    >
-                                                        <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis dataKey="name" className="text-xs font-semibold" />
-                                                        <YAxis className="text-xs font-semibold" />
-                                                        <Tooltip />
-                                                        {/* <Legend /> */}
-                                                        <Bar dataKey="pv" fill="#373A40" activeBar={<Rectangle fill="#B3C8CF" stroke="black" />} />
-                                                        <Bar dataKey="uv" fill="#D8B4FE" activeBar={<Rectangle fill="#EFBC9B" stroke="purple" />} />
-                                                    </BarChart>
+                                                    <ResponsiveContainer width="100%" height={300}>
+                                                        <BarChart
+                                                            data={ordermonthly}
+                                                            margin={{
+                                                                top: 5,
+                                                                right: 30,
+                                                                left: 20,
+                                                                bottom: 5,
+                                                            }}
+                                                        >
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="name" className="text-xs font-semibold" />
+                                                            <YAxis className="text-xs font-semibold" />
+                                                            <Tooltip />
+                                                            {/* <Legend /> */}
+                                                            <Bar dataKey="pv" fill="#373A40" activeBar={<Rectangle fill="#B3C8CF" stroke="black" />} />
+                                                            <Bar dataKey="uv" fill="#D8B4FE" activeBar={<Rectangle fill="#EFBC9B" stroke="purple" />} />
+                                                        </BarChart>
+                                                    </ResponsiveContainer>
                                                 </CardContent>
                                             </Card>
                                         </TabsContent>
@@ -513,7 +513,6 @@ export function Userdashboard() {
                                 </Tabs>
                             </CardHeader>
                         </Card>
-
                     </div>
                 </main>
             </Layout>

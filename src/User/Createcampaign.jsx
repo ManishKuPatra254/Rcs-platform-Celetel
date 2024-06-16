@@ -101,6 +101,8 @@ export default function Createcampaign() {
                         ...formData,
                         status: 'created',
                         _id: response._id,
+                        started: false,
+
 
                     }
                 ]);
@@ -140,10 +142,13 @@ export default function Createcampaign() {
     const handleStartCampaign = async (campaignId) => {
         try {
             await startCampaign(campaignId);
-            const updatedCampaigns = campaigns.map(campaign =>
-                campaign._id === campaignId ? { ...campaign, status: 'started' } : campaign
-            );
-            setCampaigns(updatedCampaigns);
+            // Update the campaigns state with the started campaign
+            setCampaigns(prevCampaigns => prevCampaigns.map(campaign => {
+                if (campaign._id === campaignId) {
+                    return { ...campaign, started: true };
+                }
+                return campaign;
+            }));
             toast("Campaign started successfully");
         } catch (error) {
             console.error('Error starting campaign:', error.message);

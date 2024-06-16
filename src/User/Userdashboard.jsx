@@ -62,8 +62,7 @@ export function Userdashboard() {
     const [campaigns, setCampaigns] = useState([]);
     const [progress, setProgress] = useState(0);
     const [dashboardData, setDashboardData] = useState('')
-    const [weeklyData, setWeeklyData] = useState([]);
-    const [dailyData, setDailyData] = useState([]);
+    const [dailyData, setDailyData] = useState();
 
 
     useEffect(() => {
@@ -108,16 +107,6 @@ export function Userdashboard() {
             try {
                 const response = await getWeelyAndDaliyStats();
                 console.log(response, "stats");
-
-                // Transform the data to include only weekly stats
-                const weeklyStats = response.weeklyStats.map(stat => ({
-                    name: stat.week,
-                    sent: stat.sent,
-                    delivered: stat.delivered,
-                    failed: stat.failed,
-                }));
-
-                setWeeklyData(weeklyStats);
 
                 const dailyStats = response.dailyStats.map(stat => ({
                     name: stat.day,
@@ -366,7 +355,7 @@ export function Userdashboard() {
                                                 <CardContent>
                                                     <ResponsiveContainer width="100%" height={300}>
                                                         <AreaChart
-                                                            data={weeklyData}
+                                                            data={dailyData}
                                                             margin={{
                                                                 top: 10,
                                                                 right: 30,
@@ -378,9 +367,9 @@ export function Userdashboard() {
                                                             <XAxis dataKey="name" className="font-semibold text-xs" />
                                                             <YAxis className="font-semibold text-xs" />
                                                             <Tooltip />
-                                                            <Area type="monotone" dataKey="sent" stroke="#C80036" fill="#C80036" />
-                                                            <Area type="monotone" dataKey="delivered" stroke="#EF9C66" fill="#EF9C66" />
-                                                            <Area type="monotone" dataKey="failed" stroke="#000" fill="#000" />
+                                                            <Area type="monotone" dataKey="sent" stroke="#7E7474" fill="#7E7474" />
+                                                            <Area type="monotone" dataKey="delivered" stroke="#FB2576" fill="#FB2576" />
+                                                            <Area type="monotone" dataKey="failed" stroke="#FFD369" fill="#FFD369" />
                                                         </AreaChart>
                                                     </ResponsiveContainer>
                                                 </CardContent>
@@ -396,25 +385,7 @@ export function Userdashboard() {
                                                     </CardDescription>
                                                 </CardHeader>
                                                 <CardContent>
-                                                    <ResponsiveContainer width="100%" height={300}>
-                                                        <AreaChart
-                                                            data={dailyData}
-                                                            margin={{
-                                                                top: 10,
-                                                                right: 30,
-                                                                left: 0,
-                                                                bottom: 0,
-                                                            }}
-                                                        >
-                                                            <CartesianGrid strokeDasharray="3 3" />
-                                                            <XAxis dataKey="name" className="font-semibold text-xs" />
-                                                            <YAxis className="font-semibold text-xs" />
-                                                            <Tooltip />
-                                                            <Area type="monotone" dataKey="sent" stroke="#435585" fill="#435585" />
-                                                            <Area type="monotone" dataKey="delivered" stroke="#ED2B2A" fill="#ED2B2A" />
-                                                            <Area type="monotone" dataKey="failed" stroke="#005B41" fill="#005B41" />
-                                                        </AreaChart>
-                                                    </ResponsiveContainer>
+
                                                 </CardContent>
                                             </Card>
                                         </TabsContent>

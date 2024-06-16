@@ -112,10 +112,13 @@ export default function RcsDetails() {
     const handleStartCampaign = async (campaignId) => {
         try {
             await startCampaign(campaignId);
-            const updatedCampaigns = campaigns.map(campaign =>
-                campaign._id === campaignId ? { ...campaign, status: 'started' } : campaign
-            );
-            setCampaigns(updatedCampaigns);
+            // Update the campaigns state with the started campaign
+            setCampaigns(prevCampaigns => prevCampaigns.map(campaign => {
+                if (campaign._id === campaignId) {
+                    return { ...campaign, started: true };
+                }
+                return campaign;
+            }));
             toast("Campaign started successfully");
         } catch (error) {
             console.error('Error starting campaign:', error.message);
@@ -135,7 +138,7 @@ export default function RcsDetails() {
             <Layout>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
                     <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-full lg:col-span-4 lg:w-full sm:w-full">
-                        <div className="flex md:flex-row justify-between items-center mt-3">
+                        <div className="flex md:flex-row justify-between items-center mt-3 px-7">
                             <CardTitle className='text-3xl'>
                                 Send RCS
                             </CardTitle>
@@ -256,10 +259,12 @@ export default function RcsDetails() {
                                                                     </Button>
                                                                 ) : column.id === 'actions' ? (
                                                                     <div className="flex space-x-2">
-                                                                        {campaign.status !== 'started' && (
+                                                                        {campaign.status !== 'started' && !campaign.started ? (
                                                                             <Button variant="secondary" onClick={() => handleStartCampaign(campaign._id)}>
                                                                                 Start
                                                                             </Button>
+                                                                        ) : (
+                                                                            <Button variant="ghost">Campaign already started</Button>
                                                                         )}
                                                                         <Button variant="link" onClick={() => handleViewDetails(campaign)}>
                                                                             View Details

@@ -475,7 +475,7 @@ const UserLayout = ({ children }) => {
                                         to={'/chatdetails'}
                                         className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                                     >
-                                        <LineChart className="h-5 w-5" />
+                                        <MessageCircleMore className="h-5 w-5" />
                                         Chats
                                     </Link>
                                 </nav>

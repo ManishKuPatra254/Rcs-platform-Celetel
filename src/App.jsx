@@ -18,6 +18,7 @@ import ProtectedRoute from './Routes/Protectedroute';
 import PageNotFound from './Routes/Page404';
 import Reports from './User/Reports';
 import Campaigndetailed from './User/Campaigndetailed';
+// import Sidebar from './User/Sidebar';
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
             <Route path='campaign/:campaignId' element={<Campaigndetailed />} />
           </Route>
           <Route path="*" exact element={<PageNotFound />} />
+          {/* <Route path="/sidebar" exact element={<Sidebar />} /> */}
         </Routes>
       </BrowserRouter>
     </Fragment>

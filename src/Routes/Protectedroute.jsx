@@ -1,21 +1,42 @@
 /* eslint-disable react/prop-types */
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import LogoutDialog from './Logout';
 
-export default function ProtectedRoute(props) {
-    const { Component } = props;
+export default function ProtectedRoute({ Component }) {
+    const [openDialog, setOpenDialog] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        let token = localStorage.getItem('token');
-        if (!token) {
-            navigate("/");
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        const checkToken = () => {
+            const token = localStorage.getItem('token');
+            // Check if token is missing and user navigates away from protected route
+            if (!token && location.pathname !== '/') {
+                setOpenDialog(true);
+            }
+        };
+
+        // Check token initially
+        checkToken();
+
+        // Listen to location changes
+        const unlisten = () => {
+            navigate(checkToken);
+        };
+
+        return unlisten();
+    }, [navigate, location.pathname]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setOpenDialog(false);
+        navigate('/');
+    };
 
     return (
         <div>
+            <LogoutDialog open={openDialog} onClose={() => setOpenDialog(false)} onLogout={handleLogout} />
             <Component />
         </div>
     );

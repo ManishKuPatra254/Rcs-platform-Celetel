@@ -2,7 +2,7 @@
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CardTitle } from '@/components/ui/card';
-import { EllipsisVertical, FolderUp, Search } from 'lucide-react';
+import { Activity, EllipsisVertical, Eye, FolderUp, MousePointerClick, PackageCheck, Pointer, Search, Send } from 'lucide-react';
 import { Fragment } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import {
@@ -227,6 +227,68 @@ export default function Reports() {
                                     </ResponsiveContainer>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
+                                </CardFooter>
+                            </Card>
+                        </div>
+
+                        <div className="grid gap-3 lg:grid-cols-3 px-6 lg:gap-4 md:grid-cols-2 sm:grid-cols-1 p-3 w-full">
+                            <Card x-chunk="dashboard-05-chunk-0" className="flex-1 min-w-[250px] m-2 hover:bg-gray-200 transition">
+                                <CardHeader className="">
+
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-30 w-30 p-4 items-center justify-center rounded-sm bg-sky-100">
+                                            <Eye className=' text-blue-400' />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-xl text-gray-900">Impressions</p>
+                                            <p className="text-md font-bold text-gray-500">4,512</p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    {/* <Progress value={70} aria-label="12% increase" /> */}
+                                </CardFooter>
+                            </Card>
+
+                            <Card x-chunk="dashboard-05-chunk-1" className="flex-1 min-w-[250px] m-2 hover:bg-gray-200 transition">
+                                <CardHeader className="pb-2">
+
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-30 w-30 p-4 items-center justify-center rounded-sm bg-sky-100">
+                                            <MousePointerClick className=' text-blue-400' />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-xl text-gray-900">Clicks</p>
+                                            <p className="text-md font-bold text-gray-500">2,552</p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    {/* <Progress value={30} aria-label="12% increase" /> */}
+                                </CardFooter>
+                            </Card>
+
+                            <Card x-chunk="dashboard-05-chunk-3" className="flex-1 min-w-[250px] m-2 hover:bg-gray-200 transition">
+                                <CardHeader className="pb-2">
+
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-30 w-30 p-4 items-center justify-center rounded-sm bg-green-100">
+                                            <Pointer className=' text-green-600' />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-xl text-gray-900">Click through rate</p>
+                                            <p className="text-md font-bold text-gray-500">15%</p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    {/* <Progress value={90} aria-label="12% increase" /> */}
                                 </CardFooter>
                             </Card>
                         </div>

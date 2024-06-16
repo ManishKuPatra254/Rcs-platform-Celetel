@@ -583,6 +583,6 @@ export function Userdashboard() {
                     </div>
                 </main>
             </Layout>
-        </Fragment >
+        </Fragment>
     )
 }

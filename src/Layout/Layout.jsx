@@ -425,7 +425,7 @@ const UserLayout = ({ children }) => {
 
 
                 <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-                    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+                    <header className="sticky top-0 z-30 flex h-14 items-center border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button size="icon" variant="outline" className="sm:hidden">
@@ -513,14 +513,14 @@ const UserLayout = ({ children }) => {
                         </Breadcrumb>
                         <div className="relative ml-auto flex-1 md:grow-0">
                         </div>
-                        <Search className=" h-5 w-5" />
-                        <BellDot className="mr-3 h-5 w-5" />
+                        <Search className="mr-4 h-5 w-5" />
+                        <BellDot className="mr-4 h-5 w-5" />
 
                         <Button
-                            variant="outline"
+                            variant="ghost"
                             size="icon"
-                            className="overflow-hidden rounded-full">
-                            <Avatar>
+                            className="overflow-hidden rounded-full cursor-default p-0">
+                            <Avatar className="p-0 h-8 w-8 mr-2">
                                 <AvatarImage src="" alt={username} />
                                 <AvatarFallback className="font-medium bg-slate-300 text-slate-800">{firstLetter}</AvatarFallback>
                             </Avatar>

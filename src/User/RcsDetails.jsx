@@ -31,6 +31,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Helmet } from 'react-helmet';
 
 
 const columns = [
@@ -136,6 +137,9 @@ export default function RcsDetails() {
     return (
         <Fragment>
             <Layout>
+                <Helmet>
+                    <title> Rcs Details | RCS Celetel</title>
+                </Helmet>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
                     <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-full lg:col-span-4 lg:w-full sm:w-full">
                         <div className="flex md:flex-row justify-between items-center mt-3 px-7">

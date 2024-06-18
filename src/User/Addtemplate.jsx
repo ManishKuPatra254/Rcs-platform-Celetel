@@ -47,6 +47,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
+import { Helmet } from 'react-helmet';
 
 
 export default function Addtemplates() {
@@ -286,6 +287,9 @@ export default function Addtemplates() {
     return (
         <Fragment>
             <Layout>
+                <Helmet>
+                    <title> Create Templates | RCS Celetel</title>
+                </Helmet>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-3 w-full lg:grid-cols-3">
                     <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
                         <Box sx={{

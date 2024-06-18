@@ -32,6 +32,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { InitWebSocket } from "@/Routes/Websocket"
 import { Button } from "@/components/ui/button"
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Helmet } from "react-helmet"
 
 const columns = [
     { id: 'templateName', label: 'Template Name' },
@@ -218,6 +219,9 @@ export function Userdashboard() {
     return (
         <Fragment>
             <Layout>
+                <Helmet>
+                    <title> User Dashboard | RCS Celetel</title>
+                </Helmet>
                 <div className="grid gap-3 lg:grid-cols-4 lg:gap-4 md:grid-cols-2 sm:grid-cols-1 p-3 w-full">
                     <Card x-chunk="dashboard-05-chunk-0" className="flex-1 min-w-[250px] m-2 hover:bg-gray-200 transition">
                         <CardHeader className="pb-2">

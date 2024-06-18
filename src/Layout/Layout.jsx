@@ -40,6 +40,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Fragment } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import mainceltellogo from '../assets/Group (1).svg'
+import mainlogofull from '../assets/main_logo.svg'
 
 // import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
@@ -436,7 +437,7 @@ const UserLayout = ({ children }) => {
                                         className="group flex shrink-0 items-start justify-start gap-2 rounded-full text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
                                     >
                                         <img
-                                            src="/src/assets/main_logo.svg"
+                                            src={mainlogofull}
                                             alt="Description"
                                             className="h-auto w-auto transition-all group-hover:scale-110 object-cover"
                                         />
@@ -464,7 +465,7 @@ const UserLayout = ({ children }) => {
                                     </Link>
 
                                     <Link
-                                        href="#"
+                                        to={'/reports'}
                                         className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                                     >
                                         <LineChart className="h-5 w-5" />

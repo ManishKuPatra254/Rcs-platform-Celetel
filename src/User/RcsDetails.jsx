@@ -313,13 +313,14 @@ export default function RcsDetails() {
                                                                     </Button>
                                                                 ) : column.id === 'actions' ? (
                                                                     <div className="flex space-x-2">
-                                                                        {campaign.status !== 'started' && !campaign.started ? (
+                                                                        {campaign.status === 'Not Started' ? (
                                                                             <Button variant="secondary" onClick={() => handleStartCampaign(campaign._id)}>
                                                                                 Start
                                                                             </Button>
                                                                         ) : (
                                                                             <Button variant="ghost">Campaign already started</Button>
                                                                         )}
+
                                                                         <Button variant="link" onClick={() => handleViewDetails(campaign)}>
                                                                             View Details
                                                                         </Button>

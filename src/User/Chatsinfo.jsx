@@ -27,6 +27,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { ArchiveRestore, Clock, CornerDownLeft, Mic, Package2, Paperclip, Trash2, Undo2 } from 'lucide-react';
 import { Label } from '@radix-ui/react-label';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 export default function Chatdetails() {
     const [selectedCard, setSelectedCard] = useState(null);
@@ -79,6 +80,9 @@ export default function Chatdetails() {
     return (
         <Fragment>
             <Layout>
+                <Helmet>
+                    <title> Chats | RCS Celetel</title>
+                </Helmet>
                 <div className="grid grid-cols-2 gap-2 p-2 md:grid-cols-1 sm:grid-cols-1">
                     <ResizablePanelGroup
                         direction="horizontal"

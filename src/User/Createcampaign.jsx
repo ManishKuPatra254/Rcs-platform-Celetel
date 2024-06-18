@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CiBatteryFull } from "react-icons/ci";
 import { FaSignal } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 export default function Createcampaign() {
 
@@ -159,6 +160,9 @@ export default function Createcampaign() {
     return (
         <Fragment>
             <Layout>
+                <Helmet>
+                    <title> Create Campaigns | RCS Celetel</title>
+                </Helmet>
                 <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-3 w-full lg:grid-cols-3">
                     <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
                         <Box sx={{

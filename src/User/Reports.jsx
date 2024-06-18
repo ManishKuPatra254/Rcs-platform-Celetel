@@ -23,6 +23,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from '@/components/ui/input';
+import { Helmet } from 'react-helmet';
 // import {
 //     Calculator,
 //     Calendar,
@@ -115,6 +116,9 @@ export default function Reports() {
             <Layout>
                 {!isCampaignRoute && (
                     <Fragment>
+                        <Helmet>
+                            <title> Reports | RCS Celetel</title>
+                        </Helmet>
                         <div className="flex md:flex-row justify-between items-center mt-3 px-7">
                             <CardTitle className='text-3xl'>
                                 Reports

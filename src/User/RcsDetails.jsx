@@ -44,8 +44,8 @@ const columns = [
 
 const frameworks = [
     {
-        value: "inprogress",
-        label: "In Progress",
+        value: "started",
+        label: "Started",
         icon: <Clock12 className="h-4 w-4 mr-2" />
     },
     {
@@ -54,7 +54,7 @@ const frameworks = [
         icon: <CircleCheck className="h-4 w-4 mr-2" />,
     },
     {
-        value: "failed",
+        value: "Failed",
         label: "Failed",
         icon: <CircleX className="h-4 w-4 mr-2" />,
     },
@@ -193,6 +193,19 @@ export default function RcsDetails() {
                                                                 onSelect={(currentValue) => {
                                                                     setValue(currentValue === value ? "" : currentValue);
                                                                     setOpen(false);
+                                                                    // eslint-disable-next-line no-unused-vars
+                                                                    const sortedCampaigns = [...campaigns].sort((a, b) => {
+                                                                        if (currentValue === 'completed') {
+                                                                            return a.status === 'Completed' ? -1 : 1;
+                                                                        } else if (currentValue === 'started') {
+                                                                            return a.status === 'Started' ? -1 : 1;
+                                                                        } else if (currentValue === 'Failed') {
+                                                                            return a.status === 'Failed' ? -1 : 1;
+                                                                        }
+                                                                        return 0;
+                                                                    });
+
+                                                                    setCampaigns(sortedCampaigns);
                                                                 }}>
                                                                 {framework.icon}
                                                                 <span className="ml-2">{framework.label}</span>

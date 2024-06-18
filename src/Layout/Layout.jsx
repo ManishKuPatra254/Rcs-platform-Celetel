@@ -522,7 +522,7 @@ const UserLayout = ({ children }) => {
                             className="overflow-hidden rounded-full cursor-default p-0">
                             <Avatar className="p-0 h-8 w-8 mr-2">
                                 <AvatarImage src="" alt={username} />
-                                <AvatarFallback className="font-medium bg-slate-300 text-slate-800">{firstLetter}</AvatarFallback>
+                                <AvatarFallback className="font-semibold bg-slate-300 text-slate-800">{firstLetter}</AvatarFallback>
                             </Avatar>
                         </Button>
                         <DropdownMenu>

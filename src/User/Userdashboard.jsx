@@ -308,7 +308,7 @@ export function Userdashboard() {
                                 <CardHeader className="flex justify-between">
                                     <Tabs defaultValue="monthly" className="w-full">
                                         <div className="p-4 flex flex-col lg:flex-row xl:flex-row md:flex-row sm:flex-row justify-between items-center w-full">
-                                            <h2 className='font-bold text-xl'>Revenue</h2>
+                                            <h2 className='font-bold text-xl'>Campaign Report</h2>
                                             <TabsList>
                                                 <TabsTrigger value="monthly">Monthly</TabsTrigger>
                                                 <TabsTrigger value="weekly">Weekly</TabsTrigger>

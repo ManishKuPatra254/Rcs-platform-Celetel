@@ -8,6 +8,8 @@ import {
     LayoutPanelTop,
     GalleryHorizontalEnd,
     MessageCircleMore,
+    ChevronDown,
+    BellDot,
 } from "lucide-react"
 
 import {
@@ -510,32 +512,30 @@ const UserLayout = ({ children }) => {
                             </BreadcrumbList>
                         </Breadcrumb>
                         <div className="relative ml-auto flex-1 md:grow-0">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Search..."
-                                className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-                            />
                         </div>
+                        <Search className=" h-5 w-5" />
+                        <BellDot className="mr-3 h-5 w-5" />
+
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="overflow-hidden rounded-full">
+                            <Avatar>
+                                <AvatarImage src="" alt={username} />
+                                <AvatarFallback className="font-medium bg-slate-300 text-slate-800">{firstLetter}</AvatarFallback>
+                            </Avatar>
+                        </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="overflow-hidden rounded-full"
-                                >
-
-                                    <Avatar>
-                                        <AvatarImage src="" alt={username} />
-                                        <AvatarFallback className="font-extrabold">{firstLetter}</AvatarFallback>
-                                    </Avatar>
+                                <Button variant="ghost" className="p-0">
+                                    <span className="font-semibold">{username}</span>
+                                    <ChevronDown className="ml-1 h-5 w-5 text-slate-400" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                                <DropdownMenuLabel>{username}</DropdownMenuLabel>
+                                {/* <DropdownMenuLabel>{username}</DropdownMenuLabel> */}
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem>Settings</DropdownMenuItem>
                                 <DropdownMenu>
                                     <Link to="/userprofile" className="no-underline text-inherit">
                                         <DropdownMenuItem>
@@ -543,6 +543,7 @@ const UserLayout = ({ children }) => {
                                         </DropdownMenuItem>
                                     </Link>
                                 </DropdownMenu>
+                                <DropdownMenuItem>Settings</DropdownMenuItem>
 
                                 <DropdownMenuItem>Support</DropdownMenuItem>
                                 <DropdownMenuSeparator />
@@ -555,6 +556,7 @@ const UserLayout = ({ children }) => {
                                 </DropdownMenu>
                             </DropdownMenuContent>
                         </DropdownMenu>
+
                     </header>
                     <main>
                         {children}

@@ -150,13 +150,13 @@ export default function Reports() {
                             </div>
 
                             <div className="">
-                                <Card className="w-full mt-5 flex items-center justify-between">
+                                <Card className="w-full mt-5 flex flex-col items-center justify-between xl:flex-row lg:flex-row md:flex-row sm:flex-row">
                                     <CardHeader>
                                         <CardTitle className="text-xl">Campaigns</CardTitle>
                                     </CardHeader>
-                                    <CardContent className="flex gap-3 mt-5">
+                                    <CardContent className=" flex flex-col xl:flex-row lg:flex-row md:flex-row sm:flex-row gap-3 mt-5">
                                         <Select>
-                                            <SelectTrigger className="font-semibold">
+                                            <SelectTrigger className="w-[180px] font-semibold">
                                                 <SelectValue placeholder="All Campaigns" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -171,7 +171,7 @@ export default function Reports() {
                                             </SelectContent>
                                         </Select>
                                         <Select>
-                                            <SelectTrigger className="font-semibold">
+                                            <SelectTrigger className=" w-[250px] font-semibold">
                                                 <SelectValue placeholder="Usage by Campaigns" />
                                             </SelectTrigger>
                                             <SelectContent>

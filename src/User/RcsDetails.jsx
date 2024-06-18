@@ -32,6 +32,8 @@ import {
 } from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Helmet } from 'react-helmet';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 
 const columns = [
@@ -143,6 +145,29 @@ export default function RcsDetails() {
 
 
     const totalPages = Math.ceil(campaigns.length / rowsPerPage);
+
+
+    const downloadSummaryPDF = () => {
+        if (!selectedCampaign) return;
+
+        const doc = new jsPDF();
+
+        doc.text("Campaign Summary", 14, 16);
+        doc.autoTable({
+            startY: 20,
+            head: [['Field', 'Value']],
+            body: [
+                ['Template Name', selectedCampaign.templateName],
+                ['Campaign Name', selectedCampaign.campaignName],
+                ['Created At', selectedCampaign.createdAt],
+                ['Updated At', selectedCampaign.updatedAt],
+                ['Total Numbers', selectedCampaign.totalNumbers],
+                ['Status', selectedCampaign.status],
+            ],
+        });
+
+        doc.save(`${selectedCampaign.campaignName}_summary.pdf`);
+    };
 
     return (
         <Fragment>
@@ -391,7 +416,7 @@ export default function RcsDetails() {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between gap-2 w-auto p-4 flex-col lg:flex-row xl:flex-row md:flex-col sm:flex-col">
-                                    <Button variant="outline" className="w-full">Download summary (pdf)</Button>
+                                    <Button variant="outline" onClick={downloadSummaryPDF} className="w-full">Download summary (pdf)</Button>
                                     <Link to={`/reports/campaign/${selectedCampaign._id}`} className='w-full'>
                                         <Button variant="outline" className="w-full"> Individual number data</Button>
                                     </Link>
@@ -403,6 +428,6 @@ export default function RcsDetails() {
                     </Sheet>
                 )}
             </Layout>
-        </Fragment >
+        </Fragment>
     );
 }

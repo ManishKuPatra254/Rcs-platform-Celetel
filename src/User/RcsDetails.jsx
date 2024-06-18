@@ -71,6 +71,8 @@ export default function RcsDetails() {
     const [hideBotId, setHideBotId] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
+    const [filter, setFilter] = useState("");
+
 
     console.log(sortOrder);
 
@@ -131,6 +133,14 @@ export default function RcsDetails() {
         setDrawerOpen(true);
     };
 
+    const handleFilterChange = (event) => {
+        setFilter(event.target.value);
+    };
+
+    const filteredCampaigns = campaigns.filter(campaign =>
+        campaign.campaignName.toLowerCase().includes(filter.toLowerCase())
+    );
+
 
     const totalPages = Math.ceil(campaigns.length / rowsPerPage);
 
@@ -161,6 +171,8 @@ export default function RcsDetails() {
                                 <div className="flex flex-wrap justify-start items-center mt-5 gap-1">
                                     <Input
                                         placeholder="Filter campaigns..."
+                                        value={filter}
+                                        onChange={handleFilterChange}
                                         className="max-w-xs mr-4 text-sm"
                                     />
                                     <Popover open={open} onOpenChange={setOpen} className="mt-4">
@@ -260,8 +272,8 @@ export default function RcsDetails() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {campaigns.length > 0 ? (
-                                            campaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((campaign) => (
+                                        {filteredCampaigns.length > 0 ? (
+                                            filteredCampaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((campaign) => (
                                                 <TableRow key={campaign._id}>
                                                     {columns.map((column) => (
                                                         column.id === 'botId' && hideBotId ? null : (
@@ -312,6 +324,7 @@ export default function RcsDetails() {
                                             </TableRow>
                                         )}
                                     </TableBody>
+
                                 </Table>
                             </div>
 

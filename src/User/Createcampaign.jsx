@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Box } from '@mui/material';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
-import { createCampaigns, getBots, startCampaign } from "@/Service/auth.service";
+import { createCampaigns, getBots, startCampaign, uploadFileCampaigns } from "@/Service/auth.service";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -15,6 +15,8 @@ import { CiBatteryFull } from "react-icons/ci";
 import { FaSignal } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import * as XLSX from 'xlsx';
+
 
 export default function Createcampaign() {
 
@@ -49,6 +51,8 @@ export default function Createcampaign() {
         campaignName: "",
         numbers: [""],
     });
+    const [selectedFile, setSelectedFile] = useState(null);
+
 
 
     const [getBot, setGetBot] = useState();
@@ -157,6 +161,75 @@ export default function Createcampaign() {
     };
 
 
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
+
+    const handleFileUpload = async (e) => {
+        e.preventDefault();
+        if (selectedFile) {
+            try {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const fileContent = event.target.result;
+
+                    // Check file type and process accordingly
+                    if (selectedFile.name.endsWith('.csv')) {
+                        // Handle CSV file
+                        console.log(selectedFile.name, "178line")
+                        const formattedNumbers = fileContent.split('\n').map(number => {
+                            console.log(formattedNumbers, "180line")
+                            number = number.toString();
+                            console.log(number, "jkjhg");
+                            const allDigits = /^\d+$/.test(number);
+                            if (allDigits) {
+                                setFormData(prevFormData => ({
+                                    ...prevFormData,
+                                    numbers: formattedNumbers,
+                                }));
+                            }
+                        }
+
+                        )
+                    } else if (selectedFile.name.endsWith('.xls') || selectedFile.name.endsWith('.xlsx')) {
+                        // Handle XLS and XLSX files using a library like `xlsx`
+                        const workbook = XLSX.read(fileContent, { type: 'binary' });
+                        const sheetName = workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+                        const data = XLSX.utils.sheet_to_csv(sheet, { header: 0 });
+                        const formattedNumbers = data.split('\n').map(number => formatPhoneNumber(number.trim()));
+                        setFormData(prevFormData => ({
+                            ...prevFormData,
+                            numbers: formattedNumbers,
+                        }));
+                    } else {
+                        // Unsupported file type
+                        console.error('Unsupported file type');
+                        toast("Unsupported file type");
+                        return;
+                    }
+
+                    // Display file upload success message
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+                    const response = await uploadFileCampaigns(formData);
+                    console.log('File uploaded successfully:', response);
+                    toast("File uploaded successfully");
+                };
+
+                // Read file as text
+                reader.readAsBinaryString(selectedFile);
+
+            } catch (error) {
+                console.error('Error uploading file:', error.message);
+                toast("Error uploading file");
+            }
+        } else {
+            toast("Please select a file to upload");
+        }
+    };
+
+
     return (
         <Fragment>
             <Layout>
@@ -200,6 +273,15 @@ export default function Createcampaign() {
                                     value={formData.campaignName}
                                     onChange={handleCreateChange} />
 
+                                <Label htmlFor="" className="text-left">Upload Numbers</Label>
+                                <div className="flex items-center gap-4">
+                                    <Input
+                                        className=""
+                                        type="file"
+                                        onChange={handleFileChange}
+                                    />
+                                    <Button onClick={handleFileUpload}>Upload</Button>
+                                </div>
                                 <Label htmlFor="" className="text-left">Phone no</Label>
                                 <Textarea
                                     name='numbers'

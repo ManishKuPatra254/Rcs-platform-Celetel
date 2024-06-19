@@ -149,16 +149,21 @@ export const updateBot = async (currentBotId) => {
 
 
 
-export const getCampaignsDetails = async () => {
+export const getCampaignsDetails = async (page, limit) => {
     try {
         const token = localStorage.getItem('token');
         const responseContact = await axios.get(`https://157.15.202.251/api/campaigns`, {
             headers: {
                 Authorization: `Bearer ${token}`
+            },
+            params: {
+                page: page,
+                limit: limit
             }
         });
 
         console.log(responseContact.data, "responseContact");
+        console.log(`Fetching campaigns with page: ${page}, limit: ${limit}`);
         if (responseContact.data.campaigns && Array.isArray(responseContact.data.campaigns)) {
             console.log(responseContact.data.campaigns[0]._id, "first campaign id");
         } else {
@@ -167,7 +172,7 @@ export const getCampaignsDetails = async () => {
 
         return responseContact.data;
     } catch (error) {
-        console.log("Profile fetch error", error.message);
+        console.log("error", error.message);
         throw error;
     }
 }
@@ -186,6 +191,26 @@ export const createCampaigns = async (formData) => {
         return response.data;
     } catch (error) {
         console.log("Profile update error", error.message);
+        throw error;
+    }
+}
+
+
+
+export const uploadFileCampaigns = async (file) => {
+    console.log(file, 'fileupload');
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(`https://157.15.202.251/api/campaigns/uploadFile`, file, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        console.log(response.data, 'datares');
+        return response.data;
+    } catch (error) {
+        console.log("error", error.message);
         throw error;
     }
 }
@@ -291,12 +316,17 @@ export const updateTemplatedataById = async (id, updatedData) => {
 };
 
 
-export const getCampaignsDetailsResponse = async (campaignId) => {
+export const getCampaignsDetailsResponse = async (campaignId, page, limit) => {
     console.log(campaignId, "campaignresponse");
     const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://157.15.202.251/api/campaigns/responses?campaignId=${campaignId}`, {
+        const response = await axios.get(`https://157.15.202.251/api/campaigns/responses`, {
+            params: {
+                campaignId,
+                page,
+                limit
+            },
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'

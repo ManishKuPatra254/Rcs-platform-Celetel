@@ -3,7 +3,7 @@ import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CardTitle } from '@/components/ui/card';
 import { EllipsisVertical, Eye, FolderUp, MousePointerClick, Pointer, Search } from 'lucide-react';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import {
     Card,
@@ -43,6 +43,16 @@ import { Helmet } from 'react-helmet';
 //     CommandSeparator,
 //     CommandShortcut,
 // } from "@/components/ui/command"
+
+import { Calendar } from "@/components/ui/calendar"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+
 
 const data = [
     {
@@ -92,6 +102,8 @@ const data = [
 export default function Reports() {
     const location = useLocation();
     const isCampaignRoute = location.pathname.includes('/reports/campaign/');
+    const [date, setDate] = useState()
+
 
 
     // const commandData = [
@@ -123,6 +135,28 @@ export default function Reports() {
                             <CardTitle className='text-3xl'>
                                 Reports
                             </CardTitle>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-[240px] justify-start text-left font-normal",
+                                            !date && "text-muted-foreground"
+                                        )}
+                                    >
+                                        <Calendar className="mr-2 h-4 w-4" />
+                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
+                                        onSelect={setDate}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
                             <Button className='bg-blue-500 hover:bg-blue-800'>
                                 <FolderUp className="mr-3 h-4 w-4" />
                                 Export</Button>

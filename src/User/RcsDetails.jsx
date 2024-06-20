@@ -170,7 +170,7 @@ export default function RcsDetails() {
     };
 
     useEffect(() => {
-        const searchCampaignsAsync = async () => {
+        const searchCampaignsRcs = async () => {
             try {
                 const searchResults = await searchCampaigns(filter);
                 setCampaigns(searchResults);
@@ -178,7 +178,7 @@ export default function RcsDetails() {
                 console.error('Error searching campaigns:', error.message);
             }
         };
-        searchCampaignsAsync();
+        searchCampaignsRcs();
     }, [filter]);
 
     return (

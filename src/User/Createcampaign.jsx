@@ -119,19 +119,13 @@ export default function Createcampaign() {
         }
     };
 
-    const formatPhoneNumber = (number) => {
-        // Add country code +91 if not present
-        if (!number.startsWith('+91')) {
-            return `+91${number}`;
-        }
-        return number;
-    };
 
     const handleCreateChange = (e) => {
         const { name, value } = e.target;
         if (name === 'numbers') {
-            const numbersArray = value.split(',')
-                .map(number => number.trim())
+            const numbersArray = value
+                .split(/[\s,]+/) // Split by whitespace or comma
+                .map(number => number.trim()) // Trim whitespace from each number
                 .map(number => formatPhoneNumber(number));
             setFormData({
                 ...formData,
@@ -143,6 +137,14 @@ export default function Createcampaign() {
                 [name]: value,
             });
         }
+    };
+
+    const formatPhoneNumber = (number) => {
+        number = number.replace(/,/g, '');
+        if (!number.startsWith('+91')) {
+            return `+91${number}`;
+        }
+        return number;
     };
 
 

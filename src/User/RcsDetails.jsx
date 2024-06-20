@@ -176,10 +176,15 @@ export default function RcsDetails() {
     const handleFilterChange = (value) => {
         setFilter(value);
         if (value === "") {
-            // If filter is empty, revert to original campaigns
             setCampaigns(originalCampaigns);
+        } else {
+            const filteredCampaigns = originalCampaigns.filter(campaign =>
+                campaign.campaignName.toLowerCase().includes(value.toLowerCase())
+            );
+            setCampaigns(filteredCampaigns);
         }
     };
+
 
     useEffect(() => {
         const searchCampaignsRcs = async () => {

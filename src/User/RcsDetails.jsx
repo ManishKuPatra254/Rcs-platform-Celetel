@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { useState, useEffect, Fragment } from 'react';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -37,6 +38,7 @@ import 'jspdf-autotable';
 
 
 const columns = [
+    { id: 'createdAt', label: 'Time' },
     { id: 'templateName', label: 'Template Name' },
     { id: 'botId', label: 'Bot ID' },
     { id: 'campaignName', label: 'Campaign Name' },
@@ -65,6 +67,7 @@ const frameworks = [
 
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState([]);
+    const [originalCampaigns, setOriginalCampaigns] = useState([]);
     const [page, setPage] = useState(0);
     const [limit, setLimit] = useState(10);
     const [open, setOpen] = useState(false);
@@ -87,6 +90,7 @@ export default function RcsDetails() {
                 console.log(response.campaigns, "cam")
                 const sortedCampaigns = response.campaigns.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setCampaigns(sortedCampaigns);
+                setOriginalCampaigns(sortedCampaigns);
             } catch (error) {
                 console.error('Error fetching campaign data:', error.message);
             }
@@ -138,7 +142,7 @@ export default function RcsDetails() {
     };
 
     const filteredCampaigns = campaigns.filter(campaign =>
-        campaign.campaignName.toLowerCase().includes(filter.toLowerCase())
+        campaign.campaignName.toLowerCase().includes(filter.toString().toLowerCase())
     );
 
 
@@ -169,6 +173,14 @@ export default function RcsDetails() {
         doc.save(`${selectedCampaign.campaignName}_summary.pdf`);
     };
 
+    const handleFilterChange = (value) => {
+        setFilter(value);
+        if (value === "") {
+            // If filter is empty, revert to original campaigns
+            setCampaigns(originalCampaigns);
+        }
+    };
+
     useEffect(() => {
         const searchCampaignsRcs = async () => {
             try {
@@ -178,8 +190,14 @@ export default function RcsDetails() {
                 console.error('Error searching campaigns:', error.message);
             }
         };
-        searchCampaignsRcs();
-    }, [filter]);
+
+        if (filter !== "") {
+            searchCampaignsRcs();
+        } else {
+            setCampaigns(originalCampaigns);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filter, originalCampaigns]);
 
     return (
         <Fragment>
@@ -210,7 +228,7 @@ export default function RcsDetails() {
                                         placeholder="Filter campaigns..."
                                         className="max-w-xs mr-4 text-sm"
                                         value={filter}
-                                        onChange={(e) => setFilter(e.target.value)}
+                                        onChange={(e) => handleFilterChange(e.target.value)}
                                     />
                                     <Popover open={open} onOpenChange={setOpen} className="mt-4">
                                         <PopoverTrigger asChild>
@@ -320,7 +338,9 @@ export default function RcsDetails() {
                                                     {columns.map((column) => (
                                                         column.id === 'botId' && hideBotId ? null : (
                                                             <TableCell key={column.id} className="text-center">
-                                                                {column.id === 'status' ? (
+                                                                {column.id === 'createdAt' ? (
+                                                                    new Date(campaign[column.id]).toLocaleString()
+                                                                ) : column.id === 'status' ? (
                                                                     <Button
                                                                         variant="ghost"
                                                                         size="sm"
@@ -335,19 +355,18 @@ export default function RcsDetails() {
                                                                                 Start
                                                                             </Button>
                                                                         ) : null}
-
-
                                                                         <Button variant="link" onClick={() => handleViewDetails(campaign)}>
                                                                             View Details
                                                                         </Button>
                                                                     </div>
+                                                                ) : column.id === 'campaignName' ? (
+                                                                    <span className="block w-48 truncate">{campaign[column.id]}</span>
                                                                 ) : (
-                                                                    column.id === 'campaignName' ? (
-                                                                        <span className="block w-48 truncate">{campaign[column.id]}</span>
-                                                                    ) : (
-                                                                        campaign[column.id]
-                                                                    ))}
+                                                                    campaign[column.id]
+                                                                )}
+
                                                             </TableCell>
+
                                                         )
                                                     ))}
                                                 </TableRow>

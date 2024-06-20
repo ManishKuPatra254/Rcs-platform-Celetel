@@ -233,8 +233,7 @@ export default function Createcampaign() {
                                     <SelectContent>
                                         {Array.isArray(getBot) && getBot.map((bot) => (
                                             <SelectItem key={bot.botId} value={bot.botId}>
-                                                {bot.botName}
-                                                {/* - {bot.botId} */}
+                                                {bot.botName} - {bot.botId}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

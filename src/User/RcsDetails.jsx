@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getCampaignsDetails, startCampaign } from '../Service/auth.service';
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { getCampaignsDetails, searchCampaigns, startCampaign } from '../Service/auth.service';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
@@ -66,7 +66,7 @@ const frameworks = [
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [limit, setLimit] = useState(10);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("");
     const [sortOrder, setSortOrder] = useState(null);
@@ -79,9 +79,11 @@ export default function RcsDetails() {
     console.log(sortOrder);
 
     useEffect(() => {
-        const fetchCampaigns = async () => {
+        const fetchCampaigns = async (page, limit) => {
             try {
-                const response = await getCampaignsDetails();
+                const response = await getCampaignsDetails(page + 1, limit);
+                console.log(response, "responseforpageandlimit");
+                console.log(response.currentPage, "responsepage");
                 console.log(response.campaigns, "cam")
                 const sortedCampaigns = response.campaigns.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setCampaigns(sortedCampaigns);
@@ -90,8 +92,8 @@ export default function RcsDetails() {
             }
         };
 
-        fetchCampaigns();
-    }, []);
+        fetchCampaigns(page, limit);
+    }, [page, limit]);
 
     const handleSort = (order) => {
         setSortOrder(order);
@@ -108,7 +110,7 @@ export default function RcsDetails() {
     };
 
     const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
+        setLimit(+event.target.value);
         setPage(0);
     };
 
@@ -135,16 +137,14 @@ export default function RcsDetails() {
         setDrawerOpen(true);
     };
 
-    const handleFilterChange = (event) => {
-        setFilter(event.target.value);
-    };
-
     const filteredCampaigns = campaigns.filter(campaign =>
         campaign.campaignName.toLowerCase().includes(filter.toLowerCase())
     );
 
 
-    const totalPages = Math.ceil(campaigns.length / rowsPerPage);
+    const totalPages = Math.ceil(campaigns.length / limit);
+
+
 
 
     const downloadSummaryPDF = () => {
@@ -168,6 +168,18 @@ export default function RcsDetails() {
 
         doc.save(`${selectedCampaign.campaignName}_summary.pdf`);
     };
+
+    useEffect(() => {
+        const searchCampaignsAsync = async () => {
+            try {
+                const searchResults = await searchCampaigns(filter);
+                setCampaigns(searchResults);
+            } catch (error) {
+                console.error('Error searching campaigns:', error.message);
+            }
+        };
+        searchCampaignsAsync();
+    }, [filter]);
 
     return (
         <Fragment>
@@ -196,9 +208,9 @@ export default function RcsDetails() {
                                 <div className="flex flex-wrap justify-start items-center mt-5 gap-1">
                                     <Input
                                         placeholder="Filter campaigns..."
-                                        value={filter}
-                                        onChange={handleFilterChange}
                                         className="max-w-xs mr-4 text-sm"
+                                        value={filter}
+                                        onChange={(e) => setFilter(e.target.value)}
                                     />
                                     <Popover open={open} onOpenChange={setOpen} className="mt-4">
                                         <PopoverTrigger asChild>
@@ -297,8 +309,13 @@ export default function RcsDetails() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {filteredCampaigns.length > 0 ? (
-                                            filteredCampaigns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((campaign) => (
+                                        <div className="">
+                                            {console.log('Campaigns state:', campaigns)}
+                                            {console.log('Filtered campaigns:', filteredCampaigns)}
+                                            {/* {console.log('Displayed campaigns:', displayedCampaigns)} */}
+                                        </div>
+                                        {campaigns.length > 0 ? (
+                                            campaigns.map((campaign) => (
                                                 <TableRow key={campaign._id}>
                                                     {columns.map((column) => (
                                                         column.id === 'botId' && hideBotId ? null : (
@@ -317,9 +334,8 @@ export default function RcsDetails() {
                                                                             <Button variant="secondary" onClick={() => handleStartCampaign(campaign._id)}>
                                                                                 Start
                                                                             </Button>
-                                                                        ) : (
-                                                                            <Button variant="ghost">Campaign already started</Button>
-                                                                        )}
+                                                                        ) : null}
+
 
                                                                         <Button variant="link" onClick={() => handleViewDetails(campaign)}>
                                                                             View Details
@@ -354,37 +370,24 @@ export default function RcsDetails() {
                                 </Table>
                             </div>
 
-                            <Pagination className='mt-5 '>
-                                <PaginationContent className='cursor-pointer'>
-                                    <PaginationItem>
-                                        <PaginationPrevious
-                                            onClick={() => handleChangePage(page > 0 ? page - 1 : 0)}
-                                            disabled={page === 0}
-                                        />
-                                    </PaginationItem>
+                            <Pagination>
+                                <PaginationPrevious onClick={() => handleChangePage(page - 1)} disabled={page === 0}>
+                                    Previous
+                                </PaginationPrevious>
+                                <PaginationContent>
                                     {Array.from({ length: totalPages }, (_, index) => (
                                         <PaginationItem key={index}>
-                                            <PaginationLink
-                                                isActive={index === page}
-                                                onClick={() => handleChangePage(index)}
-                                            >
+                                            <PaginationLink onClick={() => handleChangePage(index)} active={index === page}>
                                                 {index + 1}
                                             </PaginationLink>
                                         </PaginationItem>
                                     ))}
-                                    {totalPages > 5 && (
-                                        <PaginationItem>
-                                            <PaginationEllipsis />
-                                        </PaginationItem>
-                                    )}
-                                    <PaginationItem>
-                                        <PaginationNext
-                                            onClick={() => handleChangePage(page < totalPages - 1 ? page + 1 : totalPages - 1)}
-                                            disabled={page >= totalPages - 1}
-                                        />
-                                    </PaginationItem>
                                 </PaginationContent>
+                                <PaginationNext onClick={() => handleChangePage(page + 1)} disabled={page >= totalPages - 1}>
+                                    Next
+                                </PaginationNext>
                             </Pagination>
+
                         </div>
                     </div>
                 </div>

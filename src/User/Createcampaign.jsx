@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Box } from '@mui/material';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
-import { createCampaigns, getBots, startCampaign } from "@/Service/auth.service";
+import { createCampaigns, getBots, startCampaign, uploadFileCampaigns } from "@/Service/auth.service";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -15,6 +15,7 @@ import { CiBatteryFull } from "react-icons/ci";
 import { FaSignal } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+
 
 export default function Createcampaign() {
 
@@ -49,15 +50,20 @@ export default function Createcampaign() {
         campaignName: "",
         numbers: [""],
     });
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedBotName, setSelectedBotName] = useState("");
 
 
-    const [getBot, setGetBot] = useState();
+
+    const [getBot, setGetBot] = useState([]);
 
     useEffect(() => {
         const fetchBotId = async () => {
             try {
                 const response = await getBots();
-                setGetBot(response.botIds);
+                console.log(response, "respponsebods");
+                console.log(response.botDetails, "respponsebods");
+                setGetBot(response.botDetails || []);
             } catch (error) {
                 console.error('Error fetching bot data:', error.message);
             }
@@ -157,6 +163,51 @@ export default function Createcampaign() {
     };
 
 
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
+
+
+    const handleFileUpload = async (e) => {
+        e.preventDefault();
+        if (selectedFile) {
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                const response = await uploadFileCampaigns(formData);
+
+                if (response && response.numbers) {
+                    const formattedNumbers = response.numbers.map(number => {
+                        return number.startsWith('+91') ? number : `+91${number}`;
+                    });
+
+                    setFormData(prevFormData => ({
+                        ...prevFormData,
+                        numbers: formattedNumbers
+                    }));
+                    toast("File uploaded successfully");
+                } else {
+                    toast("File uploaded, but no numbers found in response");
+                }
+
+                console.log('File uploaded successfully:', response);
+            } catch (error) {
+                console.error('Error uploading file:', error.message);
+                toast("Error uploading file");
+            }
+        } else {
+            toast("Please select a file to upload");
+        }
+    };
+
+
+    const handleBotSelect = (value) => {
+        const selectedBot = getBot.find(bot => bot.botId === value);
+        setSelectedBotName(selectedBot ? selectedBot.botName : "");
+        setFormData({ ...formData, botId: value });
+    };
+
+
     return (
         <Fragment>
             <Layout>
@@ -175,14 +226,15 @@ export default function Createcampaign() {
                                 <CardTitle className='text-3xl'>Create Campaign</CardTitle>
 
                                 <Label htmlFor="botId" className="text-left">Bot Id</Label>
-                                <Select name='botId' value={formData.botId} onValueChange={(value) => setFormData({ ...formData, botId: value })}>
+                                <Select name='botId' value={formData.botId} onValueChange={handleBotSelect}>
                                     <SelectTrigger className="">
                                         <SelectValue placeholder="Select an option" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {getBot && getBot.map((botId) => (
-                                            <SelectItem key={botId} value={botId}>
-                                                {botId}
+                                        {Array.isArray(getBot) && getBot.map((bot) => (
+                                            <SelectItem key={bot.botId} value={bot.botId}>
+                                                {bot.botName}
+                                                {/* - {bot.botId} */}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -200,6 +252,15 @@ export default function Createcampaign() {
                                     value={formData.campaignName}
                                     onChange={handleCreateChange} />
 
+                                <Label htmlFor="" className="text-left">Upload Numbers</Label>
+                                <div className="flex items-center gap-4">
+                                    <Input
+                                        className=""
+                                        type="file"
+                                        onChange={handleFileChange}
+                                    />
+                                    <Button onClick={handleFileUpload}>Upload</Button>
+                                </div>
                                 <Label htmlFor="" className="text-left">Phone no</Label>
                                 <Textarea
                                     name='numbers'
@@ -248,7 +309,7 @@ export default function Createcampaign() {
                                     </div>
                                     <div className="p-2 bg-[#F5F5F5] flex gap-2  items-center">
                                         <ChevronLeft size={20} strokeWidth={2.5} color='#0079FF' cursor='pointer' />
-                                        <p className='break-words text-ellipsis font-semibold'>{formData.botId}</p>
+                                        <p className='text-slate-900 text-md font-semibold'>{selectedBotName}</p>
                                     </div>
                                     <div className="inner_content">
                                         <div className="inner_content_2">

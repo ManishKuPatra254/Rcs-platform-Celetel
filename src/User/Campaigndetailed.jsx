@@ -25,35 +25,41 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
 import { Helmet } from 'react-helmet';
 
-const ITEMS_PER_PAGE = 10;
-
 export default function Campaigndetailed() {
     const { campaignId } = useParams();
     console.log(campaignId, "campaignId from useParams");
 
-    const [campaignResponse, setCampaignResponse] = useState(null); // Use null initially to check for loaded state
+    const [campaignResponse, setCampaignResponse] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchCampaignResponse = async () => {
             console.log(campaignId, "Fetching campaign details for campaignId");
             try {
-                const response = await getCampaignsDetailsResponse(campaignId);
+                setLoading(true);
+                const response = await getCampaignsDetailsResponse(campaignId, currentPage, 10);
                 console.log(response, "Response from getCampaignsDetailsResponse");
-                const details = response.filter(campaign => campaign.campaignId === campaignId);
-                console.log(details, "Details found for the given campaignId");
-                setCampaignResponse(details);
+                response.responses?.map(res => console.log(res.statusLogs || [], "Response from statusLogs"));
+                response.responses?.map(res =>
+                    res.statusLogs?.map(log =>
+                        console.log(log.eventType, "Event Type from statusLogs")
+                    )
+                );
+                setCampaignResponse(response.responses || []);
+                setTotalPages(response.totalPages || 1);
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching campaign details:', error.message);
                 setCampaignResponse([]);
+                setTotalPages(1);
+                setLoading(false);
             }
         };
 
         fetchCampaignResponse();
-    }, [campaignId]);
-
-    const totalPages = campaignResponse ? Math.ceil(campaignResponse.length / ITEMS_PER_PAGE) : 0;
-    const paginatedData = campaignResponse ? campaignResponse.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE) : [];
+    }, [campaignId, currentPage]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -70,9 +76,6 @@ export default function Campaigndetailed() {
                         <CardTitle className='text-3xl'>
                             Campaign Details
                         </CardTitle>
-                        {/* <Link to="/createcampaign">
-                    <Button className=''>Create Campaign</Button>
-                </Link> */}
                     </div>
                     <div className="p-6 border rounded-md overflow-auto mt-3">
                         <CardTitle className='text-2xl mb-1'>Welcome back !</CardTitle>
@@ -106,7 +109,7 @@ export default function Campaigndetailed() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {campaignResponse === null ? (
+                                    {loading ? (
                                         <TableRow>
                                             <TableCell colSpan={6} className="text-center">
                                                 <div className="flex flex-col space-y-3">
@@ -119,16 +122,34 @@ export default function Campaigndetailed() {
                                             </TableCell>
                                         </TableRow>
                                     ) : (
-                                        paginatedData.map((campaign) => (
-                                            <TableRow key={campaign._id}>
-                                                <TableCell>{campaign.campaignId}</TableCell>
-                                                <TableCell>{campaign.eventType}</TableCell>
-                                                <TableCell>{campaign.number}</TableCell>
-                                                <TableCell>{campaign.messageId}</TableCell>
-                                                <TableCell>{campaign.errorReason || "N/A"}</TableCell>
-                                                <TableCell>{new Date(campaign.sendTime).toLocaleString()}</TableCell>
+                                        campaignResponse.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={6} className="text-center">
+                                                    <div className="flex flex-col space-y-3">
+                                                        <Skeleton className="h-full w-full rounded-xl" />
+                                                        <div className="space-y-2">
+                                                            <Skeleton className="h-4 w-full" />
+                                                            <Skeleton className="h-4 w-full" />
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
                                             </TableRow>
-                                        ))
+                                        ) : (
+                                            campaignResponse.map((campaign) => (
+                                                <TableRow key={campaign._id}>
+                                                    <TableCell>{campaign.campaignId}</TableCell>
+                                                    <TableCell>
+                                                        {campaign.statusLogs && campaign.statusLogs.length > 0
+                                                            ? campaign.statusLogs[0].eventType
+                                                            : "N/A"}
+                                                    </TableCell>
+                                                    <TableCell>{campaign.number}</TableCell>
+                                                    <TableCell>{campaign.messageId}</TableCell>
+                                                    <TableCell>{campaign.errorReason || "N/A"}</TableCell>
+                                                    <TableCell>{new Date(campaign.sendTime).toLocaleString()}</TableCell>
+                                                </TableRow>
+                                            ))
+                                        )
                                     )}
                                 </TableBody>
                             </Table>

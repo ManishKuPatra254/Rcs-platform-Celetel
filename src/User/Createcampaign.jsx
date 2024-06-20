@@ -51,16 +51,19 @@ export default function Createcampaign() {
         numbers: [""],
     });
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedBotName, setSelectedBotName] = useState("");
 
 
 
-    const [getBot, setGetBot] = useState();
+    const [getBot, setGetBot] = useState([]);
 
     useEffect(() => {
         const fetchBotId = async () => {
             try {
                 const response = await getBots();
-                setGetBot(response.botIds);
+                console.log(response, "respponsebods");
+                console.log(response.botDetails, "respponsebods");
+                setGetBot(response.botDetails || []);
             } catch (error) {
                 console.error('Error fetching bot data:', error.message);
             }
@@ -198,6 +201,13 @@ export default function Createcampaign() {
     };
 
 
+    const handleBotSelect = (value) => {
+        const selectedBot = getBot.find(bot => bot.botId === value);
+        setSelectedBotName(selectedBot ? selectedBot.botName : "");
+        setFormData({ ...formData, botId: value });
+    };
+
+
     return (
         <Fragment>
             <Layout>
@@ -216,14 +226,15 @@ export default function Createcampaign() {
                                 <CardTitle className='text-3xl'>Create Campaign</CardTitle>
 
                                 <Label htmlFor="botId" className="text-left">Bot Id</Label>
-                                <Select name='botId' value={formData.botId} onValueChange={(value) => setFormData({ ...formData, botId: value })}>
+                                <Select name='botId' value={formData.botId} onValueChange={handleBotSelect}>
                                     <SelectTrigger className="">
                                         <SelectValue placeholder="Select an option" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {getBot && getBot.map((botId) => (
-                                            <SelectItem key={botId} value={botId}>
-                                                {botId}
+                                        {Array.isArray(getBot) && getBot.map((bot) => (
+                                            <SelectItem key={bot.botId} value={bot.botId}>
+                                                {bot.botName}
+                                                {/* - {bot.botId} */}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -298,7 +309,7 @@ export default function Createcampaign() {
                                     </div>
                                     <div className="p-2 bg-[#F5F5F5] flex gap-2  items-center">
                                         <ChevronLeft size={20} strokeWidth={2.5} color='#0079FF' cursor='pointer' />
-                                        <p className='break-words text-ellipsis font-semibold'>{formData.botId}</p>
+                                        <p className='text-slate-900 text-md font-semibold'>{selectedBotName}</p>
                                     </div>
                                     <div className="inner_content">
                                         <div className="inner_content_2">

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { getCampaignsDetails, startCampaign } from '../Service/auth.service';
+import { getCampaignsDetails, searchCampaigns, startCampaign } from '../Service/auth.service';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -137,10 +137,6 @@ export default function RcsDetails() {
         setDrawerOpen(true);
     };
 
-    const handleFilterChange = (event) => {
-        setFilter(event.target.value);
-    };
-
     const filteredCampaigns = campaigns.filter(campaign =>
         campaign.campaignName.toLowerCase().includes(filter.toLowerCase())
     );
@@ -173,6 +169,18 @@ export default function RcsDetails() {
         doc.save(`${selectedCampaign.campaignName}_summary.pdf`);
     };
 
+    useEffect(() => {
+        const searchCampaignsAsync = async () => {
+            try {
+                const searchResults = await searchCampaigns(filter);
+                setCampaigns(searchResults);
+            } catch (error) {
+                console.error('Error searching campaigns:', error.message);
+            }
+        };
+        searchCampaignsAsync();
+    }, [filter]);
+
     return (
         <Fragment>
             <Layout>
@@ -200,9 +208,9 @@ export default function RcsDetails() {
                                 <div className="flex flex-wrap justify-start items-center mt-5 gap-1">
                                     <Input
                                         placeholder="Filter campaigns..."
-                                        value={filter}
-                                        onChange={handleFilterChange}
                                         className="max-w-xs mr-4 text-sm"
+                                        value={filter}
+                                        onChange={(e) => setFilter(e.target.value)}
                                     />
                                     <Popover open={open} onOpenChange={setOpen} className="mt-4">
                                         <PopoverTrigger asChild>
@@ -306,8 +314,8 @@ export default function RcsDetails() {
                                             {console.log('Filtered campaigns:', filteredCampaigns)}
                                             {/* {console.log('Displayed campaigns:', displayedCampaigns)} */}
                                         </div>
-                                        {filteredCampaigns.length > 0 ? (
-                                            filteredCampaigns.map((campaign) => (
+                                        {campaigns.length > 0 ? (
+                                            campaigns.map((campaign) => (
                                                 <TableRow key={campaign._id}>
                                                     {columns.map((column) => (
                                                         column.id === 'botId' && hideBotId ? null : (

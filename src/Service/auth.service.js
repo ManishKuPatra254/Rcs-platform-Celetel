@@ -316,6 +316,26 @@ export const updateTemplatedataById = async (id, updatedData) => {
 };
 
 
+export const searchCampaigns = async (query) => {
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await axios.get(`https://157.15.202.251/api/campaigns/search?query=${encodeURIComponent(query)}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data");
+        return response.data;
+    } catch (error) {
+        console.log("Campaign search error", error.message);
+        throw error;
+    }
+}
+
+
+
 export const getCampaignsDetailsResponse = async (campaignId, page, limit) => {
     console.log(campaignId, "campaignresponse");
     const token = localStorage.getItem('token');

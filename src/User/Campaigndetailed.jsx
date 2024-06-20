@@ -41,6 +41,12 @@ export default function Campaigndetailed() {
                 setLoading(true);
                 const response = await getCampaignsDetailsResponse(campaignId, currentPage, 10);
                 console.log(response, "Response from getCampaignsDetailsResponse");
+                response.responses?.map(res => console.log(res.statusLogs || [], "Response from statusLogs"));
+                response.responses?.map(res =>
+                    res.statusLogs?.map(log =>
+                        console.log(log.eventType, "Event Type from statusLogs")
+                    )
+                );
                 setCampaignResponse(response.responses || []);
                 setTotalPages(response.totalPages || 1);
                 setLoading(false);
@@ -132,7 +138,11 @@ export default function Campaigndetailed() {
                                             campaignResponse.map((campaign) => (
                                                 <TableRow key={campaign._id}>
                                                     <TableCell>{campaign.campaignId}</TableCell>
-                                                    <TableCell>{campaign.eventType}</TableCell>
+                                                    <TableCell>
+                                                        {campaign.statusLogs && campaign.statusLogs.length > 0
+                                                            ? campaign.statusLogs[0].eventType
+                                                            : "N/A"}
+                                                    </TableCell>
                                                     <TableCell>{campaign.number}</TableCell>
                                                     <TableCell>{campaign.messageId}</TableCell>
                                                     <TableCell>{campaign.errorReason || "N/A"}</TableCell>

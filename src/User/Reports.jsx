@@ -2,7 +2,7 @@
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { CardTitle } from '@/components/ui/card';
-import { EllipsisVertical, Eye, FolderUp, MousePointerClick, Pointer, Search } from 'lucide-react';
+import { CalendarIcon, EllipsisVertical, Eye, FolderUp, MousePointerClick, Pointer, Search } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import {
@@ -23,27 +23,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from '@/components/ui/input';
-import { Helmet } from 'react-helmet';
-// import {
-//     Calculator,
-//     Calendar,
-//     CreditCard,
-//     Settings,
-//     Smile,
-//     User,
-// } from "lucide-react"
-
-// import {
-//     Command,
-//     CommandEmpty,
-//     CommandGroup,
-//     CommandInput,
-//     CommandItem,
-//     CommandList,
-//     CommandSeparator,
-//     CommandShortcut,
-// } from "@/components/ui/command"
-
+import { Helmet } from 'react-helmet'
 import { Calendar } from "@/components/ui/calendar"
 import {
     Popover,
@@ -105,24 +85,6 @@ export default function Reports() {
     const [date, setDate] = useState()
 
 
-
-    // const commandData = [
-    //     {
-    //         name: "Manish",
-    //         age: 23,
-    //     },
-    //     {
-    //         name: "Anish",
-    //         age: 19,
-    //     },
-    //     {
-    //         name: "Manoj",
-    //         age: 45,
-    //     },
-
-
-    // ]
-
     return (
         <Fragment>
             <Layout>
@@ -135,49 +97,37 @@ export default function Reports() {
                             <CardTitle className='text-3xl'>
                                 Reports
                             </CardTitle>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant={"outline"}
-                                        className={cn(
-                                            "w-[240px] justify-start text-left font-normal",
-                                            !date && "text-muted-foreground"
-                                        )}
-                                    >
-                                        <Calendar className="mr-2 h-4 w-4" />
-                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                    <Calendar
-                                        mode="single"
-                                        selected={date}
-                                        onSelect={setDate}
-                                        initialFocus
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            <Button className='bg-blue-500 hover:bg-blue-800'>
-                                <FolderUp className="mr-3 h-4 w-4" />
-                                Export</Button>
+
+                            <div className="flex md:flex-row gap-4 items-center">
+                                <Popover className="">
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-[240px] justify-start text-left font-normal",
+                                                !date && "text-muted-foreground"
+                                            )}
+                                        >
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={date}
+                                            onSelect={setDate}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <Button className=''>
+                                    <FolderUp className="mr-3 h-4 w-4" />
+                                    Export</Button>
+                            </div>
                         </div>
 
                         <div className="px-7">
-
-
-                            {/* <Command className="rounded-lg border shadow-md mt-7">
-                                <CommandInput placeholder="Type a command or search..." />
-                                <CommandList>
-                                    <CommandEmpty>No results found.</CommandEmpty>
-                                    <CommandGroup heading="Suggestions">
-                                        {
-                                            commandData.map(val => <CommandItem>{val.name}</CommandItem>)
-                                        }
-                                    </CommandGroup>
-                                </CommandList>
-                            </Command> */}
-
-
                             <div className="relative ml-auto flex-1 md:grow-0">
                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input

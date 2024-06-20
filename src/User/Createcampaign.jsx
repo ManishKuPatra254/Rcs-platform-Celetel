@@ -15,7 +15,6 @@ import { CiBatteryFull } from "react-icons/ci";
 import { FaSignal } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import * as XLSX from 'xlsx';
 
 
 export default function Createcampaign() {
@@ -165,61 +164,30 @@ export default function Createcampaign() {
         setSelectedFile(e.target.files[0]);
     };
 
+
     const handleFileUpload = async (e) => {
         e.preventDefault();
         if (selectedFile) {
             try {
-                const reader = new FileReader();
-                reader.onload = async (event) => {
-                    const fileContent = event.target.result;
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                const response = await uploadFileCampaigns(formData);
 
-                    // Check file type and process accordingly
-                    if (selectedFile.name.endsWith('.csv')) {
-                        // Handle CSV file
-                        console.log(selectedFile.name, "178line")
-                        const formattedNumbers = fileContent.split('\n').map(number => {
-                            console.log(formattedNumbers, "180line")
-                            number = number.toString();
-                            console.log(number, "jkjhg");
-                            const allDigits = /^\d+$/.test(number);
-                            if (allDigits) {
-                                setFormData(prevFormData => ({
-                                    ...prevFormData,
-                                    numbers: formattedNumbers,
-                                }));
-                            }
-                        }
+                if (response && response.numbers) {
+                    const formattedNumbers = response.numbers.map(number => {
+                        return number.startsWith('+91') ? number : `+91${number}`;
+                    });
 
-                        )
-                    } else if (selectedFile.name.endsWith('.xls') || selectedFile.name.endsWith('.xlsx')) {
-                        // Handle XLS and XLSX files using a library like `xlsx`
-                        const workbook = XLSX.read(fileContent, { type: 'binary' });
-                        const sheetName = workbook.SheetNames[0];
-                        const sheet = workbook.Sheets[sheetName];
-                        const data = XLSX.utils.sheet_to_csv(sheet, { header: 0 });
-                        const formattedNumbers = data.split('\n').map(number => formatPhoneNumber(number.trim()));
-                        setFormData(prevFormData => ({
-                            ...prevFormData,
-                            numbers: formattedNumbers,
-                        }));
-                    } else {
-                        // Unsupported file type
-                        console.error('Unsupported file type');
-                        toast("Unsupported file type");
-                        return;
-                    }
-
-                    // Display file upload success message
-                    const formData = new FormData();
-                    formData.append('file', selectedFile);
-                    const response = await uploadFileCampaigns(formData);
-                    console.log('File uploaded successfully:', response);
+                    setFormData(prevFormData => ({
+                        ...prevFormData,
+                        numbers: formattedNumbers
+                    }));
                     toast("File uploaded successfully");
-                };
+                } else {
+                    toast("File uploaded, but no numbers found in response");
+                }
 
-                // Read file as text
-                reader.readAsBinaryString(selectedFile);
-
+                console.log('File uploaded successfully:', response);
             } catch (error) {
                 console.error('Error uploading file:', error.message);
                 toast("Error uploading file");

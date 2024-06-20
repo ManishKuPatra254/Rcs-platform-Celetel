@@ -39,7 +39,7 @@ export default function Campaigndetailed() {
             console.log(campaignId, "Fetching campaign details for campaignId");
             try {
                 setLoading(true);
-                const response = await getCampaignsDetailsResponse(campaignId, currentPage, 10); // Assuming limit is 10
+                const response = await getCampaignsDetailsResponse(campaignId, currentPage, 10);
                 console.log(response, "Response from getCampaignsDetailsResponse");
                 setCampaignResponse(response.responses || []);
                 setTotalPages(response.totalPages || 1);

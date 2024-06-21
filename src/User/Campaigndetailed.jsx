@@ -10,13 +10,14 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-import { ArrowRightLeft } from 'lucide-react';
+import { ArrowRightLeft, MessageSquareWarning } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Helmet } from 'react-helmet';
 import { Pagination } from '@mui/material';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 
 export default function Campaigndetailed() {
     const { campaignId } = useParams();
@@ -101,6 +102,7 @@ export default function Campaigndetailed() {
                                         <TableHead>Message ID</TableHead>
                                         <TableHead>Error Reason</TableHead>
                                         <TableHead>Send Time</TableHead>
+                                        <TableHead>Status</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -138,10 +140,43 @@ export default function Campaigndetailed() {
                                                             ? campaign.statusLogs[0].eventType
                                                             : "N/A"}
                                                     </TableCell>
-                                                    <TableCell>{campaign.number}</TableCell>
+                                                    <TableCell className="truncate">{campaign.number}</TableCell>
                                                     <TableCell>{campaign.messageId}</TableCell>
                                                     <TableCell>{campaign.errorReason || "N/A"}</TableCell>
                                                     <TableCell>{new Date(campaign.sendTime).toLocaleString()}</TableCell>
+                                                    <HoverCard>
+                                                        <HoverCardTrigger asChild>
+                                                            <Button className='text-xs mt-3' variant='link'>
+                                                                <MessageSquareWarning className="mr-1 h-3 w-3" /> Check Status
+                                                            </Button>
+                                                        </HoverCardTrigger>
+                                                        <HoverCardContent className="w-auto">
+                                                            <div className="flex flex-col items-center">
+                                                                <div className="flex items-center mb-4">
+                                                                    <div className=" bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">1</div>                                                                    <div>
+                                                                        <h3 className="text-sm font-bold">Sent</h3>
+                                                                        <p className="text-gray-600 text-xs">Departed from country of origin</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center mb-4">
+                                                                    <div className="bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">2</div>
+                                                                    <div>
+                                                                        <h3 className="text-sm font-bold">Delivered</h3>
+                                                                        <p className="text-gray-600 text-xs">Departed from country of origin</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center mb-4">
+                                                                    <div className="bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">3</div>
+                                                                    <div>
+                                                                        <h3 className="text-sm font-bold">Read</h3>
+                                                                        <p className="text-gray-600 text-xs">Departed from country of origin</p>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </HoverCardContent>
+                                                    </HoverCard>
+
                                                 </TableRow>
                                             ))
                                         )
@@ -154,7 +189,6 @@ export default function Campaigndetailed() {
                                 count={totalPages}
                                 page={currentPage}
                                 onChange={handlePageChange}
-                                color="secondary"
                                 variant="outlined"
                                 shape="rounded"
                             />

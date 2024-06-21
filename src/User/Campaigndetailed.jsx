@@ -17,7 +17,16 @@ import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Helmet } from 'react-helmet';
 import { Pagination } from '@mui/material';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import {
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet"
 
 export default function Campaigndetailed() {
     const { campaignId } = useParams();
@@ -146,38 +155,38 @@ export default function Campaigndetailed() {
                                                     <TableCell>{campaign.messageId}</TableCell>
                                                     <TableCell>{campaign.errorReason || "N/A"}</TableCell>
                                                     <TableCell>{new Date(campaign.sendTime).toLocaleString()}</TableCell>
-                                                    <HoverCard>
-                                                        <HoverCardTrigger asChild>
+
+                                                    <Sheet>
+                                                        <SheetTrigger asChild>
                                                             <Button className='text-xs mt-3' variant='link'>
                                                                 <MessageSquareWarning className="mr-1 h-3 w-3" /> Check Status
                                                             </Button>
-                                                        </HoverCardTrigger>
-                                                        <HoverCardContent className="w-auto">
-                                                            <div className="flex flex-col items-center">
-                                                                <div className="flex items-center mb-4">
-                                                                    <div className=" bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">1</div>                                                                    <div>
-                                                                        <h3 className="text-sm font-bold">Sent</h3>
-                                                                        <p className="text-gray-600 text-xs">Departed from country of origin</p>
+                                                        </SheetTrigger>
+                                                        <SheetContent>
+                                                            <SheetHeader>
+                                                                <SheetTitle>Check Status</SheetTitle>
+                                                                <SheetDescription>
+                                                                    Make changes to your profile here. Click save when youre done.
+                                                                </SheetDescription>
+                                                            </SheetHeader>
+                                                            <div className="flex flex-col items-start justify-start mt-10">
+                                                                {campaign.statusLogs.map((log, index) => (
+                                                                    <div key={log._id} className="flex items-center mb-4">
+                                                                        <div className="bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">{index + 1}</div>
+                                                                        <div>
+                                                                            <h3 className="text-sm font-bold">{log.eventType}</h3>
+                                                                            <p className="text-gray-600 text-xs truncate">{log.details}</p>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div className="flex items-center mb-4">
-                                                                    <div className="bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">2</div>
-                                                                    <div>
-                                                                        <h3 className="text-sm font-bold">Delivered</h3>
-                                                                        <p className="text-gray-600 text-xs">Departed from country of origin</p>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="flex items-center mb-4">
-                                                                    <div className="bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">3</div>
-                                                                    <div>
-                                                                        <h3 className="text-sm font-bold">Read</h3>
-                                                                        <p className="text-gray-600 text-xs">Departed from country of origin</p>
-                                                                    </div>
-                                                                </div>
-
+                                                                ))}
                                                             </div>
-                                                        </HoverCardContent>
-                                                    </HoverCard>
+                                                            <SheetFooter>
+                                                                <SheetClose asChild>
+                                                                    <Button type="submit" className='text-xs'>Download PDF</Button>
+                                                                </SheetClose>
+                                                            </SheetFooter>
+                                                        </SheetContent>
+                                                    </Sheet>
 
                                                 </TableRow>
                                             ))

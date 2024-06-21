@@ -9,21 +9,14 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { ArrowRightLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Label } from '@/components/ui/label';
 import { Helmet } from 'react-helmet';
+import { Pagination } from '@mui/material';
 
 export default function Campaigndetailed() {
     const { campaignId } = useParams();
@@ -33,6 +26,7 @@ export default function Campaigndetailed() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         const fetchCampaignResponse = async () => {
@@ -61,9 +55,10 @@ export default function Campaigndetailed() {
         fetchCampaignResponse();
     }, [campaignId, currentPage]);
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
     };
+
 
     return (
         <Fragment>
@@ -154,51 +149,15 @@ export default function Campaigndetailed() {
                                 </TableBody>
                             </Table>
                         </div>
-                        <div className="flex justify-around items-center mt-4">
-                            <Pagination>
-                                <PaginationContent>
-                                    <PaginationItem>
-                                        <PaginationPrevious
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (currentPage > 1) handlePageChange(currentPage - 1);
-                                            }}
-                                        />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationNext
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (currentPage < totalPages) handlePageChange(currentPage + 1);
-                                            }}
-                                        />
-                                    </PaginationItem>
-                                </PaginationContent>
-                            </Pagination>
-                            <div className='flex items-center'>
-                                <Label htmlFor="page-select" className="">Go to page</Label>
-                                <Select
-                                    id="page-select"
-                                    value={currentPage}
-                                    onValueChange={(value) => handlePageChange(Number(value))}
-                                >
-                                    <SelectTrigger className="">
-                                        <SelectValue placeholder="Select page" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>Pages</SelectLabel>
-                                            {[...Array(totalPages)].map((_, pageIndex) => (
-                                                <SelectItem key={pageIndex} value={pageIndex + 1}>
-                                                    {pageIndex + 1}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                        <div className="flex justify-end mt-4">
+                            <Pagination
+                                count={totalPages}
+                                page={currentPage}
+                                onChange={handlePageChange}
+                                color="secondary"
+                                variant="outlined"
+                                shape="rounded"
+                            />
                         </div>
                     </div>
                 </div>

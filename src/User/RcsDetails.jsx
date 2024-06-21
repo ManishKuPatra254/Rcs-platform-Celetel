@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { getCampaignsDetails, searchCampaigns, startCampaign } from '../Service/auth.service';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
@@ -35,6 +34,7 @@ import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetT
 import { Helmet } from 'react-helmet';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { Pagination } from '@mui/material';
 
 
 const columns = [
@@ -68,8 +68,8 @@ const frameworks = [
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState([]);
     const [originalCampaigns, setOriginalCampaigns] = useState([]);
-    const [page, setPage] = useState(0);
-    const [limit, setLimit] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState("");
     const [sortOrder, setSortOrder] = useState(null);
@@ -82,22 +82,23 @@ export default function RcsDetails() {
     console.log(sortOrder);
 
     useEffect(() => {
-        const fetchCampaigns = async (page, limit) => {
+        const fetchCampaigns = async () => {
             try {
-                const response = await getCampaignsDetails(page + 1, limit);
+                const response = await getCampaignsDetails(currentPage, 10);
                 console.log(response, "responseforpageandlimit");
                 console.log(response.currentPage, "responsepage");
                 console.log(response.campaigns, "cam")
                 const sortedCampaigns = response.campaigns.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setCampaigns(sortedCampaigns);
                 setOriginalCampaigns(sortedCampaigns);
+                setTotalPages(response.totalPages || 1);
             } catch (error) {
                 console.error('Error fetching campaign data:', error.message);
             }
         };
 
-        fetchCampaigns(page, limit);
-    }, [page, limit]);
+        fetchCampaigns();
+    }, [currentPage]);
 
     const handleSort = (order) => {
         setSortOrder(order);
@@ -109,16 +110,10 @@ export default function RcsDetails() {
         setCampaigns(sortedCampaigns);
     };
 
-    const handleChangePage = (newPage) => {
-        setPage(newPage);
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
     };
 
-    const handleChangeRowsPerPage = (event) => {
-        setLimit(+event.target.value);
-        setPage(0);
-    };
-
-    console.log(handleChangeRowsPerPage)
 
     const handleStartCampaign = async (campaignId) => {
         try {
@@ -146,7 +141,7 @@ export default function RcsDetails() {
     );
 
 
-    const totalPages = Math.ceil(campaigns.length / limit);
+    // const totalPages = Math.ceil(campaigns.length / limit);
 
 
 
@@ -392,26 +387,17 @@ export default function RcsDetails() {
                                     </TableBody>
 
                                 </Table>
+                                <div className="flex justify-end items-center p-3">
+                                    <Pagination
+                                        count={totalPages}
+                                        page={currentPage}
+                                        onChange={handlePageChange}
+                                        color="secondary"
+                                        variant="outlined"
+                                        shape="rounded"
+                                    />
+                                </div>
                             </div>
-
-                            <Pagination>
-                                <PaginationPrevious onClick={() => handleChangePage(page - 1)} disabled={page === 0}>
-                                    Previous
-                                </PaginationPrevious>
-                                <PaginationContent>
-                                    {Array.from({ length: totalPages }, (_, index) => (
-                                        <PaginationItem key={index}>
-                                            <PaginationLink onClick={() => handleChangePage(index)} active={index === page}>
-                                                {index + 1}
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                    ))}
-                                </PaginationContent>
-                                <PaginationNext onClick={() => handleChangePage(page + 1)} disabled={page >= totalPages - 1}>
-                                    Next
-                                </PaginationNext>
-                            </Pagination>
-
                         </div>
                     </div>
                 </div>

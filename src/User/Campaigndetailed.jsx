@@ -36,12 +36,12 @@ export default function Campaigndetailed() {
                 setLoading(true);
                 const response = await getCampaignsDetailsResponse(campaignId, currentPage, 10);
                 console.log(response, "Response from getCampaignsDetailsResponse");
-                response.responses?.map(res => console.log(res.statusLogs || [], "Response from statusLogs"));
-                response.responses?.map(res =>
+                response.responses?.map(res => {
+                    console.log(res.statusLogs || [], "Response from statusLogs");
                     res.statusLogs?.map(log =>
                         console.log(log.eventType, "Event Type from statusLogs")
-                    )
-                );
+                    );
+                });
                 setCampaignResponse(response.responses || []);
                 setTotalPages(response.totalPages || 1);
                 setLoading(false);
@@ -60,6 +60,12 @@ export default function Campaigndetailed() {
         setCurrentPage(value);
     };
 
+    const getLatestEventType = (statusLogs) => {
+        if (statusLogs && statusLogs.length > 0) {
+            return statusLogs[statusLogs.length - 1].eventType;
+        }
+        return "Message sent successfully";
+    };
 
     return (
         <Fragment>
@@ -135,11 +141,7 @@ export default function Campaigndetailed() {
                                             campaignResponse.map((campaign) => (
                                                 <TableRow key={campaign._id}>
                                                     <TableCell>{campaign.campaignId}</TableCell>
-                                                    <TableCell>
-                                                        {campaign.statusLogs && campaign.statusLogs.length > 0
-                                                            ? campaign.statusLogs[0].eventType
-                                                            : "N/A"}
-                                                    </TableCell>
+                                                    <TableCell>{getLatestEventType(campaign.statusLogs)}</TableCell>
                                                     <TableCell className="truncate">{campaign.number}</TableCell>
                                                     <TableCell>{campaign.messageId}</TableCell>
                                                     <TableCell>{campaign.errorReason || "N/A"}</TableCell>

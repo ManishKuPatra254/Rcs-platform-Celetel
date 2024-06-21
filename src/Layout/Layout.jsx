@@ -43,6 +43,10 @@ import { Fragment } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import mainceltellogo from '../assets/Group (1).svg'
 import mainlogofull from '../assets/main_logo.svg'
+import { ThemeProvider } from "@/Theme/Themeprovider"
+import { useTheme } from "@/Theme/Themeprovider"
+import { Moon, Sun } from "lucide-react"
+
 
 // import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
@@ -313,6 +317,8 @@ const UserLayout = ({ children }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const breadcrumbs = generateBreadcrumbs(location.pathname);
+    const { setTheme } = useTheme();
+
 
     const handleLogoutUser = () => {
         localStorage.removeItem('token');
@@ -513,6 +519,29 @@ const UserLayout = ({ children }) => {
                         </Breadcrumb>
                         <div className="relative ml-auto flex-1 md:grow-0">
                         </div>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="mr-2 mt-1">
+                                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                    <span className="sr-only">Toggle theme</span>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => setTheme("light")}>
+                                    Light
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                                    Dark
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setTheme("system")}>
+                                    System
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+
                         <Search className="mr-4 h-5 w-5" />
                         <BellDot className="mr-4 h-5 w-5" />
 
@@ -558,9 +587,11 @@ const UserLayout = ({ children }) => {
                         </DropdownMenu>
 
                     </header>
+
                     <main>
                         {children}
                     </main>
+
                 </div>
             </div>
         </Fragment>
@@ -599,9 +630,11 @@ export function Layout({ children }) {
 
         <Fragment>
             <div className="flex min-h-screen w-full flex-col bg-muted/40">
-                <main className="grid flex-1 gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-                    {renderLayout()}
-                </main>
+                <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+                    <main className="grid flex-1 gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+                        {renderLayout()}
+                    </main>
+                </ThemeProvider>
             </div>
         </Fragment>
     )

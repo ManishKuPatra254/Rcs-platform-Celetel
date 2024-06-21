@@ -421,8 +421,8 @@ export default function RcsDetails() {
                                         <div className="grid items-center gap-4">
                                             <p className='text-sm font-semibold'>Template Name : {selectedCampaign.templateName}</p>
                                             <p className='text-sm font-semibold'>Campaign Name  : {selectedCampaign.campaignName}</p>
-                                            <p className="text-sm font-semibold">Created at : {selectedCampaign.createdAt}</p>
-                                            <p className="text-sm font-semibold">Updated at : {selectedCampaign.updatedAt}</p>
+                                            <p className="text-sm font-semibold">Created at : {new Date(selectedCampaign.createdAt).toLocaleString()}</p>
+                                            <p className="text-sm font-semibold">Updated at : {new Date(selectedCampaign.updatedAt).toLocaleString()}</p>
                                             <p className="text-sm font-semibold">Total Numbers : {selectedCampaign.totalNumbers}</p>
                                             <p className="text-sm font-semibold">Status : {selectedCampaign.status}</p>
                                         </div>

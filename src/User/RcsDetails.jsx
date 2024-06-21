@@ -392,7 +392,6 @@ export default function RcsDetails() {
                                         count={totalPages}
                                         page={currentPage}
                                         onChange={handlePageChange}
-                                        color="secondary"
                                         variant="outlined"
                                         shape="rounded"
                                     />

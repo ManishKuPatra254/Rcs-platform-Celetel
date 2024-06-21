@@ -140,7 +140,7 @@ export default function Campaigndetailed() {
                                                             ? campaign.statusLogs[0].eventType
                                                             : "N/A"}
                                                     </TableCell>
-                                                    <TableCell>{campaign.number}</TableCell>
+                                                    <TableCell className="truncate">{campaign.number}</TableCell>
                                                     <TableCell>{campaign.messageId}</TableCell>
                                                     <TableCell>{campaign.errorReason || "N/A"}</TableCell>
                                                     <TableCell>{new Date(campaign.sendTime).toLocaleString()}</TableCell>

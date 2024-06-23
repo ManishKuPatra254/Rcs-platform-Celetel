@@ -1,10 +1,14 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import config from '@/environment';
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+console.log(API_URL, "newurl");
+
 
 export const registerUser = async (formData) => {
     try {
-        const responseContact = await axios.post(`${config.apiUrl}/auth/register`, formData, {
+        const responseContact = await axios.post(`${API_URL}/auth/register`, formData, {
             headers: {
                 'Content-Type': 'application/json',
 
@@ -25,7 +29,7 @@ export const registerUser = async (formData) => {
 export const loginUser = async (formData) => {
     console.log(formData);
     try {
-        const response = await axios.post(`${config.apiUrl}/auth/login`, formData);
+        const response = await axios.post(`${API_URL}/auth/login`, formData);
 
         // Retrieve the existing logins from the cookies
         let existingLogins = Cookies.get('logins');
@@ -87,7 +91,7 @@ export const getProfile = async () => {
         }
 
         // Make the profile request with the token
-        const responseContact = await axios.get(`${config.apiUrl}/profile/details`, {
+        const responseContact = await axios.get(`${API_URL}/profile/details`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -127,7 +131,7 @@ export const updateProfile = async (profile) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.put(`${config.apiUrl}/profile/update`, profile, {
+        const response = await axios.put(`${API_URL}/profile/update`, profile, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -165,7 +169,7 @@ export const changePassword = async (password) => {
         if (!token) {
             throw new Error("No valid token found for the specified role.");
         }
-        const response = await axios.put(`${config.apiUrl}/profile/change-password`, password, {
+        const response = await axios.put(`${API_URL}/profile/change-password`, password, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -203,7 +207,7 @@ export const createBots = async (createBot) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.post(`${config.apiUrl}/api/bot`, createBot, {
+        const response = await axios.post(`${API_URL}/api/bot`, createBot, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -240,7 +244,7 @@ export const getBots = async () => {
         if (!token) {
             throw new Error("No valid token found for the specified role.");
         }
-        const response = await axios.get(`${config.apiUrl}/api/botIds`, {
+        const response = await axios.get(`${API_URL}/api/botIds`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -277,7 +281,7 @@ export const updateBot = async (currentBotId) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.put(`${config.apiUrl}/api/botId`, currentBotId, {
+        const response = await axios.put(`${API_URL}/api/botId`, currentBotId, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -317,7 +321,7 @@ export const getCampaignsDetails = async (page, limit) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const responseContact = await axios.get(`${config.apiUrl}/api/campaigns`, {
+        const responseContact = await axios.get(`${API_URL}/api/campaigns`, {
             headers: {
                 Authorization: `Bearer ${token}`
             },
@@ -369,7 +373,7 @@ export const createCampaigns = async (formData) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.post(`${config.apiUrl}/api/campaigns/create-campaign`, formData, {
+        const response = await axios.post(`${API_URL}/api/campaigns/create-campaign`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -410,7 +414,7 @@ export const uploadFileCampaigns = async (file) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.post(`${config.apiUrl}/api/campaigns/uploadFile`, file, {
+        const response = await axios.post(`${API_URL}/api/campaigns/uploadFile`, file, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'
@@ -448,7 +452,7 @@ export const startCampaign = async (campaignId) => {
         if (!token) {
             throw new Error("No valid token found for the specified role.");
         }
-        const response = await axios.post(`${config.apiUrl}/api/campaigns/start-campaign/${campaignId}`,
+        const response = await axios.post(`${API_URL}/api/campaigns/start-campaign/${campaignId}`,
             {},
             {
                 headers: {
@@ -491,7 +495,7 @@ export const getTemplateDetailsList = async () => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const responseContact = await axios.get(`${config.apiUrl}/api/template/all`, {
+        const responseContact = await axios.get(`${API_URL}/api/template/all`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -574,7 +578,7 @@ export const getTemplatedataById = async (id) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.get(`${config.apiUrl}/api/template/details/${id}`, {
+        const response = await axios.get(`${API_URL}/api/template/details/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -616,7 +620,7 @@ export const updateTemplatedataById = async (id, updatedData) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.put(`${config.apiUrl}/api/template/update/${id}`, updatedData, {
+        const response = await axios.put(`${API_URL}/api/template/update/${id}`, updatedData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -657,7 +661,7 @@ export const searchCampaigns = async (query) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.get(`${config.apiUrl}/api/campaigns/search?query=${encodeURIComponent(query)}`, {
+        const response = await axios.get(`${API_URL}/api/campaigns/search?query=${encodeURIComponent(query)}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -700,7 +704,7 @@ export const getCampaignsDetailsResponse = async (campaignId, page, limit) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.get(`${config.apiUrl}/api/campaigns/responses`, {
+        const response = await axios.get(`${API_URL}/api/campaigns/responses`, {
             params: {
                 campaignId,
                 page,
@@ -747,7 +751,7 @@ export const getDashboardData = async () => {
         }
 
 
-        const response = await axios.get(`${config.apiUrl}/api/dashboard/stats`, {
+        const response = await axios.get(`${API_URL}/api/dashboard/stats`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -788,7 +792,7 @@ export const getWeelyAndDaliyStats = async () => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.get(`${config.apiUrl}/api/dashboard/weekly-daily-stats`, {
+        const response = await axios.get(`${API_URL}/api/dashboard/weekly-daily-stats`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -833,7 +837,7 @@ export const getAllUsers = async () => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.get(`${config.apiUrl}/api/admin/users`, {
+        const response = await axios.get(`${API_URL}/api/admin/users`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -877,7 +881,7 @@ export const getUsersByEmail = async (email) => {
         }
 
 
-        const response = await axios.get(`${config.apiUrl}/api/admin/user/${email}`, {
+        const response = await axios.get(`${API_URL}/api/admin/user/${email}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -921,7 +925,7 @@ export const updateUsersByEmail = async (updateUser) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.put(`${config.apiUrl}/api/admin/user`, updateUser, {
+        const response = await axios.put(`${API_URL}/api/admin/user`, updateUser, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -961,7 +965,7 @@ export const addBalanceToSpecificUser = async (formData) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.post(`${config.apiUrl}/api/admin/add-balance`, formData, {
+        const response = await axios.post(`${API_URL}/api/admin/add-balance`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'

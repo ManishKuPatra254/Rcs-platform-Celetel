@@ -3,9 +3,6 @@ import Cookies from 'js-cookie';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-console.log(API_URL, "newurl");
-
-
 export const registerUser = async (formData) => {
     try {
         const responseContact = await axios.post(`${API_URL}/auth/register`, formData, {

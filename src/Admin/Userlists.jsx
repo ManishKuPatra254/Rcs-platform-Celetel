@@ -3,17 +3,18 @@ import { Fragment, useEffect, useState } from 'react'
 import TablePagination from '@mui/material/TablePagination';
 import { getAllUsers, getUsersByEmail, updateUsersByEmail } from '../Service/auth.service';
 import { Button } from '@/components/ui/button';
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet"
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12 } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
@@ -58,7 +59,11 @@ export default function Userlists() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [usersList, setUsersList] = useState([]);
-    const [selectedUser, setSelectedUser] = useState(null);
+    // const [selectedUser, setSelectedUser] = useState(null);
+
+    // const [formData, setFormData] = useState({
+
+    // })
 
     // .......................
 
@@ -103,37 +108,37 @@ export default function Userlists() {
         setPage(0);
     };
 
-    const handleEditClick = async (email) => {
-        try {
-            const response = await getUsersByEmail(email);
-            setSelectedUser(response.users);
-        } catch (error) {
-            console.error('Error fetching template data:', error.message);
-        }
-    };
+    // const handleEditClick = async (email) => {
+    //     try {
+    //         const response = await getUsersByEmail(email);
+    //         setSelectedUser(response.users);
+    //     } catch (error) {
+    //         console.error('Error fetching template data:', error.message);
+    //     }
+    // };
 
-    const handleSaveChanges = async () => {
-        try {
-            const { _id, userId, ...updateUser } = selectedUser;
-            console.log(userId, "userId")
-            console.log(selectedUser, "id468788");
+    // const handleSaveChanges = async () => {
+    //     try {
+    //         const { _id, userId, ...updateUser } = selectedUser;
+    //         console.log(userId, "userId")
+    //         console.log(selectedUser, "id468788");
 
-            const response = await updateUsersByEmail(updateUser);
-            console.log(response, "updateddata");
-            setUsersList(prev => prev.map(user => user._id === _id ? updateUser : user));
-            setSelectedUser(null);
-            alert(response.message);
-            console.log(response.message);
-        } catch (error) {
-            console.error('Error updating template data:', error.message);
-        }
-    };
+    //         const response = await updateUsersByEmail(updateUser);
+    //         console.log(response, "updateddata");
+    //         setUsersList(prev => prev.map(user => user._id === _id ? updateUser : user));
+    //         setSelectedUser(null);
+    //         alert(response.message);
+    //         console.log(response.message);
+    //     } catch (error) {
+    //         console.error('Error updating template data:', error.message);
+    //     }
+    // };
 
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setSelectedUser(prev => ({ ...prev, [name]: value }));
-    };
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setSelectedUser(prev => ({ ...prev, [name]: value }));
+    // };
     return (
         <Fragment>
             <Layout>
@@ -248,37 +253,38 @@ export default function Userlists() {
                                                         <TableCell key={column.id}>
                                                             {column.id === 'actions' ? (
                                                                 <div className="text-center flex space-x-2">
-                                                                    <Dialog>
-                                                                        <DialogTrigger onClick={() => handleEditClick(row._id)}>
-                                                                            <Button>
-                                                                                Edit
-                                                                            </Button>
-                                                                        </DialogTrigger>
-                                                                        <DialogContent>
-                                                                            <DialogHeader>
-                                                                                <DialogTitle>Edit Template</DialogTitle>
-                                                                                <DialogDescription>Make changes to your template here. Click save when youre done.</DialogDescription>
-                                                                            </DialogHeader>
-                                                                            {selectedUser && selectedUser._id === row._id && (
-                                                                                <>
-                                                                                    <Label htmlFor="email" className="text-left">Email Address</Label>
-                                                                                    <Input name="email" value={selectedUser.email} onChange={handleInputChange} />
-
-                                                                                    <Label htmlFor="phone" className="text-left">Phone No</Label>
-                                                                                    <Input name="phone" value={selectedUser.phone} onChange={handleInputChange} />
-
-                                                                                    <Label htmlFor="textMessageContent" className="text-left">Text message content</Label>
-                                                                                    <Input name="type" value={selectedUser.type} onChange={handleInputChange} />
-
-                                                                                    <Label htmlFor="status" className="text-left">Status</Label>
-                                                                                    <Input name="status" value={selectedUser.status} onChange={handleInputChange} />
-                                                                                    <DialogFooter>
-                                                                                        <Button type="button" onClick={handleSaveChanges}>Save changes</Button>
-                                                                                    </DialogFooter>
-                                                                                </>
-                                                                            )}
-                                                                        </DialogContent>
-                                                                    </Dialog>
+                                                                    <Sheet>
+                                                                        <SheetTrigger asChild>
+                                                                            <Button variant="outline" className="bg-transparent text-xs">Add balance</Button>
+                                                                        </SheetTrigger>
+                                                                        <SheetContent>
+                                                                            <SheetHeader>
+                                                                                <SheetTitle>Add balance</SheetTitle>
+                                                                                <SheetDescription>
+                                                                                    Make changes to your profile here. Click save when youre done.
+                                                                                </SheetDescription>
+                                                                            </SheetHeader>
+                                                                            <div className="grid gap-4 py-4">
+                                                                                <div className="">
+                                                                                    <Label htmlFor="name" className="text-right">
+                                                                                        Balance
+                                                                                    </Label>
+                                                                                    <Input className="" />
+                                                                                </div>
+                                                                                <div className="">
+                                                                                    <Label htmlFor="username" className="text-right">
+                                                                                        Refund
+                                                                                    </Label>
+                                                                                    <Input className="col-span-3" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <SheetFooter>
+                                                                                <SheetClose asChild>
+                                                                                    <Button type="submit">Save changes</Button>
+                                                                                </SheetClose>
+                                                                            </SheetFooter>
+                                                                        </SheetContent>
+                                                                    </Sheet>
                                                                 </div>
                                                             ) : (
                                                                 column.id === 'createdAt' || column.id === 'updatedAt'

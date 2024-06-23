@@ -46,6 +46,7 @@ import mainlogofull from '../assets/main_logo.svg'
 import { ThemeProvider } from "@/Theme/Themeprovider"
 import { useTheme } from "@/Theme/Themeprovider"
 import { Moon, Sun } from "lucide-react"
+import Cookies from "js-cookie"
 
 
 // import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
@@ -321,13 +322,27 @@ const UserLayout = ({ children }) => {
 
 
     const handleLogoutUser = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('typerole');
-        localStorage.removeItem('username');
+        Cookies.remove('logins');
         navigate('/');
     };
 
-    const username = localStorage.getItem('username');
+    const logins = Cookies.get('logins');
+    let username = '';
+    // let typerole = '';
+
+    if (logins) {
+        try {
+            const parsedLogins = JSON.parse(logins);
+            if (parsedLogins.length > 0) {
+                const lastLogin = parsedLogins[parsedLogins.length - 1];
+                username = lastLogin.username;
+                // typerole = lastLogin.typerole;
+            }
+        } catch (e) {
+            console.error("Failed to parse logins cookie:", e);
+        }
+    }
+
     const firstLetter = username ? username.charAt(0).toUpperCase() : '';
 
     // const initialname = username.charAt(0);
@@ -494,7 +509,7 @@ const UserLayout = ({ children }) => {
                             <BreadcrumbList>
                                 <BreadcrumbItem>
                                     <BreadcrumbLink asChild>
-                                        <RouterLink to="/dashboard">Dashboard</RouterLink>
+                                        <RouterLink to="/userdashboard">Dashboard</RouterLink>
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 {breadcrumbs.map((breadcrumb, index) => (
@@ -611,8 +626,21 @@ const DefaultLayout = ({ children }) => {
 // eslint-disable-next-line react/prop-types
 export function Layout({ children }) {
 
-    const typeRole = localStorage.getItem('typerole');
-    console.log(typeRole, "responsetyperole")
+    const logins = Cookies.get('logins');
+    let typeRole = null;
+
+    if (logins) {
+        try {
+            const parsedLogins = JSON.parse(logins);
+            if (parsedLogins.length > 0) {
+                typeRole = parsedLogins[parsedLogins.length - 1].typerole;
+            }
+        } catch (error) {
+            console.log("Failed to parse logins cookie:", error);
+        }
+    }
+
+    console.log(typeRole, "responsetyperole");
 
     const renderLayout = () => {
         if (typeRole === 'admin') {

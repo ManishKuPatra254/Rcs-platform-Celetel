@@ -59,7 +59,11 @@ export default function Userlists() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [usersList, setUsersList] = useState([]);
-    const [selectedUser, setSelectedUser] = useState(null);
+    // const [selectedUser, setSelectedUser] = useState(null);
+
+    // const [formData, setFormData] = useState({
+
+    // })
 
     // .......................
 
@@ -104,37 +108,37 @@ export default function Userlists() {
         setPage(0);
     };
 
-    const handleEditClick = async (email) => {
-        try {
-            const response = await getUsersByEmail(email);
-            setSelectedUser(response.users);
-        } catch (error) {
-            console.error('Error fetching template data:', error.message);
-        }
-    };
+    // const handleEditClick = async (email) => {
+    //     try {
+    //         const response = await getUsersByEmail(email);
+    //         setSelectedUser(response.users);
+    //     } catch (error) {
+    //         console.error('Error fetching template data:', error.message);
+    //     }
+    // };
 
-    const handleSaveChanges = async () => {
-        try {
-            const { _id, userId, ...updateUser } = selectedUser;
-            console.log(userId, "userId")
-            console.log(selectedUser, "id468788");
+    // const handleSaveChanges = async () => {
+    //     try {
+    //         const { _id, userId, ...updateUser } = selectedUser;
+    //         console.log(userId, "userId")
+    //         console.log(selectedUser, "id468788");
 
-            const response = await updateUsersByEmail(updateUser);
-            console.log(response, "updateddata");
-            setUsersList(prev => prev.map(user => user._id === _id ? updateUser : user));
-            setSelectedUser(null);
-            alert(response.message);
-            console.log(response.message);
-        } catch (error) {
-            console.error('Error updating template data:', error.message);
-        }
-    };
+    //         const response = await updateUsersByEmail(updateUser);
+    //         console.log(response, "updateddata");
+    //         setUsersList(prev => prev.map(user => user._id === _id ? updateUser : user));
+    //         setSelectedUser(null);
+    //         alert(response.message);
+    //         console.log(response.message);
+    //     } catch (error) {
+    //         console.error('Error updating template data:', error.message);
+    //     }
+    // };
 
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setSelectedUser(prev => ({ ...prev, [name]: value }));
-    };
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setSelectedUser(prev => ({ ...prev, [name]: value }));
+    // };
     return (
         <Fragment>
             <Layout>

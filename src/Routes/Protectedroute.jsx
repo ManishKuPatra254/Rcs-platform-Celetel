@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LogoutDialog from './Logout';
+import Cookies from 'js-cookie';
 
 export default function ProtectedRoute({ Component }) {
     const [openDialog, setOpenDialog] = useState(false);
@@ -10,7 +11,7 @@ export default function ProtectedRoute({ Component }) {
 
     useEffect(() => {
         const checkToken = () => {
-            const token = localStorage.getItem('token');
+            const token = Cookies.get('logins');
             // Check if token is missing and user navigates away from protected route
             if (!token && location.pathname !== '/') {
                 setOpenDialog(true);
@@ -29,7 +30,7 @@ export default function ProtectedRoute({ Component }) {
     }, [navigate, location.pathname]);
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
+        Cookies.remove('logins');
         setOpenDialog(false);
         navigate('/');
     };

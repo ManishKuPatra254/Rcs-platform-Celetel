@@ -1,35 +1,16 @@
-/* eslint-disable no-undef */
 
-// For Staging setup -- Staging Host
-
-const staging = {
-  apiUrl: "http://localhost:",
-  encryptionkey: "",
-  PORT: '8600/api',
-  API_BASEURL: "https://main-rcs.vercel.app",
-  SOCKET_URL: "ws://localhost:8600"
+const config = {
+  apiUrl: import.meta.env.VITE_API_URL,
+  encryptionKey: import.meta.env.VITE_ENCRYPTION_KEY,
+  port: import.meta.env.VITE_PORT,
+  socketUrl: import.meta.env.VITE_SOCKET_URL,
 };
 
-// For Production server --
+console.log("All Env Variables:", import.meta.env);
+console.log("Configuration:", config);
 
-const production = {
-  apiUrl: "",
-  encryptionkey: "",
-  PORT: '8600/api',
-  API_BASEURL: "http://157.15.202.251/api-docs/",
-  // API_BASEURL: "http://3.111.149.149:8600",
-  SOCKET_URL: ""
-};
+if (!import.meta.env.PROD) {
+  console.error("Invalid environment for production:", import.meta.env.MODE);
+}
 
-console.log("process.env.REACT_APP_ENV :", process.env.REACT_APP_ENV);
-
-if (process.env.REACT_APP_ENV === "staging") {
-  module.exports = staging;
-}
-else if (process.env.REACT_APP_ENV === "production") {
-  module.exports = production;
-}
-else {
-  // Handle the case when REACT_APP_ENV is neither "staging" nor "production"
-  console.error("Invalid REACT_APP_ENV:", process.env.REACT_APP_ENV);
-}
+export default config;

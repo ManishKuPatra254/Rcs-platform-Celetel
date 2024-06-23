@@ -169,7 +169,7 @@ export default function Campaigndetailed() {
                                                                     Make changes to your profile here. Click save when youre done.
                                                                 </SheetDescription>
                                                             </SheetHeader>
-                                                            <div className="flex flex-col items-start justify-start mt-10">
+                                                            <div className="flex flex-col items-start justify-start mt-8">
                                                                 {campaign.statusLogs.map((log, index) => (
                                                                     <div key={log._id} className="flex items-center mb-4">
                                                                         <div className="bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">{index + 1}</div>

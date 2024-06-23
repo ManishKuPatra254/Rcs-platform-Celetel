@@ -1,11 +1,10 @@
-// import { API_BASEURL } from '@/environment';
 import axios from 'axios';
-// import { API_BASEURL } from '/src/environment/index.jsx';
+import Cookies from 'js-cookie';
+import config from '@/environment';
 
-// console.log(API_BASEURL, "Apiurl");
 export const registerUser = async (formData) => {
     try {
-        const responseContact = await axios.post(`https://157.15.202.251/auth/register`, formData, {
+        const responseContact = await axios.post(`${config.apiUrl}/auth/register`, formData, {
             headers: {
                 'Content-Type': 'application/json',
 
@@ -21,22 +20,37 @@ export const registerUser = async (formData) => {
 
 
 
+
+
 export const loginUser = async (formData) => {
     console.log(formData);
     try {
-        const response = await axios.post(`https://157.15.202.251/auth/login`, formData);
-        // setting the responses................................
-        const token = response.data.token;
-        const typerole = response.data.type;
-        // consoling whether the token is coming or not ...................................
-        console.log(token, "whilelogintoken");
-        console.log(typerole, "whilelogintyperole");
-        // setting to the local storage....................................
-        localStorage.setItem('token', token);
-        localStorage.setItem('typerole', typerole);
-        console.log(response.data.username, "res1");
-        const username = response.data.username;
-        localStorage.setItem('username', username);
+        const response = await axios.post(`${config.apiUrl}/auth/login`, formData);
+
+        // Retrieve the existing logins from the cookies
+        let existingLogins = Cookies.get('logins');
+        existingLogins = existingLogins ? JSON.parse(existingLogins) : [];
+
+        // Create a new login object
+        const newLogin = {
+            token: response.data.token,
+            typerole: response.data.type,
+            username: response.data.username,
+        };
+
+        // Add the new login to the array
+        existingLogins.push(newLogin);
+
+        // Store the updated array in the cookies
+        Cookies.set('logins', JSON.stringify(existingLogins));
+
+
+
+        // Optional: Log the details to the console
+        console.log(newLogin.token, "whilelogintoken");
+        console.log(newLogin.typerole, "whilelogintyperole");
+        console.log(newLogin.username, "res1");
+
         return response.data;
 
     } catch (error) {
@@ -47,15 +61,38 @@ export const loginUser = async (formData) => {
 
 // user panel apis .............................................................
 
-
 export const getProfile = async () => {
     try {
-        const token = localStorage.getItem('token');
-        const responseContact = await axios.get(`https://157.15.202.251/profile/details`, {
+        // Retrieve the 'logins' cookie and parse it
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        // Make the profile request with the token
+        const responseContact = await axios.get(`${config.apiUrl}/profile/details`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
+
         console.log(responseContact.data, "responseContact");
         return responseContact.data;
     } catch (error) {
@@ -65,15 +102,39 @@ export const getProfile = async () => {
 }
 
 export const updateProfile = async (profile) => {
+
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.put(`https://157.15.202.251/profile/update`, profile, {
+        // Retrieve the 'logins' cookie and parse it
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.put(`${config.apiUrl}/profile/update`, profile, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
         return response.data;
+
     } catch (error) {
         console.log("Profile update error", error.message);
         throw error;
@@ -83,8 +144,28 @@ export const updateProfile = async (profile) => {
 
 export const changePassword = async (password) => {
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.put(`https://157.15.202.251/profile/change-password`, password, {
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+        const response = await axios.put(`${config.apiUrl}/profile/change-password`, password, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -100,8 +181,29 @@ export const changePassword = async (password) => {
 
 export const createBots = async (createBot) => {
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.post(`https://157.15.202.251/api/bot`, createBot, {
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.post(`${config.apiUrl}/api/bot`, createBot, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -117,8 +219,28 @@ export const createBots = async (createBot) => {
 
 export const getBots = async () => {
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`https://157.15.202.251/api/botIds`, {
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+        const response = await axios.get(`${config.apiUrl}/api/botIds`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -133,8 +255,29 @@ export const getBots = async () => {
 
 export const updateBot = async (currentBotId) => {
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.put(`https://157.15.202.251/api/botId`, currentBotId, {
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.put(`${config.apiUrl}/api/botId`, currentBotId, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -151,8 +294,30 @@ export const updateBot = async (currentBotId) => {
 
 export const getCampaignsDetails = async (page, limit) => {
     try {
-        const token = localStorage.getItem('token');
-        const responseContact = await axios.get(`https://157.15.202.251/api/campaigns`, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const responseContact = await axios.get(`${config.apiUrl}/api/campaigns`, {
             headers: {
                 Authorization: `Bearer ${token}`
             },
@@ -181,8 +346,30 @@ export const getCampaignsDetails = async (page, limit) => {
 
 export const createCampaigns = async (formData) => {
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.post(`https://157.15.202.251/api/campaigns/create-campaign`, formData, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.post(`${config.apiUrl}/api/campaigns/create-campaign`, formData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -200,8 +387,30 @@ export const createCampaigns = async (formData) => {
 export const uploadFileCampaigns = async (file) => {
     console.log(file, 'fileupload');
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.post(`https://157.15.202.251/api/campaigns/uploadFile`, file, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.post(`${config.apiUrl}/api/campaigns/uploadFile`, file, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'multipart/form-data'
@@ -218,9 +427,28 @@ export const uploadFileCampaigns = async (file) => {
 
 export const startCampaign = async (campaignId) => {
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.post(
-            `https://157.15.202.251/api/campaigns/start-campaign/${campaignId}`,
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+        const response = await axios.post(`${config.apiUrl}/api/campaigns/start-campaign/${campaignId}`,
             {},
             {
                 headers: {
@@ -238,10 +466,32 @@ export const startCampaign = async (campaignId) => {
 
 
 export const getTemplateDetailsList = async () => {
-    const token = localStorage.getItem('token');
 
     try {
-        const responseContact = await axios.get(`https://157.15.202.251/api/template/all`, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const responseContact = await axios.get(`${config.apiUrl}/api/template/all`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -258,7 +508,28 @@ export const getTemplateDetailsList = async () => {
 export const createNewTemplates = async (createTemplates) => {
     console.log(createTemplates, "createtemplates")
     try {
-        const token = localStorage.getItem('token');
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
         const response = await axios.post(`https://main-rcs.vercel.app/api/template`, createTemplates, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -278,10 +549,32 @@ export const createNewTemplates = async (createTemplates) => {
 
 export const getTemplatedataById = async (id) => {
     console.log(id, "templateid");
-    const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://157.15.202.251/api/template/details/${id}`, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.get(`${config.apiUrl}/api/template/details/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -298,10 +591,32 @@ export const getTemplatedataById = async (id) => {
 
 export const updateTemplatedataById = async (id, updatedData) => {
     console.log(id, "updatetemplateid");
-    const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.put(`https://157.15.202.251/api/template/update/${id}`, updatedData, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.put(`${config.apiUrl}/api/template/update/${id}`, updatedData, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -317,10 +632,32 @@ export const updateTemplatedataById = async (id, updatedData) => {
 
 
 export const searchCampaigns = async (query) => {
-    const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://157.15.202.251/api/campaigns/search?query=${encodeURIComponent(query)}`, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.get(`${config.apiUrl}/api/campaigns/search?query=${encodeURIComponent(query)}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -338,10 +675,32 @@ export const searchCampaigns = async (query) => {
 
 export const getCampaignsDetailsResponse = async (campaignId, page, limit) => {
     console.log(campaignId, "campaignresponse");
-    const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://157.15.202.251/api/campaigns/responses`, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.get(`${config.apiUrl}/api/campaigns/responses`, {
             params: {
                 campaignId,
                 page,
@@ -363,10 +722,32 @@ export const getCampaignsDetailsResponse = async (campaignId, page, limit) => {
 
 
 export const getDashboardData = async () => {
-    const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://157.15.202.251/api/dashboard/stats`, {
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+
+        const response = await axios.get(`${config.apiUrl}/api/dashboard/stats`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -382,10 +763,32 @@ export const getDashboardData = async () => {
 
 
 export const getWeelyAndDaliyStats = async () => {
-    const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://157.15.202.251/api/dashboard/weekly-daily-stats`, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.get(`${config.apiUrl}/api/dashboard/weekly-daily-stats`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -405,10 +808,32 @@ export const getWeelyAndDaliyStats = async () => {
 // admin panel apis .............................................................
 
 export const getAllUsers = async () => {
-    const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://157.15.202.251/api/admin/users`, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'admin');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.get(`${config.apiUrl}/api/admin/users`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -426,10 +851,33 @@ export const getAllUsers = async () => {
 
 export const getUsersByEmail = async (email) => {
     console.log(email, "emailid");
-    const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://157.15.202.251/api/admin/user/${email}`, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'admin');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+
+        const response = await axios.get(`${config.apiUrl}/api/admin/user/${email}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -447,10 +895,33 @@ export const getUsersByEmail = async (email) => {
 
 export const updateUsersByEmail = async (updateUser) => {
     console.log(updateUser, "updateusers");
-    const token = localStorage.getItem('token');
+
 
     try {
-        const response = await axios.put(`https://157.15.202.251/api/admin/user`, updateUser, {
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'admin');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.put(`${config.apiUrl}/api/admin/user`, updateUser, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -460,6 +931,46 @@ export const updateUsersByEmail = async (updateUser) => {
         return response.data;
     } catch (error) {
         console.log("Profile update error", error.message);
+        throw error;
+    }
+};
+export const addBalanceToSpecificUser = async (formData) => {
+
+    try {
+
+
+        const logins = Cookies.get('logins');
+        let token = null;
+
+        if (logins) {
+            try {
+                const parsedLogins = JSON.parse(logins);
+                // Find the login object with the desired typerole
+                const currentLogin = parsedLogins.find(login => login.typerole === 'admin');
+                // Change 'user' to the desired typerole if needed
+                if (currentLogin) {
+                    token = currentLogin.token;
+                    console.log(currentLogin, "login profile")
+                }
+            } catch (error) {
+                console.error("Failed to parse logins cookie:", error.message);
+            }
+        }
+
+        if (!token) {
+            throw new Error("No valid token found for the specified role.");
+        }
+
+        const response = await axios.post(`${config.apiUrl}/api/admin/add-balance`, formData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response.data, "response data balance");
+        return response.data;
+    } catch (error) {
+        console.log("error", error.message);
         throw error;
     }
 };

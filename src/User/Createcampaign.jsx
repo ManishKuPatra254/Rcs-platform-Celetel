@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Box } from '@mui/material';
-import { createCampaigns, getBots, startCampaign, uploadFileCampaigns } from "@/Service/auth.service";
+import { createCampaigns, getBots, startCampaign } from "@/Service/auth.service";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -21,6 +21,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 
 
@@ -56,9 +57,13 @@ export default function Createcampaign() {
         botId: "",
         campaignName: "",
         numbers: [""],
+        rcsNumbersCount: '',
+        nonRcsNumbersCount: "",
+        totalNumbers: '',
     });
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedBotName, setSelectedBotName] = useState("");
+    const [dialogOpen, setDialogOpen] = useState(false);
 
 
 
@@ -82,49 +87,66 @@ export default function Createcampaign() {
     const handleCreateCampaigns = async (e) => {
         e.preventDefault();
         try {
-            const response = await createCampaigns(formData);
-            console.log(response._id, "respcreate")
-            if (response.success) {
-                alert(response.data.message);
+            let response;
+
+            if (selectedFile) {
+                // Using multipart/form-data
+                const formDataMultipart = new FormData();
+                formDataMultipart.append('templateName', formData.templateName);
+                formDataMultipart.append('botId', formData.botId);
+                formDataMultipart.append('campaignName', formData.campaignName);
+                formDataMultipart.append('file', selectedFile);
+
+                response = await createCampaigns(formDataMultipart);
+            } else {
+                // Using application/json
+                const formDataJson = {
+                    templateName: formData.templateName,
+                    botId: formData.botId,
+                    campaignName: formData.campaignName,
+                    numbers: formData.numbers,
+                };
+
+                response = await createCampaigns(formDataJson);
+            }
+
+            if (response) {
+                toast("Campaign created successfully");
+                console.log(response, 'responsecamp');
+                console.log(response.campaign._id, 'responsecampid');
                 setFormData({
                     templateName: "",
                     botId: "",
                     campaignName: "",
                     numbers: [""],
+                    rcsNumbersCount: response.rcsNumbersCount,
+                    nonRcsNumbersCount: response.nonRcsNumbersCount,
+                    totalNumbers: response.campaign.totalNumbers
                 });
 
-            } else {
-                const currentDate = new Date();
-                const formattedDate = currentDate.toLocaleString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric',
-                    hour12: true
-                });
-                toast("Campaign created successfully", {
-                    description: formattedDate
-                });
                 setCampaignCreated(true);
                 setCampaigns(prevCampaigns => [
                     ...prevCampaigns,
                     {
-                        ...formData,
+                        _id: response.campaign._id,
                         status: 'created',
-                        _id: response._id,
                         started: false,
-
+                        rcsNumbersCount: response.rcsNumbersCount,
+                        nonRcsNumbersCount: response.nonRcsNumbersCount,
+                        totalNumbers: response.campaign.totalNumbers,
 
                     }
                 ]);
+                setDialogOpen(true);
+            } else {
+                toast("Error creating campaign");
             }
         } catch (error) {
-            console.log(error.message);
+            console.error('Error creating campaign:', error.message);
+            toast("Error creating campaign");
         }
     };
+
 
 
     const handleCreateChange = (e) => {
@@ -156,6 +178,7 @@ export default function Createcampaign() {
 
 
     const handleStartCampaign = async (campaignId) => {
+        console.log("Campaign ID received:", campaignId);
         try {
             await startCampaign(campaignId);
             // Update the campaigns state with the started campaign
@@ -171,44 +194,9 @@ export default function Createcampaign() {
         }
     };
 
-
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
     };
-
-
-    const handleFileUpload = async (e) => {
-        e.preventDefault();
-        if (selectedFile) {
-            try {
-                const formData = new FormData();
-                formData.append('file', selectedFile);
-                const response = await uploadFileCampaigns(formData);
-
-                if (response && response.numbers) {
-                    const formattedNumbers = response.numbers.map(number => {
-                        return number.startsWith('+91') ? number : `+91${number}`;
-                    });
-
-                    setFormData(prevFormData => ({
-                        ...prevFormData,
-                        numbers: formattedNumbers
-                    }));
-                    toast("File uploaded successfully");
-                } else {
-                    toast("File uploaded, but no numbers found in response");
-                }
-
-                console.log('File uploaded successfully:', response);
-            } catch (error) {
-                console.error('Error uploading file:', error.message);
-                toast("Error uploading file");
-            }
-        } else {
-            toast("Please select a file to upload");
-        }
-    };
-
 
     const handleBotSelect = (value) => {
         const selectedBot = getBot.find(bot => bot.botId === value);
@@ -263,19 +251,16 @@ export default function Createcampaign() {
 
 
 
-
-
-
                                 <Tabs defaultValue="uploaddata" className="w-auto">
                                     <TabsList className="grid w-full grid-cols-2">
                                         <TabsTrigger value="uploaddata">Upload File</TabsTrigger>
-                                        <TabsTrigger value="writenumbers">Write Numbers Manually</TabsTrigger>
+                                        <TabsTrigger value="writenumbers">Input Numbers</TabsTrigger>
                                     </TabsList>
                                     <TabsContent value="uploaddata">
                                         <Card>
                                             <CardHeader>
-                                                <CardTitle>Upload Numbers</CardTitle>
-                                                <CardDescription>
+                                                <CardTitle className='text-lg'>Upload Numbers</CardTitle>
+                                                <CardDescription className='text-xs'>
                                                     Upload numbers which should be Excel or CSV file and validates the phone numbers. Click on upload when youre done.
                                                 </CardDescription>
                                             </CardHeader>
@@ -285,9 +270,9 @@ export default function Createcampaign() {
                                                     <Input
                                                         className=""
                                                         type="file"
+                                                        accept=".xlsx, .csv"
                                                         onChange={handleFileChange}
                                                     />
-                                                    <Button onClick={handleFileUpload}>Upload</Button>
                                                 </div>
                                             </CardContent>
 
@@ -296,8 +281,8 @@ export default function Createcampaign() {
                                     <TabsContent value="writenumbers">
                                         <Card>
                                             <CardHeader>
-                                                <CardTitle>Write numbers</CardTitle>
-                                                <CardDescription>
+                                                <CardTitle className='text-lg'>Input Numbers</CardTitle>
+                                                <CardDescription className='text-xs'>
                                                     Write numbers manually and create the campaign
                                                 </CardDescription>
                                             </CardHeader>
@@ -313,30 +298,56 @@ export default function Createcampaign() {
                                     </TabsContent>
                                 </Tabs>
 
+                                <div className="flex justify-center">
+                                    <Button className='w-full mt-4' onClick={handleCreateCampaigns}>
+                                        <Plus className="mr-3 h-4 w-4" />
+                                        Create
+                                    </Button>
+                                </div>
 
+                                <Dialog open={dialogOpen} onOpenChange={setDialogOpen} className="w-full">
+                                    <DialogContent className="w-full">
+                                        <DialogHeader>
+                                            <DialogTitle className='text-xl'>Campaign Counts</DialogTitle>
+                                            <DialogDescription className='text-xs mt-4'>
+                                                Your campaign was created successfully. Would you like to start it now or later?
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="w-auto">
+                                            <Label htmlFor=''>Total Numbers</Label>
+                                            <Input className="w-full" value={formData.totalNumbers} disabled />
+                                        </div>
+                                        <div className="w-auto">
+                                            <Label htmlFor=''>Rcs Count Numbers</Label>
+                                            <Input className="w-full" value={formData.rcsNumbersCount} disabled />
+                                        </div>
+                                        <div className="w-full">
+                                            <Label htmlFor='' className="text-left">NonRcs Count Numbers</Label>
+                                            <Input className="w-full" value={formData.nonRcsNumbersCount} disabled />
+                                        </div>
 
-                                <Button className='mt-4' onClick={handleCreateCampaigns}>
-                                    <Plus className="mr-3 h-4 w-4" />
-                                    Create
-                                </Button>
-
-                                {campaignCreated && campaigns.map(campaign => (
-                                    <div key={campaign._id} className="flex justify-end py-6 gap-4">
-                                        {campaign.status !== 'started' && (
-                                            <Button type="button" className="px-10 bg-slate-500" onClick={() => handleStartCampaign(campaign._id)}>
-                                                <CirclePlay className="mr-3 h-4 w-4" />
-                                                Start Now
-                                            </Button>
-                                        )}
-                                        <Link to={'/sendrcs'}>
-                                            <Button type="button" className="bg-slate-500 px-10">
-                                                <SendToBack className="mr-3 h-4 w-4" />
-                                                Start later
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                ))}
-
+                                        <DialogFooter>
+                                            <div>
+                                                {campaignCreated && campaigns.map(campaign => (
+                                                    <div key={campaign._id} className="flex justify-end py-6 gap-4">
+                                                        {campaign.status !== 'started' && (
+                                                            <Button type="button" className="text-xs" onClick={() => handleStartCampaign(campaign._id)}>
+                                                                <CirclePlay className="mr-3 h-4 w-4" />
+                                                                Start Now
+                                                            </Button>
+                                                        )}
+                                                        <Link to={'/sendrcs'}>
+                                                            <Button type="button" variant='secondary' className="text-xs">
+                                                                <SendToBack className="mr-3 h-4 w-4" />
+                                                                Start later
+                                                            </Button>
+                                                        </Link>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </DialogFooter>
+                                    </DialogContent>
+                                </Dialog>
                             </Box>
                         </Box>
                     </div>
@@ -363,9 +374,9 @@ export default function Createcampaign() {
                                     </div>
                                     <div className="inner_content">
                                         <div className="inner_content_2">
-                                            <p className="text-md font-medium text-blue-900 mt-2 break-words text-ellipsis">{formData.templateName}</p>
-                                            <p className="text-sm mt-2 break-words text-ellipsis">{formData.campaignName}</p>
-                                            <p className="text-xs mt-2 break-words text-ellipsis">{formData.numbers.join(', ')}</p>
+                                            <p className="text-md font-extrabold text-blue-900 mt-2 break-words text-ellipsis">{formData.templateName}</p>
+                                            <p className="text-sm mt-2 font-semibold break-words text-ellipsis text-red-400">{formData.campaignName}</p>
+                                            <p className="font-medium text-xs mt-2 break-words text-ellipsis text-blue-950">{formData.numbers.join(', ')}</p>
                                         </div>
                                     </div>
                                 </div>

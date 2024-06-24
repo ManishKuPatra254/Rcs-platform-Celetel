@@ -635,16 +635,16 @@ export function Layout({ children }) {
         typeRole = currentLogin.typerole;
     }
 
-    console.log(currentLogin, "currentlogin");
+    // console.log(currentLogin, "currentlogin");
 
-    console.log(typeRole, "responsetyperole");
+    // console.log(typeRole, "responsetyperole");
 
     const renderLayout = () => {
         if (typeRole === 'admin') {
-            console.log(typeRole, "renderlayoutadmin");
+            // console.log(typeRole, "renderlayoutadmin");
             return <AdminLayout>{children}</AdminLayout>;
         } else if (typeRole === 'user') {
-            console.log(typeRole, "renderlayoutuser");
+            // console.log(typeRole, "renderlayoutuser");
             return <UserLayout>{children}</UserLayout>;
         } else {
             return <DefaultLayout>{children}</DefaultLayout>;

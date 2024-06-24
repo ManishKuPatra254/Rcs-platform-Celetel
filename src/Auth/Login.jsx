@@ -2,14 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Navbar } from './Navbar';
 import { loginUser } from '../Service/auth.service';
 import bg from '../assets/New1.svg';
@@ -19,9 +14,11 @@ import { CardTitle } from '@/components/ui/card';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Loader2 } from "lucide-react";
 import { Helmet } from 'react-helmet';
+import { PasswordInput } from './Passwordref';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -105,13 +102,6 @@ export default function Login() {
     }));
   };
 
-
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-
   return (
     <>
       <Helmet>
@@ -166,61 +156,52 @@ export default function Login() {
                   <Box component="form" noValidate onSubmit={handleLoginUs} sx={{ mt: 2 }}>
                     <Grid container spacing={1}>
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <TextField
+                        <Label htmlFor="password" className="text-right">Email</Label>
+                        <Input
                           required
-                          fullWidth
                           name="email"
                           value={formData.email}
                           onChange={handleLoginChange}
-                          label="Email"
-                          size="small"
-                          type="email"
+                          // placeholder='Email'
                           autoComplete="email"
-                          sx={{
-                            '& .MuiInputBase-root': { color: 'black' },
-                            '& .MuiInputLabel-root': { color: 'black' },
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': { borderColor: 'black' },
-                              '&:hover fieldset': { borderColor: 'black' },
-                              '&.Mui-focused fieldset': { borderColor: 'black' },
-                            },
-                            mt: 1,
-                          }}
+
                         />
                       </Grid>
+
+
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <TextField
-                          type={showPassword ? 'text' : 'password'}
-                          label="Password"
+                        <Label htmlFor="password" className="text-right">Password</Label>
+                        <PasswordInput
                           name="password"
                           size="small"
+                          // placeholder='Password'
                           value={formData.password}
                           onChange={handleLoginChange}
-                          variant="outlined"
-                          fullWidth
-                          sx={{
-                            '& .MuiInputBase-root': { color: 'black' },
-                            '& .MuiInputLabel-root': { color: 'black' },
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': { borderColor: 'black' },
-                              '&:hover fieldset': { borderColor: 'black' },
-                              '&.Mui-focused fieldset': { borderColor: 'black' },
-                            },
-                            mt: 2,
-                          }}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  onClick={handleClickShowPassword}
-                                  onMouseDown={handleMouseDownPassword}
-                                  edge="end"
-                                >
-                                  {showPassword ? <VisibilityOff sx={{ color: 'black' }} /> : <Visibility sx={{ color: 'black' }} />}
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
+                        // variant="outlined"
+                        // fullWidth
+                        // sx={{
+                        //   '& .MuiInputBase-root': { color: 'black' },
+                        //   '& .MuiInputLabel-root': { color: 'black' },
+                        //   '& .MuiOutlinedInput-root': {
+                        //     '& fieldset': { borderColor: 'black' },
+                        //     '&:hover fieldset': { borderColor: 'black' },
+                        //     '&.Mui-focused fieldset': { borderColor: 'black' },
+                        //   },
+                        //   mt: 2,
+                        // }}
+                        // InputProps={{
+                        //   endAdornment: (
+                        //     <InputAdornment position="end">
+                        //       <IconButton
+                        //         onClick={handleClickShowPassword}
+                        //         onMouseDown={handleMouseDownPassword}
+                        //         edge="end"
+                        //       >
+                        //         {showPassword ? <VisibilityOff sx={{ color: 'black' }} /> : <Visibility sx={{ color: 'black' }} />}
+                        //       </IconButton>
+                        //     </InputAdornment>
+                        //   ),
+                        // }}
                         />
                       </Grid>
                       <Grid item xs={12} sx={{ padding: '5px', color: 'black' }}>

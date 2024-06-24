@@ -1,13 +1,8 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import bg from "../assets/Group 32.svg";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Fragment, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
@@ -17,11 +12,11 @@ import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { Helmet } from "react-helmet";
 import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { PasswordInput } from "./Passwordref";
 
 
 export default function Register() {
-  // const [remember, setRemember] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -97,12 +92,6 @@ export default function Register() {
 
   const navigate = useNavigate();
 
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-
   return (
     <Fragment>
       <Helmet>
@@ -160,7 +149,7 @@ export default function Register() {
                           mt: 1
                         }}
                       >
-                        <Typography component="h1" variant="h4" sx={{ color: 'black', fontWeight: "600" }}>
+                        <Typography component="h1" variant="h4" sx={{ color: 'black', fontWeight: "600", mb: 2 }}>
                           Sign in to RCS
                         </Typography>
                       </Box>
@@ -174,231 +163,75 @@ export default function Register() {
                   >
                     <Grid container spacing={1}>
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <TextField
+                        <Input
                           required
                           fullWidth
                           name="username"
                           size="small"
                           value={formData.username}
                           onChange={handleRegisterChange}
-                          label="Username"
-                          sx={{
-                            '& .MuiInputBase-root': {
-                              color: 'black',
-                            },
-                            '& .MuiInputLabel-root': {
-                              color: 'black',
-                            },
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&:hover fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&.Mui-focused fieldset': {
-                                borderColor: 'black',
-                              },
-                            },
-                            mt: 1,
-
-                          }}
+                          placeholder="Username"
                         />
                       </Grid>
 
 
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <TextField
+                        <Input
                           required
                           fullWidth
-                          label="Company"
+                          placeholder="Company"
                           name="company"
                           size="small"
                           value={formData.company}
                           onChange={handleRegisterChange}
-                          sx={{
-                            '& .MuiInputBase-root': {
-                              color: 'black',
-                            },
-                            '& .MuiInputLabel-root': {
-                              color: 'black',
-                            },
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&:hover fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&.Mui-focused fieldset': {
-                                borderColor: 'black',
-                              },
-                            },
-                            mt: 1,
 
-                          }}
                         />
                       </Grid>
 
 
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <TextField
+                        <Input
                           required
                           fullWidth
-                          label="Email"
+                          placeholder="Email"
                           name="email"
                           size="small"
                           value={formData.email}
                           onChange={handleRegisterChange}
                           autoComplete="new-password"
-                          sx={{
-                            '& .MuiInputBase-root': {
-                              color: 'black',
-                            },
-                            '& .MuiInputLabel-root': {
-                              color: 'black',
-                            },
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&:hover fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&.Mui-focused fieldset': {
-                                borderColor: 'black',
-                              },
-                            },
-                            mt: 1,
 
-                          }}
                         />
                       </Grid>
 
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <TextField
+                        <Input
                           required
                           fullWidth
                           name="phone"
-                          label="Phone"
+                          placeholder="Phone"
                           type="text"
                           size="small"
                           value={formData.phone}
                           onChange={handleRegisterChange}
                           autoComplete="phone"
-                          sx={{
-                            '& .MuiInputBase-root': {
-                              color: 'black',
-                            },
-                            '& .MuiInputLabel-root': {
-                              color: 'black',
-                            },
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&:hover fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&.Mui-focused fieldset': {
-                                borderColor: 'black',
-                              },
-                            },
-                            mt: 1,
-
-                          }}
                         />
                       </Grid>
+
+
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <TextField
-                          type={showPassword ? 'text' : 'password'}
-                          label="Password"
+                        <PasswordInput
+                          placeholder="Password"
                           name="password"
                           value={formData.password}
                           onChange={handleRegisterChange}
-                          size="small"
-                          variant="outlined"
-                          fullWidth
-                          sx={{
-                            '& .MuiInputBase-root': {
-                              color: 'black',
-                            },
-                            '& .MuiInputLabel-root': {
-                              color: 'black',
-                            },
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&:hover fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&.Mui-focused fieldset': {
-                                borderColor: 'black',
-                              },
-                            },
-                            mt: 1,
-
-                          }}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  onClick={handleClickShowPassword}
-                                  onMouseDown={handleMouseDownPassword}
-                                  edge="end"
-                                >
-                                  {showPassword ? <VisibilityOff sx={{ color: "black" }} /> : <Visibility sx={{ color: "black" }} />}
-                                </IconButton>
-                              </InputAdornment>
-                            )
-                          }}
                         />
                       </Grid>
                       <Grid item xs={12} sx={{ padding: '10px', color: 'black' }}>
-                        <TextField
-                          type={showPassword ? 'text' : 'password'}
-                          label="Confirm password"
+                        <PasswordInput
+                          placeholder="Confirm password"
                           name="confirmPassword"
                           value={formData.confirmPassword}
                           onChange={handleRegisterChange}
-                          size="small"
-                          variant="outlined"
-                          fullWidth
-                          sx={{
-                            '& .MuiInputBase-root': {
-                              color: 'black',
-                            },
-                            '& .MuiInputLabel-root': {
-                              color: 'black',
-                            },
-                            '& .MuiOutlinedInput-root': {
-                              '& fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&:hover fieldset': {
-                                borderColor: 'black',
-                              },
-                              '&.Mui-focused fieldset': {
-                                borderColor: 'black',
-                              },
-                            },
-                            mt: 1,
-
-                          }}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  onClick={handleClickShowPassword}
-                                  onMouseDown={handleMouseDownPassword}
-                                  edge="end"
-                                >
-                                  {showPassword ? <VisibilityOff sx={{ color: "black" }} /> : <Visibility sx={{ color: "black" }} />}
-                                </IconButton>
-                              </InputAdornment>
-                            )
-                          }}
                         />
                       </Grid>
                       <Grid item xs={12} sx={{ padding: "10px", color: "black" }}>

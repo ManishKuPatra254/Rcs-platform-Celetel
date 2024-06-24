@@ -116,6 +116,7 @@ export default function RcsDetails() {
 
 
     const handleStartCampaign = async (campaignId) => {
+        console.log(campaignId, "camp119");
         try {
             await startCampaign(campaignId);
             // Update the campaigns state with the started campaign

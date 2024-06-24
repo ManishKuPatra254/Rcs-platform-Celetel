@@ -90,7 +90,6 @@ export const getProfile = async () => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -131,7 +130,6 @@ export const updateProfile = async (profile) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -170,7 +168,6 @@ export const changePassword = async (password) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -207,7 +204,6 @@ export const createBots = async (createBot) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -245,7 +241,6 @@ export const getBots = async () => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -281,7 +276,6 @@ export const updateBot = async (currentBotId) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -361,19 +355,15 @@ export const getCampaignsDetails = async (page, limit) => {
 
 export const createCampaigns = async (formData) => {
     try {
-
         const logins = Cookies.get('logins');
         let token = null;
 
         if (logins) {
             try {
                 const parsedLogins = JSON.parse(logins);
-                // Find the login object with the desired typerole
                 const currentLogin = parsedLogins.find(login => login.typerole === 'user');
-                // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -384,18 +374,24 @@ export const createCampaigns = async (formData) => {
             throw new Error("No valid token found for the specified role.");
         }
 
-        const response = await axios.post(`${API_URL}/api/campaigns/create-campaign`, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        const isMultipart = formData instanceof FormData;
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': isMultipart ? 'multipart/form-data' : 'application/json',
+        };
+
+        const response = await axios.post(
+            `${API_URL}/api/campaigns/create-campaign`,
+            isMultipart ? formData : JSON.stringify(formData),
+            { headers }
+        );
+
         return response.data;
     } catch (error) {
-        console.log("Profile update error", error.message);
+        console.log("update error", error.message);
         throw error;
     }
-}
+};
 
 
 
@@ -414,7 +410,6 @@ export const uploadFileCampaigns = async (file) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -441,6 +436,7 @@ export const uploadFileCampaigns = async (file) => {
 
 
 export const startCampaign = async (campaignId) => {
+    console.log(campaignId, "443line")
     try {
         const logins = Cookies.get('logins');
         let token = null;
@@ -453,7 +449,6 @@ export const startCampaign = async (campaignId) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -468,7 +463,7 @@ export const startCampaign = async (campaignId) => {
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/json'
                 }
             }
         );
@@ -495,7 +490,6 @@ export const getTemplateDetailsList = async () => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -534,7 +528,6 @@ export const createNewTemplates = async (createTemplates) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -578,7 +571,6 @@ export const getTemplatedataById = async (id) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);
@@ -620,7 +612,6 @@ export const updateTemplatedataById = async (id, updatedData) => {
                 // Change 'user' to the desired typerole if needed
                 if (currentLogin) {
                     token = currentLogin.token;
-                    console.log(currentLogin, "login profile")
                 }
             } catch (error) {
                 console.error("Failed to parse logins cookie:", error.message);

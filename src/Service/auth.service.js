@@ -393,48 +393,6 @@ export const createCampaigns = async (formData) => {
     }
 };
 
-
-
-export const uploadFileCampaigns = async (file) => {
-    console.log(file, 'fileupload');
-    try {
-
-        const logins = Cookies.get('logins');
-        let token = null;
-
-        if (logins) {
-            try {
-                const parsedLogins = JSON.parse(logins);
-                // Find the login object with the desired typerole
-                const currentLogin = parsedLogins.find(login => login.typerole === 'user');
-                // Change 'user' to the desired typerole if needed
-                if (currentLogin) {
-                    token = currentLogin.token;
-                }
-            } catch (error) {
-                console.error("Failed to parse logins cookie:", error.message);
-            }
-        }
-
-        if (!token) {
-            throw new Error("No valid token found for the specified role.");
-        }
-
-        const response = await axios.post(`${API_URL}/api/campaigns/uploadFile`, file, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data'
-            }
-        });
-        console.log(response.data, 'datares');
-        return response.data;
-    } catch (error) {
-        console.log("error", error.message);
-        throw error;
-    }
-}
-
-
 export const startCampaign = async (campaignId) => {
     console.log(campaignId, "443line")
     try {

@@ -1,20 +1,8 @@
 import { Fragment, useEffect, useState } from 'react';
-// import { Box } from '@mui/material';
 import { changePassword, createBots, getProfile, updateBot, updateProfile } from '../Service/auth.service';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner"
-// import {
-//     AlertDialog,
-//     AlertDialogAction,
-//     AlertDialogCancel,
-//     AlertDialogContent,
-//     AlertDialogDescription,
-//     AlertDialogFooter,
-//     AlertDialogHeader,
-//     AlertDialogTitle,
-//     AlertDialogTrigger,
-// } from "@/components/ui/alert-dialog"
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { CardTitle } from '@/components/ui/card';

@@ -20,24 +20,25 @@ export const registerUser = async (formData) => {
 };
 
 
-
-
-
 export const loginUser = async (formData) => {
     console.log(formData);
     try {
         const response = await axios.post(`${API_URL}/auth/login`, formData);
 
-        // Retrieve the existing logins from the cookies
-        let existingLogins = Cookies.get('logins');
-        existingLogins = existingLogins ? JSON.parse(existingLogins) : [];
+        // Generate a unique session ID for this login
+        const sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
 
-        // Create a new login object
+        // Create a new login object with the sessionId
         const newLogin = {
+            sessionId: sessionId,
             token: response.data.token,
             typerole: response.data.type,
             username: response.data.username,
         };
+
+        // Retrieve the existing logins from the cookies
+        let existingLogins = Cookies.get('logins');
+        existingLogins = existingLogins ? JSON.parse(existingLogins) : [];
 
         // Add the new login to the array
         existingLogins.push(newLogin);
@@ -45,7 +46,8 @@ export const loginUser = async (formData) => {
         // Store the updated array in the cookies
         Cookies.set('logins', JSON.stringify(existingLogins));
 
-
+        // Store the sessionId in the cookies for this tab
+        Cookies.set('activeSessionId', sessionId);
 
         // Optional: Log the details to the console
         console.log(newLogin.token, "whilelogintoken");
@@ -59,6 +61,18 @@ export const loginUser = async (formData) => {
         throw error;
     }
 }
+
+export const getCurrentLogin = () => {
+    // Fetch the active session ID from the cookies
+    const activeSessionId = Cookies.get('activeSessionId');
+
+    // Fetch all login sessions from the cookies
+    const logins = JSON.parse(Cookies.get('logins') || '[]');
+
+    // Find and return the login session that matches the active session ID
+    return logins.find(login => login.sessionId === activeSessionId);
+}
+
 
 // user panel apis .............................................................
 
@@ -935,6 +949,8 @@ export const updateUsersByEmail = async (updateUser) => {
         throw error;
     }
 };
+
+
 export const addBalanceToSpecificUser = async (formData) => {
 
     try {

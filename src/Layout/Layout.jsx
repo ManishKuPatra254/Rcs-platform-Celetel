@@ -47,6 +47,7 @@ import { ThemeProvider } from "@/Theme/Themeprovider"
 import { useTheme } from "@/Theme/Themeprovider"
 import { Moon, Sun } from "lucide-react"
 import Cookies from "js-cookie"
+import { getCurrentLogin } from "@/Service/auth.service"
 
 
 // import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
@@ -626,25 +627,21 @@ const DefaultLayout = ({ children }) => {
 // eslint-disable-next-line react/prop-types
 export function Layout({ children }) {
 
-    const logins = Cookies.get('logins');
+    // Get the current login session
+    const currentLogin = getCurrentLogin();
     let typeRole = null;
 
-    if (logins) {
-        try {
-            const parsedLogins = JSON.parse(logins);
-            if (parsedLogins.length > 0) {
-                typeRole = parsedLogins[parsedLogins.length - 1].typerole;
-            }
-        } catch (error) {
-            console.log("Failed to parse logins cookie:", error);
-        }
+    if (currentLogin) {
+        typeRole = currentLogin.typerole;
     }
+
+    console.log(currentLogin, "currentlogin");
 
     console.log(typeRole, "responsetyperole");
 
     const renderLayout = () => {
         if (typeRole === 'admin') {
-            console.log(typeRole, "renderlayoutadmin")
+            console.log(typeRole, "renderlayoutadmin");
             return <AdminLayout>{children}</AdminLayout>;
         } else if (typeRole === 'user') {
             console.log(typeRole, "renderlayoutuser");
@@ -655,7 +652,6 @@ export function Layout({ children }) {
     };
 
     return (
-
         <Fragment>
             <div className="flex min-h-screen w-full flex-col bg-muted/40">
                 <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -665,5 +661,5 @@ export function Layout({ children }) {
                 </ThemeProvider>
             </div>
         </Fragment>
-    )
+    );
 }

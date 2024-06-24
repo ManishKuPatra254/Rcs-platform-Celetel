@@ -6,11 +6,11 @@ const config = {
   socketUrl: import.meta.env.VITE_SOCKET_URL,
 };
 
-console.log("All Env Variables:", import.meta.env);
-console.log("Configuration:", config);
+// console.log("All Env Variables:", import.meta.env);
+// console.log("Configuration:", config);
 
 if (!import.meta.env.PROD) {
-  console.error("Invalid environment for production:", import.meta.env.MODE);
+  // console.log("Invalid environment for production:", import.meta.env.MODE);
 }
 
 export default config;

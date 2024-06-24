@@ -12,5 +12,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <App />
       <Toaster />
     </TooltipProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )

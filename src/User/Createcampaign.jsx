@@ -4,7 +4,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Box } from '@mui/material';
-import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import { createCampaigns, getBots, startCampaign, uploadFileCampaigns } from "@/Service/auth.service";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -15,6 +14,14 @@ import { CiBatteryFull } from "react-icons/ci";
 import { FaSignal } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+
 
 
 export default function Createcampaign() {
@@ -253,24 +260,66 @@ export default function Createcampaign() {
                                     value={formData.campaignName}
                                     onChange={handleCreateChange} />
 
-                                <Label htmlFor="" className="text-left">Upload Numbers</Label>
-                                <div className="flex items-center gap-4">
-                                    <Input
-                                        className=""
-                                        type="file"
-                                        onChange={handleFileChange}
-                                    />
-                                    <Button onClick={handleFileUpload}>Upload</Button>
-                                </div>
-                                <Label htmlFor="" className="text-left">Phone no</Label>
-                                <Textarea
-                                    name='numbers'
-                                    value={formData.numbers.join(',')}
-                                    onChange={handleCreateChange} />
 
-                                <Button onClick={handleCreateCampaigns}>
+
+
+
+
+
+                                <Tabs defaultValue="uploaddata" className="w-auto">
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="uploaddata">Upload File</TabsTrigger>
+                                        <TabsTrigger value="writenumbers">Write Numbers Manually</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="uploaddata">
+                                        <Card>
+                                            <CardHeader>
+                                                <CardTitle>Upload Numbers</CardTitle>
+                                                <CardDescription>
+                                                    Upload numbers which should be Excel or CSV file and validates the phone numbers. Click on upload when youre done.
+                                                </CardDescription>
+                                            </CardHeader>
+                                            <CardContent className="space-y-2">
+                                                <Label htmlFor="" className="text-left">Upload Numbers</Label>
+                                                <div className="flex items-center gap-4">
+                                                    <Input
+                                                        className=""
+                                                        type="file"
+                                                        onChange={handleFileChange}
+                                                    />
+                                                    <Button onClick={handleFileUpload}>Upload</Button>
+                                                </div>
+                                            </CardContent>
+
+                                        </Card>
+                                    </TabsContent>
+                                    <TabsContent value="writenumbers">
+                                        <Card>
+                                            <CardHeader>
+                                                <CardTitle>Write numbers</CardTitle>
+                                                <CardDescription>
+                                                    Write numbers manually and create the campaign
+                                                </CardDescription>
+                                            </CardHeader>
+                                            <CardContent className="space-y-2">
+                                                <Label htmlFor="" className="text-left">Write phone no</Label>
+                                                <Textarea
+                                                    name='numbers'
+                                                    value={formData.numbers.join(',')}
+                                                    onChange={handleCreateChange} />
+                                            </CardContent>
+
+                                        </Card>
+                                    </TabsContent>
+                                </Tabs>
+
+
+
+                                <Button className='mt-4' onClick={handleCreateCampaigns}>
                                     <Plus className="mr-3 h-4 w-4" />
-                                    Create</Button>
+                                    Create
+                                </Button>
+
                                 {campaignCreated && campaigns.map(campaign => (
                                     <div key={campaign._id} className="flex justify-end py-6 gap-4">
                                         {campaign.status !== 'started' && (
@@ -317,7 +366,6 @@ export default function Createcampaign() {
                                             <p className="text-md font-medium text-blue-900 mt-2 break-words text-ellipsis">{formData.templateName}</p>
                                             <p className="text-sm mt-2 break-words text-ellipsis">{formData.campaignName}</p>
                                             <p className="text-xs mt-2 break-words text-ellipsis">{formData.numbers.join(', ')}</p>
-
                                         </div>
                                     </div>
                                 </div>

@@ -20,9 +20,6 @@ export const registerUser = async (formData) => {
 };
 
 
-
-
-
 export const loginUser = async (formData) => {
     console.log(formData);
     try {
@@ -935,6 +932,8 @@ export const updateUsersByEmail = async (updateUser) => {
         throw error;
     }
 };
+
+
 export const addBalanceToSpecificUser = async (formData) => {
 
     try {

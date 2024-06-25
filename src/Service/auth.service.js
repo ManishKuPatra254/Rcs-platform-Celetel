@@ -380,9 +380,7 @@ export const createCampaigns = async (formData) => {
             'Content-Type': isMultipart ? 'multipart/form-data' : 'application/json',
         };
 
-        const response = await axios.post(
-            `${API_URL}/api/campaigns/create-campaign`,
-            isMultipart ? formData : JSON.stringify(formData),
+        const response = await axios.post(`${API_URL}/api/campaigns/create-campaign`, isMultipart ? formData : JSON.stringify(formData),
             { headers }
         );
 

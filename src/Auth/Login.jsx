@@ -32,8 +32,6 @@ export default function Login() {
     setLoading(true);
     try {
       const response = await loginUser(formData);
-      console.log('Login response:', response);
-      console.log('Login response type:', response.type);
 
       if (response.success === true) {
         setFormData({
@@ -42,11 +40,9 @@ export default function Login() {
         });
         if (response.type === 'admin') {
           navigate('/admindashboard');
-          console.log(response.type, "resp1")
         }
         else if (response.type === 'user') {
           navigate('/userdashboard');
-          console.log(response.type, "resp2")
         }
         else {
           toast(response.message);

@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment, useRef, useCallback } from 'react';
 import { Layout } from '@/Layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import { getCampaignsDetails, searchCampaigns, startCampaign } from '../Service/
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { ArrowRightLeft, ChevronsUpDown, CircleCheck, CirclePlus, CircleX, Clock12 } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import {
     Menubar,
     MenubarContent,
@@ -19,23 +20,20 @@ import {
 } from "@/components/ui/menubar";
 import {
     Command,
-    CommandEmpty,
     CommandGroup,
-    CommandInput,
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Helmet } from 'react-helmet';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Pagination } from '@mui/material';
+import { X } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
+import { Command as CommandPrimitive } from "cmdk";
 
 const columns = [
     { id: 'createdAt', label: 'Time' },
@@ -47,23 +45,21 @@ const columns = [
     { id: 'actions', label: 'Actions' },
 ];
 
-const frameworks = [
+const FRAMEWORKS = [
     {
-        value: "started",
-        label: "Started",
-        icon: <Clock12 className="h-4 w-4 mr-2" />
+        value: "Completed",
+        label: "Completed",
     },
     {
-        value: "completed",
-        label: "Completed",
-        icon: <CircleCheck className="h-4 w-4 mr-2" />,
+        value: "Not Started",
+        label: "Not Started",
     },
     {
         value: "Failed",
         label: "Failed",
-        icon: <CircleX className="h-4 w-4 mr-2" />,
     },
 ];
+
 
 export default function RcsDetails() {
     const [campaigns, setCampaigns] = useState([]);
@@ -200,6 +196,44 @@ export default function RcsDetails() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filter, originalCampaigns]);
 
+
+
+    const inputRef = useRef(null);
+    // const [open, setOpen] = useState(false);
+    const [selected, setSelected] = useState([FRAMEWORKS[1]]);
+    const [inputValue, setInputValue] = useState("");
+
+    const handleUnselect = useCallback((framework) => {
+        setSelected((prev) => prev.filter((s) => s.value !== framework.value));
+    }, []);
+
+    const handleKeyDown = useCallback(
+        (e) => {
+            const input = inputRef.current;
+            if (input) {
+                if (e.key === "Delete" || e.key === "Backspace") {
+                    if (input.value === "") {
+                        setSelected((prev) => {
+                            const newSelected = [...prev];
+                            newSelected.pop();
+                            return newSelected;
+                        });
+                    }
+                }
+                if (e.key === "Escape") {
+                    input.blur();
+                }
+            }
+        },
+        []
+    );
+
+    const selectables = FRAMEWORKS.filter(
+        (framework) => !selected.includes(framework)
+    );
+
+    console.log(selectables, selected, inputValue);
+
     return (
         <Fragment>
             <Layout>
@@ -224,76 +258,82 @@ export default function RcsDetails() {
                                 Here is the list of your campaigns
                             </CardDescription>
                             <div className="grid">
-                                <div className="flex flex-wrap justify-start items-center mt-5 gap-1">
+                                <div className="flex flex-wrap justify-start mt-5 gap-1">
                                     <Input
                                         placeholder="Filter campaigns..."
-                                        className="max-w-xs mr-4 text-sm"
+                                        className="max-w-xs mr-4 text-xs"
                                         value={filter}
                                         onChange={(e) => handleFilterChange(e.target.value)}
                                     />
-                                    <Popover open={open} onOpenChange={setOpen} className="mt-4">
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant="outline"
-                                                role="combobox"
-                                                aria-expanded={open}
-                                                className="flex justify-between items-center px-4 py-0 text-xs"
-                                            >
-                                                {value ? (
-                                                    <Fragment>
-                                                        {frameworks.find((framework) => framework.value === value)?.icon}
-                                                        <span className="ml-2">
-                                                            {frameworks.find((framework) => framework.value === value)?.label}
-                                                        </span>
-                                                    </Fragment>
-                                                ) : (
-                                                    <span>Status</span>
-                                                )}
-                                                <CirclePlus className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-[200px] p-0">
-                                            <Command>
-                                                <CommandInput placeholder="Status" />
-                                                <CommandList>
-                                                    <CommandEmpty>No templates found.</CommandEmpty>
-                                                    <CommandGroup>
-                                                        {frameworks.map((framework) => (
-                                                            <CommandItem
-                                                                key={framework.value}
-                                                                value={framework.value}
-                                                                onSelect={(currentValue) => {
-                                                                    setValue(currentValue === value ? "" : currentValue);
-                                                                    setOpen(false);
-                                                                    // eslint-disable-next-line no-unused-vars
-                                                                    const sortedCampaigns = [...campaigns].sort((a, b) => {
-                                                                        if (currentValue === 'completed') {
-                                                                            return a.status === 'Completed' ? -1 : 1;
-                                                                        } else if (currentValue === 'started') {
-                                                                            return a.status === 'Started' ? -1 : 1;
-                                                                        } else if (currentValue === 'Failed') {
-                                                                            return a.status === 'Failed' ? -1 : 1;
-                                                                        }
-                                                                        return 0;
-                                                                    });
+                                    <Command
+                                        onKeyDown={handleKeyDown}
+                                        className="overflow-visible bg-transparent w-auto mt-0"
+                                    >
+                                        <div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                                            <div className="flex flex-wrap gap-1">
+                                                {selected.map((framework) => {
+                                                    return (
+                                                        <Badge key={framework.value} variant="destructive">
+                                                            {framework.label}
+                                                            <button
+                                                                className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === "Enter") {
+                                                                        handleUnselect(framework);
+                                                                    }
+                                                                }}
+                                                                onMouseDown={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                }}
+                                                                onClick={() => handleUnselect(framework)}
+                                                            >
+                                                                <X className="text-white h-3 w-3 text-muted-foreground hover:text-foreground" />
+                                                            </button>
+                                                        </Badge>
+                                                    );
+                                                })}
+                                                <CommandPrimitive.Input
+                                                    ref={inputRef}
+                                                    value={inputValue}
+                                                    onValueChange={setInputValue}
+                                                    onBlur={() => setOpen(false)}
+                                                    onFocus={() => setOpen(true)}
+                                                    placeholder="Select status..."
+                                                    className="ml-2 py-0.5 flex-1 text-xs bg-transparent outline-none placeholder:text-muted-foreground"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="relative mt-2">
+                                            <CommandList>
+                                                {open && selectables.length > 0 ? (
+                                                    <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+                                                        <CommandGroup className="h-full overflow-auto">
+                                                            {selectables.map((framework) => {
+                                                                return (
+                                                                    <CommandItem
+                                                                        key={framework.value}
+                                                                        onMouseDown={(e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                        }}
+                                                                        onSelect={(value) => {
+                                                                            setInputValue("");
+                                                                            setSelected((prev) => [...prev, framework]);
+                                                                        }}
+                                                                        className={"cursor-pointer"}
+                                                                    >
+                                                                        {framework.label}
+                                                                    </CommandItem>
+                                                                );
+                                                            })}
+                                                        </CommandGroup>
+                                                    </div>
+                                                ) : null}
+                                            </CommandList>
+                                        </div>
+                                    </Command>
 
-                                                                    setCampaigns(sortedCampaigns);
-                                                                }}>
-                                                                {framework.icon}
-                                                                <span className="ml-2">{framework.label}</span>
-                                                            </CommandItem>
-                                                        ))}
-                                                    </CommandGroup>
-                                                </CommandList>
-                                            </Command>
-                                        </PopoverContent>
-                                    </Popover>
-                                    <Button
-                                        variant="outline"
-                                        className="ml-auto text-xs bg-transparent">
-                                        <ArrowRightLeft className='h-4 w-4 mr-3' />
-                                        View
-                                    </Button>
                                 </div>
                             </div>
 
@@ -374,14 +414,21 @@ export default function RcsDetails() {
                                             ))
                                         ) : (
                                             <TableRow>
-                                                <TableCell colSpan={columns.length} align="center">
-                                                    <div className="flex flex-col space-y-3">
-                                                        <Skeleton className="h-full w-full rounded-xl" />
-                                                        <div className="space-y-2">
-                                                            <Skeleton className="h-4 w-full" />
-                                                            <Skeleton className="h-4 w-full" />
+                                                <TableCell colSpan={columns.length} className="text-center">
+                                                    {filteredCampaigns.length === 0 ? (
+                                                        <div className="flex flex-col space-y-3">
+                                                            <Skeleton className="h-full w-full rounded-xl" />
+                                                            <div className="space-y-2">
+                                                                <Skeleton className="h-4 w-full" />
+                                                                <Skeleton className="h-4 w-full" />
+                                                            </div>
                                                         </div>
-                                                    </div>
+
+                                                    ) : (
+                                                        <div className="flex flex-col space-y-3">
+                                                            <p className="text-gray-600 font-semibold">No results found.</p>
+                                                        </div>
+                                                    )}
                                                 </TableCell>
                                             </TableRow>
                                         )}
@@ -442,6 +489,6 @@ export default function RcsDetails() {
                     </Sheet>
                 )}
             </Layout>
-        </Fragment>
+        </Fragment >
     );
 }

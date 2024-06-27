@@ -18,6 +18,8 @@ import ProtectedRoute from './Routes/Protectedroute';
 import PageNotFound from './Routes/Page404';
 import Reports from './User/Reports';
 import Campaigndetailed from './User/Campaigndetailed';
+import Usersettings from './User/Usersettings';
+import Createbot from './User/Createbot';
 // import Sidebar from './User/Sidebar';
 
 
@@ -53,8 +55,10 @@ function App() {
           <Route path="/reports" exact element={<ProtectedRoute Component={Reports} />}>
             <Route path='campaign/:campaignId' element={<Campaigndetailed />} />
           </Route>
+          <Route path="/usersettings" exact element={<Usersettings />} >
+            <Route path='createbot' element={<Createbot />} />
+          </Route>
           <Route path="*" exact element={<PageNotFound />} />
-          {/* <Route path="/sidebar" exact element={<Sidebar />} /> */}
         </Routes>
       </BrowserRouter>
     </Fragment>

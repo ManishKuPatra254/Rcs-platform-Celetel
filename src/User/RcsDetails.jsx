@@ -489,6 +489,6 @@ export default function RcsDetails() {
                     </Sheet>
                 )}
             </Layout>
-        </Fragment >
+        </Fragment>
     );
 }

@@ -35,6 +35,7 @@ export default function Chatdetails() {
         { type: 'receiver', content: 'Hello, how can I help you?' },
         { type: 'sender', content: 'I have a question about the project.' },
         { type: 'receiver', content: 'Sure, what do you need to know?' },
+        { type: 'sender', content: 'Hi' },
     ]);
     const [newMessage, setNewMessage] = useState('');
 
@@ -193,11 +194,11 @@ export default function Chatdetails() {
                                     </div>
                                 </header>
                                 {selectedCard ? (
-                                    <div>
+                                    <div className='mt-2'>
                                         <Avatar>
-                                            <AvatarFallback>CN</AvatarFallback>
+                                            <AvatarFallback className='bg-gray-300'>CN</AvatarFallback>
                                         </Avatar>
-                                        <h3 className="text-sm font-bold">{selectedCard.title}</h3>
+                                        <h3 className="text-sm font-bold mt-2">{selectedCard.title}</h3>
                                         <p className="text-xs">{selectedCard.description}</p>
                                         <div className="border mt-4"></div>
 

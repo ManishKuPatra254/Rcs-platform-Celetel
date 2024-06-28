@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
@@ -9,11 +9,18 @@ import Phoneinput from './Phoneinput'
 import { Helmet } from 'react-helmet'
 import { Card, CardDescription } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ChevronLeft, Globe, Mail, PhoneCall } from 'lucide-react'
+import { ChevronLeft, CirclePlus, Globe, Mail, PhoneCall, Upload } from 'lucide-react'
 import { CiBatteryFull } from 'react-icons/ci'
 import { FaSignal } from 'react-icons/fa'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 
 
 export default function Createbot() {
@@ -25,6 +32,10 @@ export default function Createbot() {
             hour12: true
         });
     });
+    const fileInputRef = useRef(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [emails, setEmails] = useState(['']);
+    const [websites, setWebsites] = useState(['']);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -40,6 +51,41 @@ export default function Createbot() {
         return () => clearInterval(interval);
     }, []);
 
+
+
+    const addEmailField = (e) => {
+        e.preventDefault();
+        if (emails.length < 3) {
+            setEmails([...emails, '']);
+        }
+    };
+
+    const handleEmailChange = (index, event) => {
+        const newEmails = emails.map((email, i) => (i === index ? event.target.value : email));
+        setEmails(newEmails);
+    };
+
+
+    const addWebsiteField = (e) => {
+        e.preventDefault();
+        if (websites.length < 3) {
+            setWebsites([...websites, '']);
+        }
+    };
+
+    const handleWebsiteChange = (index, event) => {
+        const newWebsites = websites.map((website, i) => (i === index ? event.target.value : websites));
+        setWebsites(newWebsites);
+    };
+
+
+    const handleFileInputClick = () => {
+        setDialogOpen(true);
+    };
+
+    const handleInputClick = () => {
+        fileInputRef.current.click();
+    };
 
     return (
         <Fragment>
@@ -82,12 +128,12 @@ export default function Createbot() {
 
                                     <div className="space-y-3">
                                         <Label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" htmlFor="">Bot Name</Label>
-                                        <Input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" name="username" />
+                                        <Input className="" name="username" />
                                         <p className="text-[0.8rem] text-muted-foreground">Enter the name of the chatbot that the user will see at the top of the message thread (40 chars. max)</p>
                                     </div>
                                     <div className="space-y-3">
                                         <Label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" htmlFor="">Brand Name</Label>
-                                        <Input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" name="username" />
+                                        <Input className="" name="username" />
                                         <p className="text-[0.8rem] text-muted-foreground">Enter the brand name with which your chatbot will be associated.
                                         </p>
                                     </div>
@@ -98,7 +144,79 @@ export default function Createbot() {
                                 <div className="space-y-3">
                                     <Label> Bot Logo* </Label>
                                     <p className='text-xs'>Provide a logo for your bot that will be displayed in connection with the bots name.</p>
-                                    <Input type='file' />
+
+                                    <Dialog open={dialogOpen} onOpenChange={setDialogOpen} className="w-full">
+                                        <DialogContent className="w-full">
+                                            <DialogHeader>
+                                                <DialogTitle className='text-xl'>Select an Image</DialogTitle>
+                                                <DialogDescription className='text-xs mt-4'>
+
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                            <Tabs defaultValue="uploadimage" className="w-full">
+                                                <TabsList className="grid w-full grid-cols-2">
+                                                    <TabsTrigger value="uploadimage">Upload Image</TabsTrigger>
+                                                    <TabsTrigger value="uploadfromurl">Upload from URL</TabsTrigger>
+                                                </TabsList>
+                                                <TabsContent value="uploadimage">
+                                                    <Card className='border-transparent'>
+                                                        <CardHeader>
+                                                            <CardTitle>Upload Image</CardTitle>
+                                                            <CardDescription className='text-xs'>
+                                                                The image you upload must be 224 pixels wide x 224 pixels tall, have a max file size of 90KB, and be a JPEG, JPG or PNG. IF the image you select doesnt meet these requirements, youll have the opportunity to edit it.
+                                                            </CardDescription>
+                                                        </CardHeader>
+                                                        <CardContent className="space-y-2">
+
+                                                            <div role="presentation" tabIndex="0" className="group relative grid w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center" onClick={handleInputClick}>
+
+
+                                                                <Input ref={fileInputRef} accept="image/*" multiple="" type="file" tabindex="-1" className='hidden' />
+                                                                <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
+                                                                    <div className="rounded-full border border-dashed p-3">
+                                                                        <Upload />
+                                                                    </div>
+                                                                    <div className="space-y-px">
+                                                                        <p className="font-medium text-muted-foreground">Drop files here, or click to select files</p>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </CardContent>
+                                                        <CardFooter>
+                                                            <Button className='flex justify-end text-xs'>Save changes</Button>
+                                                        </CardFooter>
+                                                    </Card>
+                                                </TabsContent>
+                                                <TabsContent value="uploadfromurl">
+                                                    <Card>
+                                                        <CardHeader>
+                                                            <CardTitle>Upload From Url</CardTitle>
+                                                            <CardDescription className='text-xs mt-4'>
+                                                                The image you upload must be 224 pixels wide x 224 pixels tall, have a max file size of 90KB, and be a JPEG, JPG or PNG. IF the image you select doesnt meet these requirements, youll have the opportunity to edit it.
+                                                            </CardDescription>
+                                                        </CardHeader>
+                                                        <CardContent className="space-y-2">
+                                                            <div className="space-y-1">
+                                                                <Input type="" />
+                                                            </div>
+
+                                                        </CardContent>
+                                                        <CardFooter className='flex gap-2 justify-end'>
+                                                            <Button className='text-xs'>Save password</Button>
+                                                            <Button className='text-xs'>Cancel</Button>
+                                                        </CardFooter>
+                                                    </Card>
+                                                </TabsContent>
+                                            </Tabs>
+
+                                            <DialogFooter>
+
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+
+                                    <Input className='text-xs cursor-pointer' placeholder='Click here upload the bot logo..' onClick={handleFileInputClick} />
 
                                     <div className="space-y-3">
                                         <Label>  Banner Image*</Label>
@@ -118,14 +236,48 @@ export default function Createbot() {
                                         <Label>Primary phone number</Label>
                                         <Phoneinput />
                                     </div>
-                                    <div className="space-y-3">
-                                        <Label>Primary Email Id</Label>
-                                        <Input className='text-xs' placeholder='abc@gmail.com' />
+
+
+                                    <div className="space-y-4">
+                                        {emails.map((email, index) => (
+                                            <div key={index}>
+                                                <Label>Primary Email Id</Label>
+                                                <Input
+                                                    className='text-xs'
+                                                    placeholder='abc@gmail.com'
+                                                    value={email}
+                                                    onChange={(event) => handleEmailChange(index, event)}
+                                                />
+                                            </div>
+                                        ))}
+                                        {emails.length < 3 && (
+                                            <Button variant='destructive' onClick={addEmailField} className='text-xs'>
+                                                <CirclePlus className='h-4 w-4 mr-2' />Add
+                                            </Button>
+                                        )}
                                     </div>
+
+
                                     <div className="space-y-3">
-                                        <Label>Primary Website</Label>
-                                        <Input className='text-xs' placeholder='https://' />
+                                        {websites.map((website, index) => (
+                                            <div key={index}>
+                                                <Label>Primary Website</Label>
+                                                <Input
+                                                    className='text-xs'
+                                                    placeholder='https://'
+                                                    value={website}
+                                                    onChange={(event) => handleWebsiteChange(index, event)}
+                                                />
+                                            </div>
+                                        ))}
+                                        {websites.length < 3 && (
+                                            <Button variant='destructive' onClick={addWebsiteField} className='text-xs py-0.5'>
+                                                <CirclePlus className='h-4 w-4 mr-2' />Add
+                                            </Button>
+                                        )}
                                     </div>
+
+
                                     <div className="space-y-3">
                                         <Label>Terms of Use URL</Label>
                                         <p className='text-xs'>Enter the URL of the website</p>
@@ -189,37 +341,13 @@ export default function Createbot() {
                         </div>
                     </div>
                 </div>
+
+
                 <div className="w-auto">
                     <Tabs defaultValue="conversation" className="w-auto">
-                        <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="conversation">Conversation</TabsTrigger>
-                            <TabsTrigger value="businessinfo">Business Info</TabsTrigger>
+                        <TabsList className="w-full">
+                            <TabsTrigger className='w-full text-black font-semibold bg-slate-200 border-transparent' value="businessinfo">Preview of Business Info</TabsTrigger>
                         </TabsList>
-                        <TabsContent value="conversation">
-                            <Card className='overflow-auto custom-scrollbar'>
-                                <div className="iphone-x">
-                                    <div className="status-bar">
-                                        <span className='font-semibold text-sm'>{realtime}</span>
-                                        <div className="flex gap-1.5">
-                                            <FaSignal className='' />
-                                            <p className='font-semibold text-sm'>5G</p>
-                                            <CiBatteryFull className='text-md' />
-                                        </div>
-                                    </div>
-                                    <div className="p-2 bg-[#F5F5F5] flex gap-2  items-center">
-                                        <ChevronLeft size={20} strokeWidth={2.5} color='#0079FF' cursor='pointer' />
-                                        <p className='text-slate-900 text-md font-semibold'>{ }</p>
-                                    </div>
-                                    <div className="inner_content">
-                                        <div className="inner_content_2">
-                                            <p className="text-md font-extrabold text-blue-900 mt-2 break-words text-ellipsis">{ }</p>
-                                            <p className="text-sm mt-2 font-semibold break-words text-ellipsis text-red-400">{ }</p>
-                                            <p className="font-medium text-xs mt-2 break-words text-ellipsis text-blue-950">{ }</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Card>
-                        </TabsContent>
 
                         <TabsContent value="businessinfo">
                             <Card className='overflow-auto'>

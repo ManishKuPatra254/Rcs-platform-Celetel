@@ -8,6 +8,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from '@/components/ui/button'
+import { Helmet } from 'react-helmet'
 
 export default function Botlist() {
 
@@ -59,6 +60,9 @@ export default function Botlist() {
 
     return (
         <Fragment>
+            <Helmet>
+                <title> Bot List | RCS Celetel</title>
+            </Helmet>
             <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-4 w-full lg:grid-cols-4">
                 <div className=" w-full grid mt-2 auto-rows-max items-start gap-4 md:gap-4 md:w-full lg:col-span-4 lg:w-full sm:w-full">
                     <div className="rounded-md border mt-4 overflow-auto">

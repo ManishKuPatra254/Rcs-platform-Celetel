@@ -93,15 +93,16 @@ export default function Createbot() {
                 <title> Create Bot | RCS Celetel</title>
             </Helmet>
             <div className="grid auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 xl:grid-cols-3 w-full lg:grid-cols-3">
-                <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2">
-                    <div className="flex lg:max-w-xl">
+                <div className="grid mt-2 auto-rows-max items-start gap-0 md:gap-8 lg:col-span-2 max-w-xl">
+                    <div className="flex lg:max-w-xl md:w-full">
                         <div className="space-y-6">
                             <div>
                                 <h3 className="text-lg font-medium">RCS Bot Details</h3>
                                 <p className="text-sm text-muted-foreground">This is where bot will be created</p>
                             </div>
 
-                            <div data-orientation="horizontal" role="none" className="shrink-0 bg-border h-[1px] w-full"></div>
+                            <Separator className="my-4" />
+
                             <form className="space-y-8">
                                 <div className="space-y-2">
                                     <p className='font-medium text-sm'>Bot type* : Domestic</p>
@@ -184,14 +185,14 @@ export default function Createbot() {
                                                             </div>
                                                         </CardContent>
                                                         <CardFooter>
-                                                            <Button className='flex justify-end text-xs'>Save changes</Button>
+                                                            <Button className='flex justify-end text-xs'>Upload</Button>
                                                         </CardFooter>
                                                     </Card>
                                                 </TabsContent>
                                                 <TabsContent value="uploadfromurl">
                                                     <Card>
                                                         <CardHeader>
-                                                            <CardTitle>Upload From Url</CardTitle>
+                                                            <CardTitle>Upload From URL</CardTitle>
                                                             <CardDescription className='text-xs mt-4'>
                                                                 The image you upload must be 224 pixels wide x 224 pixels tall, have a max file size of 90KB, and be a JPEG, JPG or PNG. IF the image you select doesnt meet these requirements, youll have the opportunity to edit it.
                                                             </CardDescription>
@@ -202,9 +203,8 @@ export default function Createbot() {
                                                             </div>
 
                                                         </CardContent>
-                                                        <CardFooter className='flex gap-2 justify-end'>
-                                                            <Button className='text-xs'>Save password</Button>
-                                                            <Button className='text-xs'>Cancel</Button>
+                                                        <CardFooter>
+                                                            <Button className='text-xs'>Upload</Button>
                                                         </CardFooter>
                                                     </Card>
                                                 </TabsContent>
@@ -364,17 +364,17 @@ export default function Createbot() {
                                         <ChevronLeft size={20} strokeWidth={2.5} color='#0079FF' cursor='pointer' />
                                         <p className='break-words text-ellipsis font-semibold'>Info & options</p>
                                     </div>
-                                    <div className="inner_content">
-                                        <div className="inner_content_2">
-                                            <p className='text-slate-900 text-md font-semibold'>{ }</p>
-                                            <p className='text-slate-500 text-xs mt-2'>Building the future: Transforming landscapes with innovation and excellence
-                                            </p>
-                                            <div className="flex justify-between mt-5">
-                                                <PhoneCall size={25} strokeWidth={2} cursor="pointer" />
-                                                <Globe size={25} strokeWidth={2} cursor="pointer" />
-                                                <Mail size={25} strokeWidth={2} cursor="pointer" />
-                                            </div>
+                                    <div className="mt-2 h-20 p-3">
+                                        <div className="p-2 h-20 block bg-zinc-100 overflow-auto break-words ">
+
+
                                         </div>
+                                    </div>
+
+                                    <div className="flex justify-between px-8 mt-5 mb-4">
+                                        <PhoneCall size={25} strokeWidth={2} cursor="pointer" />
+                                        <Globe size={25} strokeWidth={2} cursor="pointer" />
+                                        <Mail size={25} strokeWidth={2} cursor="pointer" />
                                     </div>
                                     <Tabs defaultValue="info" className="w-full p-2">
                                         <TabsList className="grid w-full grid-cols-2">

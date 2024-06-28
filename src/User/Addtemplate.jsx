@@ -682,9 +682,6 @@ export default function Addtemplates() {
                                                 </Textarea>
                                             </div>
                                         ))}
-
-
-
                                     </Fragment>
                                 )}
 

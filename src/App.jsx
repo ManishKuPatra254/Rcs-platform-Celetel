@@ -20,6 +20,7 @@ import Reports from './User/Reports';
 import Campaigndetailed from './User/Campaigndetailed';
 import Usersettings from './User/Usersettings';
 import Createbot from './User/Createbot';
+import Botlist from './User/Botlist';
 // import Sidebar from './User/Sidebar';
 
 
@@ -57,6 +58,7 @@ function App() {
           </Route>
           <Route path="/usersettings" exact element={<Usersettings />} >
             <Route path='createbot' element={<Createbot />} />
+            <Route path='botlist' element={<Botlist />} />
           </Route>
           <Route path="*" exact element={<PageNotFound />} />
         </Routes>

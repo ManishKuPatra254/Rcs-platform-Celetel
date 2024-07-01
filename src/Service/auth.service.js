@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { InitWebSocket } from '@/Routes/Websocket';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,16 +25,21 @@ export const loginUser = async (formData) => {
     console.log(formData);
     try {
         const response = await axios.post(`${API_URL}/auth/login`, formData);
+        const { token } = response.data;
 
-        // Generate a unique session ID for this login
-        const sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+        InitWebSocket(token);
+        console.log(token, "token30");
+
+        // Calculate the expiry time for the token
+        const expiryTime = new Date(new Date().getTime() + response.data.tokenExpiry * 60000); // tokenExpiry is in minutes
+        const expiryTimeString = expiryTime.toLocaleString(); // Convert to locale string
 
         // Create a new login object with the sessionId
         const newLogin = {
-            sessionId: sessionId,
             token: response.data.token,
             typerole: response.data.type,
             username: response.data.username,
+            tokenExpiry: expiryTimeString, // Add expiry time as a locale string to the newLogin object
         };
 
         // Retrieve the existing logins from the cookies
@@ -43,16 +49,14 @@ export const loginUser = async (formData) => {
         // Add the new login to the array
         existingLogins.push(newLogin);
 
-        // Store the updated array in the cookies
-        Cookies.set('logins', JSON.stringify(existingLogins));
-
-        // Store the sessionId in the cookies for this tab
-        Cookies.set('activeSessionId', sessionId);
+        // Store the updated array in the cookies with the token expiration time
+        Cookies.set('logins', JSON.stringify(existingLogins), { expires: expiryTime });
 
         // Optional: Log the details to the console
         console.log(newLogin.token, "whilelogintoken");
         console.log(newLogin.typerole, "whilelogintyperole");
         console.log(newLogin.username, "res1");
+        console.log(newLogin.tokenExpiry, "tokenExpiry"); // Log the token expiry time
 
         return response.data;
 
@@ -60,18 +64,7 @@ export const loginUser = async (formData) => {
         console.log("Login error", error.message);
         throw error;
     }
-}
-
-export const getCurrentLogin = () => {
-    // Fetch the active session ID from the cookies
-    const activeSessionId = Cookies.get('activeSessionId');
-
-    // Fetch all login sessions from the cookies
-    const logins = JSON.parse(Cookies.get('logins') || '[]');
-
-    // Find and return the login session that matches the active session ID
-    return logins.find(login => login.sessionId === activeSessionId);
-}
+};
 
 
 // user panel apis .............................................................

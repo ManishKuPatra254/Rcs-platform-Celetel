@@ -1,3 +1,7 @@
+import * as React from "react";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
 import { getCampaignsDetailsResponse } from '@/Service/auth.service';
 import { Fragment, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -11,7 +15,6 @@ import {
 } from "@/components/ui/table";
 
 import { ArrowRightLeft, MessageSquareWarning } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -27,30 +30,28 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import { Separator } from '@/components/ui/separator';
+import { Button } from "@/components/ui/button";
+
+const steps = [
+    "Select campaign settings",
+    "Create an ad group",
+    "Create an ad",
+];
 
 export default function Campaigndetailed() {
     const { campaignId } = useParams();
-    console.log(campaignId, "campaignId from useParams");
-
     const [campaignResponse, setCampaignResponse] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(true);
-
+    const [activeStep, setActiveStep] = React.useState(0);
 
     useEffect(() => {
         const fetchCampaignResponse = async () => {
-            console.log(campaignId, "Fetching campaign details for campaignId");
             try {
                 setLoading(true);
                 const response = await getCampaignsDetailsResponse(campaignId, currentPage, 10);
-                console.log(response, "Response from getCampaignsDetailsResponse");
-                response.responses?.map(res => {
-                    console.log(res.statusLogs || [], "Response from statusLogs");
-                    res.statusLogs?.map(log =>
-                        console.log(log.eventType, "Event Type from statusLogs")
-                    );
-                });
                 setCampaignResponse(response.responses || []);
                 setTotalPages(response.totalPages || 1);
                 setLoading(false);
@@ -75,6 +76,15 @@ export default function Campaigndetailed() {
         }
         return "Message sent successfully";
     };
+
+    useEffect(() => {
+        if (campaignResponse.length > 0) {
+            // Automatically move to the next step if status logs are present
+            if (campaignResponse[0].statusLogs.length > 0) {
+                setActiveStep(steps.length); // Set active step to the last step
+            }
+        }
+    }, [campaignResponse]);
 
     return (
         <Fragment>
@@ -158,18 +168,30 @@ export default function Campaigndetailed() {
 
                                                     <Sheet>
                                                         <SheetTrigger asChild>
-                                                            <Button className='text-xs mt-3' variant='link'>
+                                                            <Button className='text-xs mt-2' variant='link'>
                                                                 <MessageSquareWarning className="mr-1 h-3 w-3" /> Check Status
                                                             </Button>
                                                         </SheetTrigger>
                                                         <SheetContent>
                                                             <SheetHeader>
                                                                 <SheetTitle>Check Status</SheetTitle>
-                                                                <SheetDescription>
-                                                                    Make changes to your profile here. Click save when youre done.
+                                                                <SheetDescription className='text-xs'>
+                                                                    Check the status here
                                                                 </SheetDescription>
+                                                                <Separator />
                                                             </SheetHeader>
-                                                            <div className="flex flex-col items-start justify-start mt-8">
+
+                                                            <Stepper activeStep={activeStep} orientation="vertical">
+                                                                {campaign.statusLogs.map((log) => (
+                                                                    <Step key={log._id}>
+                                                                        <StepLabel>{log.eventType}
+                                                                            <p className="text-gray-600 text-xs truncate">{log.details}</p>
+                                                                        </StepLabel>
+                                                                    </Step>
+                                                                ))}
+                                                            </Stepper>
+
+                                                            {/* <div className="flex flex-col items-start justify-start mt-8">
                                                                 {campaign.statusLogs.map((log, index) => (
                                                                     <div key={log._id} className="flex items-center mb-4">
                                                                         <div className="bg-slate-300 w-6 h-6 text-center rounded-full text-slate-50 mr-2">{index + 1}</div>
@@ -179,10 +201,10 @@ export default function Campaigndetailed() {
                                                                         </div>
                                                                     </div>
                                                                 ))}
-                                                            </div>
+                                                            </div> */}
                                                             <SheetFooter>
                                                                 <SheetClose asChild>
-                                                                    <Button type="submit" className='text-xs'>Download PDF</Button>
+                                                                    <Button type="submit" className='text-xs'>Close</Button>
                                                                 </SheetClose>
                                                             </SheetFooter>
                                                         </SheetContent>

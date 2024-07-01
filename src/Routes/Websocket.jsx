@@ -1,27 +1,14 @@
-
-export function InitWebSocket(setProgress) {
-    const socket = new WebSocket('wss://157.15.202.251/ws');
+export function InitWebSocket(token) {
+    const socket = new WebSocket(`ws://157.15.202.251:8090`, token);
 
     socket.onopen = function () {
         console.log('WebSocket connection opened');
     };
 
-
     socket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        console.log('Received data:', data);
-
-        if (data.processedCount !== undefined && data.totalNumbers !== undefined) {
-            console.log(data.processedCount, "dataprocess")
-            // Calculate progress as a percentage
-            const progress = (data.processedCount / data.totalNumbers) * 100;
-            console.log('Calculated progress:', progress);
-            setProgress(progress);
-        }
+        console.log('Receiveddata:', data);
     };
-
-
-
 
     socket.onclose = function () {
         console.log('WebSocket connection closed');
@@ -31,3 +18,4 @@ export function InitWebSocket(setProgress) {
         console.error('WebSocket error:', error);
     };
 }
+

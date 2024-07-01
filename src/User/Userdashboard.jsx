@@ -22,14 +22,12 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-import { Progress } from "@/components/ui/progress"
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AreaChart, Area } from 'recharts';
 import { BarChart, Bar, Rectangle } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { getCampaignsDetails, getDashboardData, getWeelyAndDaliyStats } from "@/Service/auth.service"
 import { Skeleton } from "@/components/ui/skeleton"
-import { InitWebSocket } from "@/Routes/Websocket"
 import { Button } from "@/components/ui/button"
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Helmet } from "react-helmet"
@@ -61,14 +59,8 @@ const getStatusColor = (status) => {
 export function Userdashboard() {
 
     const [campaigns, setCampaigns] = useState([]);
-    const [progress, setProgress] = useState(0);
     const [dashboardData, setDashboardData] = useState('')
     const [dailyData, setDailyData] = useState();
-
-
-    useEffect(() => {
-        InitWebSocket(setProgress);
-    }, [])
 
     useEffect(() => {
         const fetchCampaigns = async () => {
@@ -513,11 +505,10 @@ export function Userdashboard() {
                                                                                                 <Tooltip>
                                                                                                     <TooltipTrigger asChild>
                                                                                                         <Button variant='ghost'>
-                                                                                                            <Progress value={progress} className="w-32 h-2" />
                                                                                                         </Button>
                                                                                                     </TooltipTrigger>
                                                                                                     <TooltipContent className="text-sm">
-                                                                                                        <p>{progress}%</p>
+
                                                                                                     </TooltipContent>
                                                                                                 </Tooltip>
                                                                                             </TooltipProvider>

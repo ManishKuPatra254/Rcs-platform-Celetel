@@ -11,22 +11,39 @@ export default function ProtectedRoute({ Component }) {
 
     useEffect(() => {
         const checkToken = () => {
-            const token = Cookies.get('logins');
-            // Check if token is missing and user navigates away from protected route
-            if (!token && location.pathname !== '/') {
+            const logins = Cookies.get('logins');
+            if (!logins) {
+                if (location.pathname !== '/') {
+                    setOpenDialog(true);
+                }
+                return;
+            }
+
+            const existingLogins = JSON.parse(logins);
+            const currentLogin = existingLogins[existingLogins.length - 1];
+            const tokenExpiry = new Date(currentLogin.tokenExpiry);
+
+            console.log(tokenExpiry, "token26");
+
+            if (new Date() >= tokenExpiry) {
                 setOpenDialog(true);
+            } else {
+                const timeout = tokenExpiry.getTime() - new Date().getTime();
+                const timeoutId = setTimeout(() => {
+                    setOpenDialog(true);
+                }, timeout);
+                return () => clearTimeout(timeoutId);
             }
         };
 
         // Check token initially
         checkToken();
 
-        // Listen to location changes
-        const unlisten = () => {
-            navigate(checkToken);
-        };
+        // Listen to location changes and check token validity
+        const unlisten = navigate(checkToken);
 
-        return unlisten();
+        // Return the cleanup function for unlisten
+        return unlisten;
     }, [navigate, location.pathname]);
 
     const handleLogout = () => {
